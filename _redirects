@@ -1,0 +1,5 @@
+# Form submission redirect
+/success /success.html 200
+
+# Fallback for any other routes
+/* /index.html 200

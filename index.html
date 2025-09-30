@@ -384,7 +384,7 @@
                     </p>
                 </div>
                 
-                <form name="beta-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success" class="space-y-6 max-w-2xl mx-auto">
+                <form name="beta-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-recaptcha="true" class="space-y-6 max-w-2xl mx-auto" onsubmit="return handleSubmit(event)">
                     <!-- Hidden honeypot field for spam protection -->
                     <input type="hidden" name="bot-field" />
                     
@@ -421,13 +421,25 @@
                         </div>
                     </div>
                     
-                    <button type="submit" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-lg hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1">
+                    <div data-netlify-recaptcha="true"></div>
+                    
+                    <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-lg hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1">
                         Join Beta Waitlist
                     </button>
                     
                     <p class="text-center text-sm text-forest/60">
                         Free early access • Be notified first • Help shape the product • Limited spots available
                     </p>
+                    
+                    <!-- Thank You Message (Hidden by default) -->
+                    <div id="thank-you-message" class="hidden bg-gradient-to-r from-sage to-mint text-white p-6 rounded-2xl text-center">
+                        <div class="text-4xl mb-4">🌱</div>
+                        <h3 class="text-xl font-bold mb-2">Welcome to LingoLeaf!</h3>
+                        <p class="mb-4">You're officially on the beta waitlist! Check your email for updates as we approach our October 20th launch.</p>
+                        <div class="text-sm opacity-90">
+                            🎉 You'll be among the first to give your plants a voice!
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -482,6 +494,32 @@
             document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
             document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // Form submission handler
+        function handleSubmit(event) {
+            const submitBtn = document.getElementById('submit-btn');
+            const thankYouMessage = document.getElementById('thank-you-message');
+            
+            // Change button text to show loading
+            submitBtn.innerHTML = 'Joining Waitlist... 🌱';
+            submitBtn.disabled = true;
+            
+            // Show thank you message after a short delay
+            setTimeout(() => {
+                thankYouMessage.classList.remove('hidden');
+                thankYouMessage.scrollIntoView({ behavior: 'smooth' });
+                
+                // Reset form after showing message
+                setTimeout(() => {
+                    event.target.reset();
+                    submitBtn.innerHTML = 'Join Beta Waitlist';
+                    submitBtn.disabled = false;
+                }, 2000);
+            }, 1000);
+            
+            // Allow form to submit normally to Netlify
+            return true;
         }
 
         // Simple form validation and smooth scrolling
