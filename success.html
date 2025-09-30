@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to LingoLeaf! 🌱</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#0f4c3a',
+                        'sage': '#87a96b',
+                        'mint': '#a8d5ba',
+                        'cream': '#faf8f5',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    </style>
+</head>
+<body class="bg-cream min-h-screen flex items-center justify-center">
+    
+    <div class="max-w-2xl mx-auto px-6 text-center">
+        <!-- Success Animation -->
+        <div class="mb-8">
+            <div class="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center animate-bounce-slow">
+                <span class="text-6xl">🌱</span>
+            </div>
+        </div>
+        
+        <!-- Success Message -->
+        <h1 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
+            Welcome to the LingoLeaf Family! 
+        </h1>
+        
+        <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-sage/20 mb-8">
+            <p class="text-xl text-forest/80 mb-6 leading-relaxed">
+                🎉 <strong>You're officially on the beta waitlist!</strong> Your plant is about to get a voice, and we couldn't be more excited to have you join us.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-6 text-left">
+                <div class="bg-sage/10 p-4 rounded-2xl">
+                    <h3 class="font-semibold text-forest mb-2">📧 What's Next?</h3>
+                    <p class="text-sm text-forest/70">
+                        Check your email for a welcome message and beta updates as we approach our October 20th launch.
+                    </p>
+                </div>
+                <div class="bg-mint/20 p-4 rounded-2xl">
+                    <h3 class="font-semibold text-forest mb-2">🌿 Early Access</h3>
+                    <p class="text-sm text-forest/70">
+                        You'll be among the first to experience AI plant personalities and smart care reminders.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Countdown Reminder -->
+        <div class="bg-gradient-to-r from-forest to-sage text-white rounded-2xl p-6 mb-8">
+            <h3 class="text-xl font-bold mb-2">⏰ Launch Countdown</h3>
+            <p class="text-mint/90">October 20, 2025 - Mark your calendar!</p>
+        </div>
+        
+        <!-- Social Sharing -->
+        <div class="space-y-4">
+            <p class="text-forest/70">
+                Know other plant parents who'd love this? Share LingoLeaf with friends!
+            </p>
+            
+            <div class="flex justify-center space-x-4">
+                <button onclick="shareOnTwitter()" class="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition-colors">
+                    Share on Twitter
+                </button>
+                <button onclick="copyLink()" class="bg-sage text-white px-6 py-3 rounded-full hover:bg-forest transition-colors">
+                    Copy Link
+                </button>
+            </div>
+        </div>
+        
+        <!-- Back to Home -->
+        <div class="mt-12">
+            <a href="/" class="inline-block text-sage hover:text-forest font-medium transition-colors">
+                ← Back to LingoLeaf Home
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        function shareOnTwitter() {
+            const text = "I just joined the LingoLeaf beta waitlist! 🌱 Finally, my plants will have a voice and remind me when they need care. Join me at";
+            const url = window.location.origin;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+        
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.origin).then(() => {
+                alert('Link copied to clipboard! 🌱');
+            });
+        }
+    </script>
+</body>
+</html>
