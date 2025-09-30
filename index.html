@@ -107,9 +107,9 @@
                     </div>
                     
                     <h1 class="text-5xl lg:text-7xl font-bold text-forest leading-tight">
-                        Your Plants Are
+                        Unlock Your Plant's
                         <span class="block text-sage relative">
-                            Finally Talking
+                            Thriving Future!
                             <div class="absolute -bottom-2 left-0 w-full h-3 bg-mint/30 -skew-x-12"></div>
                         </span>
                     </h1>
@@ -120,7 +120,7 @@
                     
                     <div class="flex justify-center">
                         <button class="bg-gradient-to-r from-forest to-sage text-white px-10 py-4 rounded-2xl font-semibold text-lg hover:shadow-strong transition-all duration-300 transform hover:-translate-y-1">
-                            Join the Beta Waitlist
+                            Give Your Plants a Voice! 🌱
                         </button>
                     </div>
                     
@@ -205,6 +205,31 @@
                     <!-- Floating Elements -->
                     <div class="absolute -top-6 -right-6 w-12 h-12 bg-mint/30 rounded-full animate-float"></div>
                     <div class="absolute -bottom-6 -left-6 w-8 h-8 bg-sage/30 rounded-full animate-sway"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="bg-gradient-to-r from-sage/10 to-mint/20 p-8 rounded-3xl border border-sage/20">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center mr-4">
+                        <span class="text-white text-2xl">🌿</span>
+                    </div>
+                    <div class="text-left">
+                        <div class="font-bold text-forest">Emma R. & Fiddle Leaf Fig</div>
+                        <div class="text-sm text-sage">Plant Parent • Beta Tester</div>
+                    </div>
+                </div>
+                <blockquote class="text-xl italic text-forest/80 mb-4">
+                    "My fiddle leaf fig's 'Dramatic Diva' personality texted me: 'Darling, I'm feeling parched and the humidity is only 35%! I need water AND a humidifier boost before I start dropping leaves dramatically!' Saved my $200 plant from another near-death experience."
+                </blockquote>
+                <div class="flex justify-center items-center space-x-4 text-sm text-sage">
+                    <span>✅ Prevented Plant Death</span>
+                    <span>✅ Perfect Timing</span>
+                    <span>✅ Humidity Monitoring</span>
                 </div>
             </div>
         </div>
@@ -559,57 +584,46 @@
                     <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
                         Be First to Give Your Plants a Voice
                     </h2>
-                    <p class="text-xl text-forest/70 max-w-2xl mx-auto">
+                    <p class="text-xl text-forest/70 max-w-2xl mx-auto mb-4">
                         Join 100+ plant parents on our exclusive beta waitlist. Get early access when we launch on October 20th and help shape the future of plant care.
                     </p>
+                    <div class="inline-flex items-center bg-orange-50 border border-orange-200 px-4 py-2 rounded-full">
+                        <span class="text-orange-600 font-semibold text-sm">🌱 Only 25 Beta Spots Remaining!</span>
+                    </div>
                 </div>
                 
                 <form name="beta-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-recaptcha="true" class="space-y-6 max-w-2xl mx-auto" onsubmit="return handleSubmit(event)">
                     <!-- Hidden honeypot field for spam protection -->
                     <input type="hidden" name="bot-field" />
                     
-                    <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Step 1: Essential Info Only -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Email Address</label>
+                            <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                        </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Plant Type</label>
                             <input type="text" name="plant-type" placeholder="e.g. Monstera, Basil, Cactus" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
                         </div>
+                        
                         <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Plant Nickname</label>
-                            <input type="text" name="plant-nickname" placeholder="e.g. Betty, Steve, Luna" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <label class="block text-sm font-medium text-forest mb-2">Preferred Plant Personality</label>
+                            <select name="personality" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                                <option value="">Choose a personality...</option>
+                                <option value="sassy">Sassy & Direct - Never Misses Watering</option>
+                                <option value="zen">Zen & Peaceful - Gentle Care Reminders</option>
+                                <option value="anxious">Anxious & Worried - Prevents Plant Stress</option>
+                                <option value="formal">Formal & Proper - Professional Plant Care</option>
+                            </select>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-forest mb-2">Personality</label>
-                        <select name="personality" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
-                            <option value="">Choose a personality...</option>
-                            <option value="sassy">Sassy & Direct</option>
-                            <option value="zen">Zen & Peaceful</option>
-                            <option value="anxious">Anxious & Worried</option>
-                            <option value="formal">Formal & Proper</option>
-                        </select>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">City</label>
-                            <input type="text" name="city" placeholder="e.g. New York, Toronto, London" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Country</label>
-                            <input type="text" name="country" placeholder="e.g. United States, Canada" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-forest mb-2">Email Address</label>
-                        <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
                     </div>
                     
                     <div data-netlify-recaptcha="true"></div>
                     
                     <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-lg hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1">
-                        Join Beta Waitlist
+                        Give Your Plants a Voice! 🌱
                     </button>
                     
                     <p class="text-center text-sm text-forest/60">
