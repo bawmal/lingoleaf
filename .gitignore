@@ -23,3 +23,11 @@ node_modules/
 # Build outputs
 dist/
 build/
+
+# Environment variables (IMPORTANT - contains API keys!)
+.env
+.env.local
+.env.*.local
+
+# Netlify
+.netlify/

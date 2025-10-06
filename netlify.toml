@@ -1,0 +1,14 @@
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["netlify/functions/lib/**"]
+  external_node_modules = ["node-fetch","twilio"]
+
+[[headers]]
+  for = "/success.html"
+  [headers.values]
+  Cache-Control = "no-store"
+
+# Scheduled job: every hour
+[[scheduled.functions]]
+  name = "schedule-check"
+  cron = "0 * * * *"

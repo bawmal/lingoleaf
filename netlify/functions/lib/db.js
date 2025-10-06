@@ -1,0 +1,54 @@
+// netlify/functions/lib/db.js
+const fetch = require('node-fetch');
+const { DB_URL, DB_API_KEY } = process.env;
+
+async function createPlant(row) {
+  const res = await fetch(`${DB_URL}/rest/v1/plants`, {
+    method: 'POST',
+    headers: {
+      'apikey': DB_API_KEY,
+      'Authorization': `Bearer ${DB_API_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(row)
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const [created] = await res.json();
+  return created;
+}
+
+async function listDuePlants(nowTs) {
+  const res = await fetch(`${DB_URL}/rest/v1/plants?next_due_ts=lte.${nowTs}`, {
+    headers: { 'apikey': DB_API_KEY, 'Authorization': `Bearer ${DB_API_KEY}` }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function getPlantByPhone(phone) {
+  const res = await fetch(`${DB_URL}/rest/v1/plants?phone_e164=eq.${encodeURIComponent(phone)}&limit=1`, {
+    headers: { 'apikey': DB_API_KEY, 'Authorization': `Bearer ${DB_API_KEY}` }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+async function updatePlant(id, patch) {
+  const res = await fetch(`${DB_URL}/rest/v1/plants?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': DB_API_KEY,
+      'Authorization': `Bearer ${DB_API_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(patch)
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  return rows;
+}
+
+module.exports = { createPlant, listDuePlants, getPlantByPhone, updatePlant };

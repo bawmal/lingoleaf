@@ -1,0 +1,146 @@
+<!-- LingoLeaf MVP Form Snippet -->
+<!-- Replace your existing form in index.html with this -->
+
+<form name="beta-waitlist" method="POST" action="/.netlify/functions/onboard" netlify-honeypot="bot-field" data-netlify-recaptcha="true" class="space-y-6 max-w-2xl mx-auto">
+    <!-- Hidden honeypot field for spam protection -->
+    <input type="hidden" name="bot-field" />
+    
+    <!-- Essential Info -->
+    <div class="space-y-6">
+        <div>
+            <label class="block text-sm font-medium text-forest mb-2">Email Address</label>
+            <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-forest mb-2">Phone Number (with country code)</label>
+            <input type="tel" name="phone" placeholder="+16475550123" required pattern="^\+[1-9]\d{1,14}$" class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+            <p class="text-xs text-forest/60 mt-1">Format: +1 for USA/Canada, +44 for UK, etc.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-forest mb-2">City</label>
+                <input type="text" name="city" placeholder="Toronto" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-forest mb-2">Country</label>
+                <input type="text" name="country" placeholder="Canada" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-forest mb-2">Plant Species</label>
+            <select name="species" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                <option value="">Choose your plant...</option>
+                <optgroup label="Popular Houseplants">
+                    <option value="Pothos (Golden/Neon)">Pothos (Golden/Neon)</option>
+                    <option value="Snake Plant">Snake Plant</option>
+                    <option value="Monstera Deliciosa">Monstera Deliciosa</option>
+                    <option value="ZZ Plant">ZZ Plant</option>
+                    <option value="Fiddle Leaf Fig">Fiddle Leaf Fig</option>
+                    <option value="Spider Plant">Spider Plant</option>
+                    <option value="Peace Lily">Peace Lily</option>
+                    <option value="Rubber Tree">Rubber Tree</option>
+                    <option value="Bird of Paradise">Bird of Paradise</option>
+                </optgroup>
+                <optgroup label="Succulents & Cacti">
+                    <option value="Cactus (General)">Cactus (General)</option>
+                    <option value="Succulent (General)">Succulent (General)</option>
+                    <option value="Aloe Vera">Aloe Vera</option>
+                    <option value="Jade Plant">Jade Plant</option>
+                    <option value="String of Pearls">String of Pearls</option>
+                    <option value="Christmas Cactus">Christmas Cactus</option>
+                </optgroup>
+                <optgroup label="Ferns">
+                    <option value="Boston Fern">Boston Fern</option>
+                    <option value="Maidenhair Fern">Maidenhair Fern</option>
+                    <option value="Staghorn Fern">Staghorn Fern</option>
+                    <option value="Bird's Nest Fern">Bird's Nest Fern</option>
+                </optgroup>
+                <optgroup label="Herbs">
+                    <option value="Basil (Indoor Herb)">Basil (Indoor Herb)</option>
+                    <option value="Mint (Indoor Herb)">Mint (Indoor Herb)</option>
+                    <option value="Rosemary (Indoor Herb)">Rosemary (Indoor Herb)</option>
+                    <option value="Parsley">Parsley</option>
+                    <option value="Cilantro">Cilantro</option>
+                    <option value="Thyme">Thyme</option>
+                    <option value="Sage">Sage</option>
+                </optgroup>
+                <optgroup label="Palms">
+                    <option value="Majesty Palm">Majesty Palm</option>
+                    <option value="Areca Palm">Areca Palm</option>
+                </optgroup>
+                <optgroup label="Orchids">
+                    <option value="Orchid (Phalaenopsis)">Orchid (Phalaenopsis)</option>
+                    <option value="Dendrobium Orchid">Dendrobium Orchid</option>
+                    <option value="Oncidium Orchid">Oncidium Orchid</option>
+                </optgroup>
+                <optgroup label="Other">
+                    <option value="Calathea Orbifolia">Calathea Orbifolia</option>
+                    <option value="Chinese Evergreen">Chinese Evergreen</option>
+                    <option value="Dracaena Marginata">Dracaena Marginata</option>
+                    <option value="Prayer Plant">Prayer Plant</option>
+                    <option value="Money Tree">Money Tree</option>
+                    <option value="English Ivy">English Ivy</option>
+                </optgroup>
+            </select>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-forest mb-2">Plant Nickname (Optional)</label>
+            <input type="text" name="nickname" placeholder="e.g., Leafy, Spike, Fern" class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-forest mb-2">Preferred Plant Personality</label>
+            <select name="personality" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                <option value="">Choose a personality...</option>
+                <option value="sassy">😤 Sassy & Direct - "Water me NOW, human!"</option>
+                <option value="zen">🧘 Zen & Peaceful - "When you have a moment..."</option>
+                <option value="anxious">😬 Anxious & Worried - "I'm worried I'll wilt..."</option>
+                <option value="formal">🎩 Formal & Proper - "A prompt watering would be appreciated"</option>
+            </select>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-forest mb-2">Pot Size</label>
+                <select name="pot_size" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                    <option value="">Choose...</option>
+                    <option value="small">Small (< 8 inches)</option>
+                    <option value="large">Large (≥ 8 inches)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-forest mb-2">Pot Material</label>
+                <select name="pot_material" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                    <option value="">Choose...</option>
+                    <option value="plastic">Plastic</option>
+                    <option value="terracotta">Terracotta/Clay</option>
+                </select>
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-forest mb-2">Light Exposure</label>
+            <select name="light_exposure" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                <option value="">Choose...</option>
+                <option value="north">North-facing (Low light)</option>
+                <option value="east">East-facing (Morning sun)</option>
+                <option value="west">West-facing (Afternoon sun)</option>
+                <option value="south">South-facing (Bright light)</option>
+            </select>
+        </div>
+    </div>
+    
+    <div data-netlify-recaptcha="true"></div>
+    
+    <button type="submit" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-lg hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1">
+        Give Your Plants a Voice! 🌱
+    </button>
+    
+    <p class="text-center text-sm text-forest/60">
+        Free early access • Be notified first • Help shape the product • Limited spots available
+    </p>
+</form>
