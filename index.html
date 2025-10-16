@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Weather-aware plant care assistant. Get SMS reminders when your plants need water. Works on any phone.">
     <title>LingoLeaf - Your Plants, With a Voice</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -65,28 +72,56 @@
             background: linear-gradient(135deg, #a8d5ba, #87a96b);
             border-radius: 20px 20px 5px 20px;
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            h1 {
+                font-size: clamp(1.75rem, 8vw, 3rem);
+                line-height: 1.2;
+            }
+            
+            /* Ensure minimum tap target size */
+            a, button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        
+        /* Performance: Reduce animations on mobile */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-cream font-sans overflow-x-hidden">
     
     <!-- Navigation -->
     <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-sage/20">
-        <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center transform rotate-12">
-                        <span class="text-white text-xl">🌱</span>
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center">
+                        <img src="/Logo.jpeg" alt="LingoLeaf" class="w-full h-full object-contain">
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-forest">LingoLeaf</h1>
-                        <p class="text-xs text-sage">Your Plants, With a Voice</p>
+                        <h1 class="text-xl sm:text-2xl font-bold text-forest">LingoLeaf</h1>
+                        <p class="text-xs text-sage hidden sm:block">Your Plants, With a Voice</p>
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-forest hover:text-sage transition-colors font-medium">Features</a>
-                    <a href="#personalities" class="text-forest hover:text-sage transition-colors font-medium">Personalities</a>
-                    <a href="#signup" class="bg-gradient-to-r from-sage to-forest text-white px-6 py-2 rounded-full hover:shadow-glow transition-all duration-300">Get Started</a>
+                    <a href="#features" class="text-forest hover:text-sage transition-colors font-medium min-h-[44px] flex items-center">Features</a>
+                    <a href="/plantsona.html" class="text-purple-600 hover:text-purple-700 transition-colors font-medium flex items-center space-x-1 min-h-[44px]">
+                        <span>🎭</span>
+                        <span>PlantSona</span>
+                    </a>
+                    <a href="#personalities" class="text-forest hover:text-sage transition-colors font-medium min-h-[44px] flex items-center">Personalities</a>
+                    <a href="#signup" class="bg-gradient-to-r from-sage to-forest text-white px-6 py-2 rounded-full hover:shadow-glow transition-all duration-300 min-h-[44px] flex items-center">Get Started</a>
                 </div>
+                <a href="#signup" class="md:hidden bg-gradient-to-r from-sage to-forest text-white px-4 py-2 rounded-full text-sm font-semibold min-h-[44px] flex items-center">Join Beta</a>
             </div>
         </div>
     </nav>
@@ -100,51 +135,34 @@
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 
                 <!-- Left Content -->
-                <div class="space-y-8 animate-fade-up">
-                    <div class="inline-flex items-center bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-sage/30">
-                        <div class="w-2 h-2 bg-sage rounded-full mr-2 animate-pulse"></div>
-                        <span class="text-sm font-medium text-forest">Launching Oct 20th • Beta Waitlist Open</span>
-                    </div>
-                    
-                    <h1 class="text-5xl lg:text-7xl font-bold text-forest leading-tight">
-                        Unlock Your Plant's
-                        <span class="block text-sage relative">
-                            Thriving Future!
-                            <div class="absolute -bottom-2 left-0 w-full h-3 bg-mint/30 -skew-x-12"></div>
-                        </span>
+                <div class="space-y-6 sm:space-y-8 animate-fade-up">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-forest leading-tight">
+                        Your Plant's Personal Weather-Aware Care Assistant
                     </h1>
                     
-                    <p class="text-xl text-forest/70 leading-relaxed max-w-lg">
-                        Transform plant care from a forgotten chore into an engaging conversation. Each plant gets a unique AI personality that sends <strong class="text-sage">AI-powered SMS reminders</strong> exactly when they need attention.
+                    <p class="text-base sm:text-lg md:text-xl text-forest/80 leading-relaxed max-w-lg">
+                        Stop guessing when to water. LingoLeaf learns <strong class="text-forest">YOUR</strong> plant in <strong class="text-forest">YOUR</strong> home with <strong class="text-forest">YOUR</strong> weather—and texts you exactly when it's thirsty.
                     </p>
                     
-                    <div class="flex justify-center">
-                        <button class="bg-gradient-to-r from-forest to-sage text-white px-10 py-4 rounded-2xl font-semibold text-lg hover:shadow-strong transition-all duration-300 transform hover:-translate-y-1">
-                            Give Your Plants a Voice! 🌱
-                        </button>
+                    <p class="text-sm sm:text-base md:text-lg text-forest/60 leading-relaxed max-w-lg">
+                        No app to download. Works on any phone. Even flip phones.
+                    </p>
+                    
+                    <div>
+                        <a href="#signup" class="inline-block bg-gradient-to-r from-forest to-sage text-white px-6 sm:px-8 py-4 rounded-2xl font-semibold text-base sm:text-lg hover:shadow-strong transition-all duration-300 active:scale-95 text-center min-h-[44px]">
+                            Join Beta List
+                        </a>
                     </div>
                     
-                    <!-- Stats -->
-                    <div class="flex items-center space-x-8 pt-8">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-forest">100+</div>
-                            <div class="text-sm text-sage">On Waitlist</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-forest">Oct 20</div>
-                            <div class="text-sm text-sage">Launch Date</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-forest">Early</div>
-                            <div class="text-sm text-sage">Access</div>
-                        </div>
-                    </div>
+                    <p class="text-xs sm:text-sm text-forest/60">
+                        Trusted by 100+ plant parents  •  No credit card required
+                    </p>
                 </div>
                 
                 <!-- Right Content - Phone Mockup -->
-                <div class="relative flex justify-center">
+                <div class="relative flex justify-center mt-8 lg:mt-0">
                     <!-- Phone Frame -->
-                    <div class="w-80 h-[600px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-[3rem] p-3 shadow-strong">
+                    <div class="w-72 sm:w-80 h-[550px] sm:h-[600px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-[3rem] p-3 shadow-strong">
                         <!-- Screen -->
                         <div class="w-full h-full bg-gradient-to-b from-white to-gray-50 rounded-[2.5rem] p-6 relative overflow-hidden">
                             
@@ -165,8 +183,8 @@
                                     <span class="text-white text-lg">🌿</span>
                                 </div>
                                 <div>
-                                    <h3 class="font-semibold text-forest">Basil Betty</h3>
-                                    <p class="text-xs text-sage">Your Sassy Herb</p>
+                                    <h3 class="font-semibold text-forest">LingoLeaf Messages</h3>
+                                    <p class="text-xs text-sage">Leafy (Pothos)</p>
                                 </div>
                             </div>
                             
@@ -174,9 +192,9 @@
                             <div class="space-y-4">
                                 <!-- Plant Message 1 -->
                                 <div class="flex justify-start">
-                                    <div class="message-bubble-plant text-white p-4 max-w-[80%] shadow-soft">
+                                    <div class="message-bubble-plant text-white p-4 max-w-[85%] shadow-soft">
                                         <p class="text-sm font-medium leading-relaxed">
-                                            Hey there! It's getting pretty toasty today (89°F) and I'm feeling parched. Mind giving me a drink? 🌿💧
+                                            Hi! 🌿 I'm Leafy, your Pothos! It's been sunny and 78° in Portland this week. Check my soil—reply DAMP or DRY
                                         </p>
                                         <p class="text-xs opacity-75 mt-2">2 min ago</p>
                                     </div>
@@ -185,15 +203,15 @@
                                 <!-- User Reply -->
                                 <div class="flex justify-end">
                                     <div class="message-bubble-user text-white p-3 max-w-[70%] shadow-soft">
-                                        <p class="text-sm">Just watered you! 💚</p>
+                                        <p class="text-sm">Dry</p>
                                     </div>
                                 </div>
                                 
                                 <!-- Plant Message 2 -->
                                 <div class="flex justify-start">
-                                    <div class="message-bubble-plant text-white p-4 max-w-[80%] shadow-soft">
+                                    <div class="message-bubble-plant text-white p-4 max-w-[85%] shadow-soft">
                                         <p class="text-sm font-medium leading-relaxed">
-                                            Ahh, that's the good stuff! You're the best plant parent ever! I'm ready to grow big and strong now! 🌱✨
+                                            Time to water! 💧 Give me a good drink. I'll check back in 4 days (accounting for this weekend's rain ☔)
                                         </p>
                                         <p class="text-xs opacity-75 mt-2">now</p>
                                     </div>
@@ -210,26 +228,93 @@
         </div>
     </section>
 
+    <!-- Trust Bar -->
+    <section class="py-4 sm:py-6 bg-white border-y border-sage/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-12 text-center">
+                <div class="flex items-center space-x-2 min-h-[44px]">
+                    <span class="text-xl sm:text-2xl">⭐⭐⭐⭐⭐</span>
+                    <span class="text-forest font-semibold text-sm sm:text-base">4.8/5 rating</span>
+                </div>
+                <div class="hidden md:block w-px h-8 bg-sage/30"></div>
+                <div class="flex items-center space-x-2 min-h-[44px]">
+                    <span class="text-xl sm:text-2xl">🌱</span>
+                    <span class="text-forest font-semibold text-sm sm:text-base">80%+ plant survival rate</span>
+                </div>
+                <div class="hidden md:block w-px h-8 bg-sage/30"></div>
+                <div class="flex items-center space-x-2 min-h-[44px]">
+                    <span class="text-xl sm:text-2xl">📱</span>
+                    <span class="text-forest font-semibold text-sm sm:text-base">Works on any phone</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Social Proof Section -->
     <section class="py-16 bg-white">
-        <div class="max-w-4xl mx-auto px-6 text-center">
-            <div class="bg-gradient-to-r from-sage/10 to-mint/20 p-8 rounded-3xl border border-sage/20">
-                <div class="flex items-center justify-center mb-6">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center mr-4">
-                        <span class="text-white text-2xl">🌿</span>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-gradient-to-r from-sage/10 to-mint/20 p-8 rounded-3xl border border-sage/20">
+                    <div class="flex items-start mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                            <span class="text-white text-xl">🌿</span>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-bold text-forest text-lg">Jessica T.</div>
+                            <div class="text-sm text-sage mb-2">Winnipeg, MB</div>
+                            <div class="text-yellow-500 text-sm">⭐⭐⭐⭐⭐</div>
+                        </div>
                     </div>
-                    <div class="text-left">
-                        <div class="font-bold text-forest">Emma R. & Fiddle Leaf Fig</div>
-                        <div class="text-sm text-sage">Plant Parent • Beta Tester</div>
+                    <h3 class="text-xl font-bold text-forest mb-3">"My fiddle leaf was dropping leaves and turning brown. LingoLeaf saved it."</h3>
+                    <blockquote class="text-base text-forest/80 leading-relaxed mb-4">
+                        "I was watering every Sunday like clockwork—turns out that was the problem. I didn't realize Winnipeg's winter humidity meant I should water WAY less often. LingoLeaf's weather tracking taught me to actually check the soil, not just follow a schedule. My fig has 8 new leaves now and the brown spots are gone!"
+                    </blockquote>
+                    <div class="text-xs text-forest/60 pt-4 border-t border-sage/20">
+                        Plants using LingoLeaf: Fiddle Leaf Fig, Pothos, Snake Plant
                     </div>
                 </div>
-                <blockquote class="text-xl italic text-forest/80 mb-4">
-                    "My fiddle leaf fig's 'Dramatic Diva' personality texted me: 'Darling, I'm feeling parched and the humidity is only 35%! I need water AND a humidifier boost before I start dropping leaves dramatically!' Saved my $200 plant from another near-death experience."
-                </blockquote>
-                <div class="flex justify-center items-center space-x-4 text-sm text-sage">
-                    <span>✅ Prevented Plant Death</span>
-                    <span>✅ Perfect Timing</span>
-                    <span>✅ Humidity Monitoring</span>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-gradient-to-r from-sage/10 to-mint/20 p-8 rounded-3xl border border-sage/20">
+                    <div class="flex items-start mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                            <span class="text-white text-xl">📱</span>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-bold text-forest text-lg">Patricia K.</div>
+                            <div class="text-sm text-sage mb-2">Portland, OR</div>
+                            <div class="text-yellow-500 text-sm">⭐⭐⭐⭐⭐</div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-forest mb-3">"I don't use apps. But I can text. This is absolutely perfect for me."</h3>
+                    <blockquote class="text-base text-forest/80 leading-relaxed mb-4">
+                        "My daughter set this up for me in 2 minutes on my flip phone. Now I just text back 'damp' or 'dry' when it asks. I don't have to remember anything. I love that it's so simple and works on my old phone."
+                    </blockquote>
+                    <div class="text-xs text-forest/60 pt-4 border-t border-sage/20">
+                        Works on any phone, even flip phones
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-gradient-to-r from-sage/10 to-mint/20 p-8 rounded-3xl border border-sage/20">
+                    <div class="flex items-start mb-6">
+                        <div class="w-14 h-14 bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                            <span class="text-white text-xl">🌵</span>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-bold text-forest text-lg">Mike R.</div>
+                            <div class="text-sm text-sage mb-2">Phoenix, AZ</div>
+                            <div class="text-yellow-500 text-sm">⭐⭐⭐⭐⭐</div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-forest mb-3">"The directional light tracking was eye-opening."</h3>
+                    <blockquote class="text-base text-forest/80 leading-relaxed mb-4">
+                        "Turns out I was watering twice as often as I should. The algorithm taught me what 'bone dry' actually feels like for succulents, and the directional light tracking was eye-opening—my west-facing window in Phoenix gets HOT, so they need slightly more water than the care guides said. LingoLeaf accounts for all of it."
+                    </blockquote>
+                    <div class="text-xs text-forest/60 pt-4 border-t border-sage/20">
+                        Perfect for hot, dry climates
+                    </div>
                 </div>
             </div>
         </div>
@@ -283,10 +368,10 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
-                    How Smart Plant Communication Works
+                    Why LingoLeaf is Smarter Than Every Other App
                 </h2>
                 <p class="text-xl text-forest/70 max-w-3xl mx-auto">
-                    We combine plant science, real-time weather data, and AI personalities to create messages that actually get your attention.
+                    This Isn't Just Reminders. It's Actually Intelligent.
                 </p>
             </div>
             
@@ -322,6 +407,143 @@
                     <p class="text-forest/70 leading-relaxed">
                         Choose your plant's voice - sassy, zen, formal, or anxious. Each message feels personal and builds a real emotional connection.
                     </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-white text-2xl">🪴</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Pot Size Actually Matters</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Calculates how fast soil dries based on pot size and material (terracotta vs. plastic). Saves you from watering a huge plant like a small one.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-white text-2xl">🧭</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Window Direction Tracking</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Factors in light exposure from your window's direction (North, South, East, West) to create a precise evaporation model tailored to your home's natural light.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-white text-2xl">🧠</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">The Algorithm Learns Your Home</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Fine-tunes the schedule based on your feedback (DAMP or DRY soil). After 4-6 cycles, it learns your specific plant and spot better than any generic guide.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PlantSona Section -->
+    <section class="py-20 bg-gradient-to-br from-purple-50 via-white to-green-50 relative overflow-hidden">
+        <div class="absolute top-10 left-10 w-32 h-32 bg-purple-200/30 rounded-full animate-float"></div>
+        <div class="absolute bottom-10 right-10 w-40 h-40 bg-green-200/30 organic-shape animate-sway"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left: Content -->
+                <div class="space-y-6">
+                    <div class="inline-block px-4 py-2 bg-gradient-to-r from-purple-500 to-green-500 text-white rounded-full text-sm font-semibold">
+                        ✨ NEW FEATURE
+                    </div>
+                    <h2 class="text-4xl lg:text-5xl font-bold text-forest">
+                        Meet PlantSona 🎭
+                    </h2>
+                    <p class="text-xl text-gray-600 leading-relaxed">
+                        Upload a photo and your plant introduces itself! It'll tell you its name, where it's from, and exactly how to care for it—all in its own unique voice.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-purple-600">📸</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-forest">AI Plant Identification</h3>
+                                <p class="text-gray-600">Upload a photo and our AI identifies your plant species instantly</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-green-600">🎭</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-forest">Choose a Personality</h3>
+                                <p class="text-gray-600">Sassy, Zen, Anxious, or Formal - pick the voice that fits your plant</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-blue-600">💬</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-forest">Personalized Care Instructions</h3>
+                                <p class="text-gray-600">Get scientifically accurate care tips in your plant's unique voice</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="/plantsona.html" class="inline-block bg-gradient-to-r from-purple-600 to-green-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            Try PlantSona Now →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Visual Demo -->
+                <div class="relative">
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 transform hover:scale-105 transition-transform duration-300">
+                        <div class="space-y-6">
+                            <!-- Mock Upload -->
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center bg-gray-50">
+                                <div class="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                                    <span class="text-3xl">🌿</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Upload your plant photo</p>
+                            </div>
+                            
+                            <!-- Mock Personality Selection -->
+                            <div class="grid grid-cols-4 gap-2">
+                                <div class="border-2 border-purple-500 bg-purple-50 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">😤</div>
+                                    <p class="text-xs font-semibold">Sassy</p>
+                                </div>
+                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">🧘</div>
+                                    <p class="text-xs">Zen</p>
+                                </div>
+                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">😰</div>
+                                    <p class="text-xs">Anxious</p>
+                                </div>
+                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">🎩</div>
+                                    <p class="text-xs">Formal</p>
+                                </div>
+                            </div>
+
+                            <!-- Mock Result -->
+                            <div class="bg-gradient-to-br from-purple-50 to-green-50 rounded-xl p-4">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Your Plant Says:</p>
+                                <p class="text-gray-800 italic">"Hey there! I'm Aloe Vera from the Arabian Peninsula. I don't like wet feet, so let my soil dry out between waterings. Give me bright light and I'll be your best friend! 🌵"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-purple-300/40 rounded-full animate-float"></div>
+                    <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-green-300/40 rounded-full animate-sway"></div>
                 </div>
             </div>
         </div>
@@ -588,7 +810,7 @@
                         Join 100+ plant parents on our exclusive beta waitlist. Get early access when we launch on October 20th and help shape the future of plant care.
                     </p>
                     <div class="inline-flex items-center bg-orange-50 border border-orange-200 px-4 py-2 rounded-full">
-                        <span class="text-orange-600 font-semibold text-sm">🌱 Only 25 Beta Spots Remaining!</span>
+                        <span class="text-orange-600 font-semibold text-sm">🌱 Only 50 Beta Spots Remaining!</span>
                     </div>
                 </div>
                 
@@ -596,42 +818,43 @@
                     <!-- Hidden honeypot field for spam protection -->
                     <input type="hidden" name="bot-field" />
                     
-                    <div class="space-y-6">
+                    <div class="space-y-5 sm:space-y-6">
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Email Address</label>
-                            <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Phone Number (with country code)</label>
-                            <input type="tel" name="phone" placeholder="+16475550123" required pattern="^\+[1-9]\d{1,14}$" class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <input type="tel" id="phone-input" name="phone" placeholder="+16475550123" required pattern="^\+[1-9]\d{7,14}$" class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                             <p class="text-xs text-forest/60 mt-1">Format: +1 for USA/Canada, +44 for UK, etc.</p>
+                            <p id="phone-error" class="text-xs text-red-600 mt-1 hidden"></p>
                         </div>
                         
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-forest mb-2">City</label>
-                                <input type="text" name="city" placeholder="Toronto" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                                <input type="text" name="city" placeholder="Toronto" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-forest mb-2">Country</label>
-                                <input type="text" name="country" placeholder="Canada" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                                <input type="text" name="country" placeholder="Canada" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                             </div>
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Plant Species</label>
-                            <input type="text" name="species" placeholder="e.g. Monstera Deliciosa, Snake Plant" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <input type="text" name="species" placeholder="e.g. Monstera Deliciosa, Snake Plant" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Plant Nickname (Optional)</label>
-                            <input type="text" name="nickname" placeholder="e.g., Leafy, Spike, Fern" class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <input type="text" name="nickname" placeholder="e.g., Leafy, Spike, Fern" class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Preferred Plant Personality</label>
-                            <select name="personality" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <select name="personality" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                                 <option value="">Choose a personality...</option>
                                 <option value="sassy">😤 Sassy & Direct - "Water me NOW, human!"</option>
                                 <option value="zen">🧘 Zen & Peaceful - "When you have a moment..."</option>
@@ -640,10 +863,10 @@
                             </select>
                         </div>
                         
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-forest mb-2">Pot Size</label>
-                                <select name="pot_size" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                                <select name="pot_size" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                                     <option value="">Choose...</option>
                                     <option value="small">Small (< 8 inches)</option>
                                     <option value="large">Large (≥ 8 inches)</option>
@@ -651,7 +874,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-forest mb-2">Pot Material</label>
-                                <select name="pot_material" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                                <select name="pot_material" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                                     <option value="">Choose...</option>
                                     <option value="plastic">Plastic</option>
                                     <option value="terracotta">Terracotta/Clay</option>
@@ -661,7 +884,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-forest mb-2">Light Exposure</label>
-                            <select name="light_exposure" required class="w-full px-4 py-3 rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <select name="light_exposure" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                                 <option value="">Choose...</option>
                                 <option value="north">North-facing (Low light)</option>
                                 <option value="east">East-facing (Morning sun)</option>
@@ -669,11 +892,22 @@
                                 <option value="south">South-facing (Bright light)</option>
                             </select>
                         </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Current Soil Condition</label>
+                            <select name="initial_soil_status" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="">Choose...</option>
+                                <option value="just_watered">Just Watered - Soil is wet</option>
+                                <option value="damp">Damp - Soil is moist but not wet</option>
+                                <option value="dry">Dry - Soil needs watering soon</option>
+                            </select>
+                            <p class="text-xs text-forest/60 mt-1">Check your soil now - this helps us time your first reminder perfectly!</p>
+                        </div>
                     </div>
                     
                     <div data-netlify-recaptcha="true"></div>
                     
-                    <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-lg hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1">
+                    <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-base sm:text-lg hover:shadow-glow transition-all duration-300 active:scale-95 min-h-[48px]">
                         Give Your Plants a Voice! 🌱
                     </button>
                     
@@ -690,9 +924,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <div class="flex items-center space-x-3 mb-6 md:mb-0">
-                    <div class="w-12 h-12 bg-gradient-to-br from-sage to-mint rounded-2xl flex items-center justify-center">
-                        <span class="text-forest text-xl">🌱</span>
-                    </div>
+                    <img src="/Logo2.jpeg" alt="LingoLeaf" class="h-12 w-auto object-contain">
                     <div>
                         <h3 class="text-xl font-bold">LingoLeaf</h3>
                         <p class="text-sage text-sm">Your Plants, With a Voice</p>
@@ -736,6 +968,55 @@
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
         }
 
+        // Phone number validation
+        function validatePhoneNumber(phone) {
+            // Remove all spaces and dashes for validation
+            const cleaned = phone.replace(/[\s-]/g, '');
+            
+            // Must start with + and have country code
+            if (!cleaned.startsWith('+')) {
+                return { valid: false, error: 'Phone number must start with + and country code (e.g., +1, +234)' };
+            }
+            
+            // Extract country code and number
+            const match = cleaned.match(/^\+(\d{1,3})(\d+)$/);
+            if (!match) {
+                return { valid: false, error: 'Invalid phone number format. Use: +[country code][number]' };
+            }
+            
+            const countryCode = match[1];
+            const number = match[2];
+            
+            // Country-specific validation
+            const validations = {
+                '1': { min: 10, max: 10, name: 'USA/Canada' },      // +1 XXX XXX XXXX
+                '44': { min: 10, max: 10, name: 'UK' },             // +44 XXXX XXXXXX
+                '234': { min: 10, max: 10, name: 'Nigeria' },       // +234 XXX XXX XXXX
+                '91': { min: 10, max: 10, name: 'India' },          // +91 XXXXX XXXXX
+                '86': { min: 11, max: 11, name: 'China' },          // +86 XXX XXXX XXXX
+            };
+            
+            const validation = validations[countryCode];
+            if (validation) {
+                if (number.length < validation.min || number.length > validation.max) {
+                    return { 
+                        valid: false, 
+                        error: `${validation.name} numbers should have ${validation.min} digits after +${countryCode}. You entered ${number.length} digits.` 
+                    };
+                }
+            } else {
+                // Generic validation for other countries (7-14 digits)
+                if (number.length < 7 || number.length > 14) {
+                    return { 
+                        valid: false, 
+                        error: `Phone number should have 7-14 digits after the country code. You entered ${number.length} digits.` 
+                    };
+                }
+            }
+            
+            return { valid: true, cleaned: cleaned };
+        }
+
         // Form submission handler
         function handleSubmit(event) {
             const submitBtn = document.getElementById('submit-btn');
@@ -767,6 +1048,56 @@
             // Initialize countdown
             updateCountdown();
             setInterval(updateCountdown, 1000);
+
+            // Phone number validation on input
+            const phoneInput = document.getElementById('phone-input');
+            const phoneError = document.getElementById('phone-error');
+            const form = document.querySelector('form[name="beta-waitlist"]');
+            
+            if (phoneInput) {
+                phoneInput.addEventListener('blur', function() {
+                    const result = validatePhoneNumber(this.value);
+                    if (!result.valid && this.value) {
+                        phoneError.textContent = result.error;
+                        phoneError.classList.remove('hidden');
+                        phoneInput.classList.add('border-red-500');
+                        phoneInput.classList.remove('border-sage/30');
+                    } else {
+                        phoneError.classList.add('hidden');
+                        phoneInput.classList.remove('border-red-500');
+                        phoneInput.classList.add('border-sage/30');
+                    }
+                });
+                
+                // Clear error on input
+                phoneInput.addEventListener('input', function() {
+                    if (phoneError && !phoneError.classList.contains('hidden')) {
+                        phoneError.classList.add('hidden');
+                        phoneInput.classList.remove('border-red-500');
+                        phoneInput.classList.add('border-sage/30');
+                    }
+                });
+            }
+            
+            // Validate phone on form submit
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const phoneValue = phoneInput.value;
+                    const result = validatePhoneNumber(phoneValue);
+                    
+                    if (!result.valid) {
+                        e.preventDefault();
+                        phoneError.textContent = result.error;
+                        phoneError.classList.remove('hidden');
+                        phoneInput.classList.add('border-red-500');
+                        phoneInput.focus();
+                        return false;
+                    }
+                    
+                    // Update the input with cleaned phone number
+                    phoneInput.value = result.cleaned;
+                });
+            }
 
             // Smooth scrolling for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {

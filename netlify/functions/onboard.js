@@ -31,7 +31,7 @@ To help me fine-tune ${plantName}'s schedule, you can also reply with DRY if the
 Let's work together to help ${plantName} thrive! 🌱`;
 }
 
-function createWelcomeEmailHtml(species, nickname, effectiveHours) {
+function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus = false) {
   const plantName = nickname || species;
   const duration = formatDuration(effectiveHours);
   
@@ -69,54 +69,66 @@ function createWelcomeEmailHtml(species, nickname, effectiveHours) {
               
               <div style="background-color: #f9f9f5; padding: 30px; margin-bottom: 40px; border-left: 4px solid #7ba05b;">
                 <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                  Your First Watering Reminder
+                  ${isDryStatus ? '🚨 Immediate Text Message Sent!' : 'Your First Watering Reminder'}
                 </p>
                 <p style="margin: 0; color: #4a4a4a; font-size: 16px; line-height: 1.7;">
-                  Expect a friendly reminder for <strong>${plantName}</strong> in about <strong>${duration}</strong>. We'll send you a text message when it's time!
+                  ${isDryStatus 
+                    ? `We've sent you an <strong>immediate text message</strong> because your soil is dry. Please water <strong>${plantName}</strong> right away and reply <strong>DONE</strong> to start your care schedule!`
+                    : `Expect a friendly reminder for <strong>${plantName}</strong> in about <strong>${duration}</strong>. We'll send you a text message asking you to check the soil!`
+                  }
                 </p>
               </div>
               
               <h2 style="margin: 0 0 25px 0; color: #2d5016; font-size: 24px; font-weight: normal; text-align: center;">
-                How to Respond
+                How LingoLeaf Works
               </h2>
               
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
-                <tr>
-                  <td style="padding: 20px; background-color: #e8f4e8; text-align: center;">
-                    <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 20px;">💧</p>
-                    <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                      Reply "DONE"
-                    </p>
-                    <p style="margin: 0; color: #4a4a4a; font-size: 14px;">
-                      Once you've watered ${plantName}
-                    </p>
-                  </td>
-                </tr>
-              </table>
-              
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
-                <tr>
-                  <td style="width: 48%; padding: 20px; background-color: #fff8e8; text-align: center; vertical-align: top;">
-                    <p style="margin: 0 0 8px 0; font-size: 20px;">🏜️</p>
-                    <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 15px; font-weight: bold;">
-                      Reply "DRY"
-                    </p>
-                    <p style="margin: 0; color: #4a4a4a; font-size: 13px;">
-                      If soil is unexpectedly dry
-                    </p>
-                  </td>
-                  <td style="width: 4%;"></td>
-                  <td style="width: 48%; padding: 20px; background-color: #e8f0f8; text-align: center; vertical-align: top;">
-                    <p style="margin: 0 0 8px 0; font-size: 20px;">💦</p>
-                    <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 15px; font-weight: bold;">
-                      Reply "DAMP"
-                    </p>
-                    <p style="margin: 0; color: #4a4a4a; font-size: 13px;">
-                      If soil is still quite wet
-                    </p>
-                  </td>
-                </tr>
-              </table>
+              <div style="background-color: #f0f8ff; padding: 25px; margin-bottom: 20px; border-radius: 8px;">
+                <p style="margin: 0 0 15px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
+                  📱 Step 1: We'll ask you to check the soil
+                </p>
+                <p style="margin: 0 0 20px 0; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
+                  When it's time, you'll get a text: <em>"Check my soil and reply: DRY or DAMP"</em>
+                </p>
+                
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                  <tr>
+                    <td style="width: 48%; padding: 15px; background-color: #fff8e8; text-align: center; vertical-align: top; border-radius: 6px;">
+                      <p style="margin: 0 0 8px 0; font-size: 20px;">🏜️</p>
+                      <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 15px; font-weight: bold;">
+                        Reply "DRY"
+                      </p>
+                      <p style="margin: 0; color: #4a4a4a; font-size: 13px;">
+                        Soil needs water
+                      </p>
+                    </td>
+                    <td style="width: 4%;"></td>
+                    <td style="width: 48%; padding: 15px; background-color: #e8f0f8; text-align: center; vertical-align: top; border-radius: 6px;">
+                      <p style="margin: 0 0 8px 0; font-size: 20px;">💦</p>
+                      <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 15px; font-weight: bold;">
+                        Reply "DAMP"
+                      </p>
+                      <p style="margin: 0; color: #4a4a4a; font-size: 13px;">
+                        Soil still moist
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+                
+                <p style="margin: 0 0 15px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
+                  💧 Step 2: If DRY, we'll tell you to water
+                </p>
+                <p style="margin: 0 0 20px 0; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
+                  You'll get: <em>"Water me NOW! Reply DONE when finished"</em>
+                </p>
+                
+                <p style="margin: 0 0 15px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
+                  ✅ Step 3: Reply DONE after watering
+                </p>
+                <p style="margin: 0; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
+                  We'll reset the timer and check back at the perfect time!
+                </p>
+              </div>
               
               <div style="text-align: center; margin: 40px 0 30px 0; padding: 30px; background-color: #f9f9f5;">
                 <p style="margin: 0; color: #2d5016; font-size: 18px; line-height: 1.6;">
@@ -151,7 +163,7 @@ function createWelcomeEmailHtml(species, nickname, effectiveHours) {
   `;
 }
 
-async function sendWelcomeEmail({ to, species, nickname, effectiveHours }) {
+async function sendWelcomeEmail({ to, species, nickname, effectiveHours, isDryStatus = false }) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_API_KEY) {
     console.log('RESEND_API_KEY not set; skipping welcome email.');
@@ -159,7 +171,7 @@ async function sendWelcomeEmail({ to, species, nickname, effectiveHours }) {
   }
   try {
     const subject = `Welcome to LingoLeaf — ${nickname || species} is registered!`;
-    const html = createWelcomeEmailHtml(species, nickname, effectiveHours);
+    const html = createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus);
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -197,7 +209,7 @@ exports.handler = async (event) => {
     data = Object.fromEntries(new URLSearchParams(event.body || ''));
   }
 
-  const { email, phone, city, country, species, nickname, personality, pot_size, pot_material, light_exposure } = data;
+  const { email, phone, city, country, species, nickname, personality, pot_size, pot_material, light_exposure, initial_soil_status } = data;
 
   // Geocode via OWM direct geocoding
   const owmKey = process.env.OWM_API_KEY;
@@ -210,7 +222,26 @@ exports.handler = async (event) => {
 
   const sched = computeAdjustedHours({ species, pot_size, pot_material, light_exposure });
   const lastWateredTs = Date.now();
-  const next_due_ts = nextDueFrom(lastWateredTs, sched.effective);
+  
+  // Calculate next_due_ts based on initial soil status
+  let next_due_ts;
+  let shouldSendImmediateReminder = false;
+  
+  if (initial_soil_status === 'just_watered') {
+    // Full interval - just watered, so wait the complete duration
+    next_due_ts = nextDueFrom(lastWateredTs, sched.effective);
+  } else if (initial_soil_status === 'damp') {
+    // Half interval - soil is moist, check in ~50% of normal time
+    next_due_ts = nextDueFrom(lastWateredTs, Math.floor(sched.effective * 0.5));
+  } else if (initial_soil_status === 'dry') {
+    // IMMEDIATE - soil is dry NOW, send reminder right away
+    // Set next_due_ts to now so it triggers immediately
+    next_due_ts = Date.now();
+    shouldSendImmediateReminder = true;
+  } else {
+    // Default fallback (if field not provided)
+    next_due_ts = nextDueFrom(lastWateredTs, sched.effective);
+  }
 
   const row = await createPlant({
     id: randomUUID(), created_at: new Date().toISOString(),
@@ -220,24 +251,39 @@ exports.handler = async (event) => {
     calibration_hours: 0, last_watered_ts: lastWateredTs, next_due_ts, timezone: 'America/Toronto'
   });
 
-  // Send welcome SMS
-  const welcomeMessage = createWelcomeMessage(species, nickname, sched.effective);
+  // Send welcome SMS (or immediate watering reminder if soil is dry)
+  let welcomeMessage;
+  
+  if (shouldSendImmediateReminder) {
+    // Soil is DRY - send immediate watering reminder instead of welcome
+    welcomeMessage = `🚨 ${nickname || species} needs water NOW! Your soil is dry. Water your plant, then reply DONE to start your care schedule. 🌱`;
+  } else {
+    // Normal welcome message
+    welcomeMessage = createWelcomeMessage(species, nickname, sched.effective);
+  }
+  
   try {
-    console.log(`Sending welcome SMS to ${phone}...`);
+    console.log(`Sending ${shouldSendImmediateReminder ? 'immediate watering reminder' : 'welcome SMS'} to ${phone}...`);
     const message = await client.messages.create({
       to: phone,
       from: process.env.TWILIO_FROM_NUMBER,
       body: welcomeMessage
     });
-    console.log(`✅ Welcome SMS sent successfully! SID: ${message.sid}`);
+    console.log(`✅ SMS sent successfully! SID: ${message.sid}`);
   } catch (error) {
-    console.error('❌ Failed to send welcome SMS:', error.message);
+    console.error('❌ Failed to send SMS:', error.message);
     console.error('Error details:', error);
   }
 
   // Send welcome email (Resend)
   if (email) {
-    await sendWelcomeEmail({ to: email, species, nickname, effectiveHours: sched.effective });
+    await sendWelcomeEmail({ 
+      to: email, 
+      species, 
+      nickname, 
+      effectiveHours: sched.effective,
+      isDryStatus: shouldSendImmediateReminder 
+    });
   }
 
   return {
