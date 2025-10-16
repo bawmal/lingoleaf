@@ -55,8 +55,12 @@ exports.handler = async () => {
     console.log(`   📱 Sending SMS: "${body.substring(0, 50)}..."`);
     
     try {
-      const msg = await client.messages.create({ to: p.phone_e164, from: process.env.TWILIO_FROM_NUMBER, body });
-      console.log(`   ✅ SMS sent successfully! SID: ${msg.sid}`);
+      const msg = await client.messages.create({ 
+        to: p.phone_e164, 
+        from: p.twilio_number || process.env.TWILIO_FROM_NUMBER,  // Use plant's slot number
+        body 
+      });
+      console.log(`   ✅ SMS sent successfully from slot ${p.slot_index + 1}! SID: ${msg.sid}`);
     } catch (err) {
       console.error(`   ❌ SMS failed:`, err.message);
     }

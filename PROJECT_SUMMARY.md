@@ -173,7 +173,7 @@ curl -X POST "http://localhost:8888/.netlify/functions/sms-webhook" \
 - [ ] Multi-plant support per user
 - [ ] Per-user temperature units (auto-detect from country)
 - [ ] Humidity-based adjustments
-- [ ] Photo uploads for plant health tracking
+- [ ] Photo uploads for plant health trackingfcddc2p[x''2x]
 - [ ] Push notifications (in addition to SMS)
 - [ ] Admin dashboard
 - [ ] Pricing tiers & payment integration

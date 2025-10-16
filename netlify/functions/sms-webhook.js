@@ -1,5 +1,5 @@
 // netlify/functions/sms-webhook.js
-const { getPlantByPhone, updatePlant } = require('./lib/db');
+const { getPlantByUserAndSlot, updatePlant } = require('./lib/db');
 const { confirmMessage, waterNowMessage, waitLongerMessage } = require('./lib/messaging');
 const { computeAdjustedHours, nextDueFrom } = require('./lib/schedule');
 const twilio = require('twilio');
@@ -8,18 +8,30 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
   const params = new URLSearchParams(event.body || '');
-  const from = params.get('From');
+  const userPhone = params.get('From');        // User's phone number
+  const slotNumber = params.get('To');         // Which slot number received the message
   const body = (params.get('Body') || '').trim().toUpperCase();
 
+  console.log(`📱 SMS received from ${userPhone} to slot ${slotNumber}: "${body}"`);
+
+  // Find plant by user phone + slot number (unique combination)
   let plant = null;
-  try { plant = await getPlantByPhone(from); } catch {}
+  try { 
+    plant = await getPlantByUserAndSlot(userPhone, slotNumber); 
+  } catch (err) {
+    console.error('Database error:', err.message);
+  }
 
   const twiml = new twilio.twiml.MessagingResponse();
 
   if (!plant) {
+    console.log(`❌ No plant found for user ${userPhone} at slot ${slotNumber}`);
     twiml.message('We could not find your plant profile. Reply HELP for assistance.');
     return { statusCode: 200, headers: { 'Content-Type': 'text/xml' }, body: twiml.toString() };
   }
+
+  console.log(`✅ Found plant: ${plant.nickname || plant.species} (${plant.id})`);
+
 
   // NEW FLOW: Handle soil check responses first
   if (body === 'DRY') {

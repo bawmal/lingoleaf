@@ -35,6 +35,23 @@ async function getPlantByPhone(phone) {
   return rows[0] || null;
 }
 
+async function getPlantsByPhone(phone) {
+  const res = await fetch(`${DB_URL}/rest/v1/plants?phone_e164=eq.${encodeURIComponent(phone)}&order=slot_index.asc`, {
+    headers: { 'apikey': DB_API_KEY, 'Authorization': `Bearer ${DB_API_KEY}` }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function getPlantByUserAndSlot(phone, twilioNumber) {
+  const res = await fetch(`${DB_URL}/rest/v1/plants?phone_e164=eq.${encodeURIComponent(phone)}&twilio_number=eq.${encodeURIComponent(twilioNumber)}&limit=1`, {
+    headers: { 'apikey': DB_API_KEY, 'Authorization': `Bearer ${DB_API_KEY}` }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
 async function updatePlant(id, patch) {
   const res = await fetch(`${DB_URL}/rest/v1/plants?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
@@ -51,4 +68,4 @@ async function updatePlant(id, patch) {
   return rows;
 }
 
-module.exports = { createPlant, listDuePlants, getPlantByPhone, updatePlant };
+module.exports = { createPlant, listDuePlants, getPlantByPhone, getPlantsByPhone, getPlantByUserAndSlot, updatePlant };

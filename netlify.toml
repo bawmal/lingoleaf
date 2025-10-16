@@ -3,6 +3,12 @@
   included_files = ["netlify/functions/lib/**"]
   external_node_modules = ["node-fetch","twilio"]
 
+[build.environment]
+  NODE_VERSION = "18"
+
+[context.dev.environment]
+  OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"
+
 [[headers]]
   for = "/success.html"
   [headers.values]

@@ -1,8 +1,9 @@
 // netlify/functions/onboard.js
-const { computeAdjustedHours, nextDueFrom } = require('./lib/schedule');
-const { createPlant } = require('./lib/db');
-const fetch = require('node-fetch');
 const { randomUUID } = require('crypto');
+const { createPlant, getPlantsByPhone } = require('./lib/db');
+const { computeAdjustedHours, nextDueFrom } = require('./lib/schedule');
+const { getSlotNumber, MAX_PLANTS_PER_USER } = require('./lib/twilio-pool');
+const fetch = require('node-fetch');
 const twilio = require('twilio');
 
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -31,7 +32,7 @@ To help me fine-tune ${plantName}'s schedule, you can also reply with DRY if the
 Let's work together to help ${plantName} thrive! 🌱`;
 }
 
-function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus = false) {
+function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus = false, twilioNumber = null, slotIndex = 1) {
   const plantName = nickname || species;
   const duration = formatDuration(effectiveHours);
   
@@ -66,6 +67,20 @@ function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus =
               <p style="margin: 0 0 30px 0; color: #4a4a4a; font-size: 18px; line-height: 1.8; text-align: center;">
                 🎉 Great news! Your <strong>${species}</strong>${nickname ? ` (${nickname})` : ''} has been successfully registered!
               </p>
+              
+              ${twilioNumber ? `
+              <div style="background-color: #e8f4e8; padding: 20px; margin-bottom: 20px; border-radius: 8px; text-align: center;">
+                <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
+                  📞 Save This Number
+                </p>
+                <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 24px; font-weight: bold;">
+                  ${twilioNumber}
+                </p>
+                <p style="margin: 0; color: #4a4a4a; font-size: 14px;">
+                  This is <strong>${plantName}'s</strong> personal number (Plant ${slotIndex}). Save it as "${plantName} Plant" in your contacts!
+                </p>
+              </div>
+              ` : ''}
               
               <div style="background-color: #f9f9f5; padding: 30px; margin-bottom: 40px; border-left: 4px solid #7ba05b;">
                 <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
@@ -163,7 +178,7 @@ function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus =
   `;
 }
 
-async function sendWelcomeEmail({ to, species, nickname, effectiveHours, isDryStatus = false }) {
+async function sendWelcomeEmail({ to, species, nickname, effectiveHours, isDryStatus = false, twilioNumber = null, slotIndex = 1 }) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_API_KEY) {
     console.log('RESEND_API_KEY not set; skipping welcome email.');
@@ -171,7 +186,7 @@ async function sendWelcomeEmail({ to, species, nickname, effectiveHours, isDrySt
   }
   try {
     const subject = `Welcome to LingoLeaf — ${nickname || species} is registered!`;
-    const html = createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus);
+    const html = createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus, twilioNumber, slotIndex);
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -210,6 +225,24 @@ exports.handler = async (event) => {
   }
 
   const { email, phone, zipcode, city, country, species, nickname, personality, pot_size, pot_material, light_exposure, initial_soil_status } = data;
+
+  // Check how many plants this user already has
+  const existingPlants = await getPlantsByPhone(phone);
+  const slotIndex = existingPlants.length;
+  
+  // Check if user has reached the limit
+  if (slotIndex >= MAX_PLANTS_PER_USER) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ 
+        error: `Maximum ${MAX_PLANTS_PER_USER} plants per user. You already have ${existingPlants.length} plants registered.` 
+      })
+    };
+  }
+  
+  // Assign Twilio number from pool
+  const twilioNumber = getSlotNumber(slotIndex);
+  console.log(`Assigning plant to slot ${slotIndex + 1}: ${twilioNumber}`);
 
   // Geocode via OWM - try zipcode first for precision, fallback to city
   const owmKey = process.env.OWM_API_KEY;
@@ -263,8 +296,10 @@ exports.handler = async (event) => {
     id: randomUUID(), created_at: new Date().toISOString(),
     email, phone_e164: phone, zipcode, city, country, lat, lon, species, nickname, personality,
     pot_size, pot_material, light_exposure,
+    twilio_number: twilioNumber, slot_index: slotIndex,
     base_hours: sched.base, winter_multiplier: sched.winter, adjusted_hours: sched.adjusted,
-    calibration_hours: 0, last_watered_ts: lastWateredTs, next_due_ts, timezone: 'America/Toronto'
+    calibration_hours: 0, last_watered_ts: lastWateredTs, next_due_ts, timezone: 'America/Toronto',
+    skip_soil_check: false
   });
 
   // Send welcome SMS (or immediate watering reminder if soil is dry)
@@ -279,10 +314,10 @@ exports.handler = async (event) => {
   }
   
   try {
-    console.log(`Sending ${shouldSendImmediateReminder ? 'immediate watering reminder' : 'welcome SMS'} to ${phone}...`);
+    console.log(`Sending ${shouldSendImmediateReminder ? 'immediate watering reminder' : 'welcome SMS'} to ${phone} from slot ${slotIndex + 1}...`);
     const message = await client.messages.create({
       to: phone,
-      from: process.env.TWILIO_FROM_NUMBER,
+      from: twilioNumber,  // Send FROM the plant's assigned slot number
       body: welcomeMessage
     });
     console.log(`✅ SMS sent successfully! SID: ${message.sid}`);
@@ -298,7 +333,10 @@ exports.handler = async (event) => {
       species, 
       nickname, 
       effectiveHours: sched.effective,
-      isDryStatus: shouldSendImmediateReminder 
+      isDryStatus: shouldSendImmediateReminder,
+      twilioNumber,
+      slotIndex: slotIndex + 1,  // 1-indexed for display
+      totalPlants: slotIndex + 1
     });
   }
 
