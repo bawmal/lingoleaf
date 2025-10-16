@@ -80,9 +80,11 @@ IMPORTANT INSTRUCTIONS:
 2. Provide scientifically accurate care instructions
 3. Include an interesting fun fact
 4. Write the voiceMessage in the "${selectedStyle.name}" personality style: ${selectedStyle.style}
-5. ${nickname ? `The plant's nickname is "${nickname}" - use this in the voiceMessage` : 'The plant doesn\'t have a nickname, so use its species name'}
-6. The voiceMessage should be written from the plant's perspective, addressing its owner directly
-7. REWRITE the care instructions and fun fact completely in the personality's distinctive style, not just wrapped in personality-appropriate language
+5. ${nickname ? `The plant's nickname is "${nickname}". This is MY name as the plant. I (the plant named "${nickname}") am speaking TO my owner/human.` : 'I am the plant speaking TO my owner/human. Use my species name when referring to myself.'}
+6. The voiceMessage MUST be written from MY perspective as the plant, speaking TO the human owner. I am "${nickname || 'the plant'}" and I'm talking to YOU (the human).
+7. NEVER address the plant by its nickname in the voiceMessage - the plant IS the one speaking, not being spoken to.
+8. Example correct format: "Hey human! I'm ${nickname || 'your plant'} and I need..." NOT "Oh dear ${nickname}..."
+9. REWRITE the care instructions and fun fact completely in the personality's distinctive style, not just wrapped in personality-appropriate language
 
 Return ONLY valid JSON, no other text.`;
 
