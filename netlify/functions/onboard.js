@@ -209,16 +209,32 @@ exports.handler = async (event) => {
     data = Object.fromEntries(new URLSearchParams(event.body || ''));
   }
 
-  const { email, phone, city, country, species, nickname, personality, pot_size, pot_material, light_exposure, initial_soil_status } = data;
+  const { email, phone, zipcode, city, country, species, nickname, personality, pot_size, pot_material, light_exposure, initial_soil_status } = data;
 
-  // Geocode via OWM direct geocoding
+  // Geocode via OWM - try zipcode first for precision, fallback to city
   const owmKey = process.env.OWM_API_KEY;
   let lat = null, lon = null;
   try {
-    const geo = await (await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)},${encodeURIComponent(country)}&limit=1&appid=${owmKey}`)).json();
-    lat = geo?.[0]?.lat ?? null;
-    lon = geo?.[0]?.lon ?? null;
-  } catch {}
+    // Try zipcode first (more precise)
+    if (zipcode) {
+      const geoZip = await (await fetch(`https://api.openweathermap.org/geo/1.0/zip?zip=${encodeURIComponent(zipcode)},${encodeURIComponent(country)}&appid=${owmKey}`)).json();
+      if (geoZip?.lat && geoZip?.lon) {
+        lat = geoZip.lat;
+        lon = geoZip.lon;
+        console.log(`✅ Geocoded via zipcode: ${zipcode} → ${lat}, ${lon}`);
+      }
+    }
+    
+    // Fallback to city if zipcode failed
+    if (!lat || !lon) {
+      const geoCity = await (await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)},${encodeURIComponent(country)}&limit=1&appid=${owmKey}`)).json();
+      lat = geoCity?.[0]?.lat ?? null;
+      lon = geoCity?.[0]?.lon ?? null;
+      console.log(`✅ Geocoded via city: ${city}, ${country} → ${lat}, ${lon}`);
+    }
+  } catch (err) {
+    console.error('Geocoding error:', err.message);
+  }
 
   const sched = computeAdjustedHours({ species, pot_size, pot_material, light_exposure });
   const lastWateredTs = Date.now();
@@ -245,7 +261,7 @@ exports.handler = async (event) => {
 
   const row = await createPlant({
     id: randomUUID(), created_at: new Date().toISOString(),
-    email, phone_e164: phone, city, country, lat, lon, species, nickname, personality,
+    email, phone_e164: phone, zipcode, city, country, lat, lon, species, nickname, personality,
     pot_size, pot_material, light_exposure,
     base_hours: sched.base, winter_multiplier: sched.winter, adjusted_hours: sched.adjusted,
     calibration_hours: 0, last_watered_ts: lastWateredTs, next_due_ts, timezone: 'America/Toronto'
