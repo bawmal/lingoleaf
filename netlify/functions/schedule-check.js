@@ -1,6 +1,6 @@
 // netlify/functions/schedule-check.js
 const { listDuePlants, updatePlant } = require('./lib/db');
-const { personaMessage } = require('./lib/messaging');
+const { personaMessage, waterNowMessage } = require('./lib/messaging');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
 
@@ -18,21 +18,40 @@ exports.handler = async () => {
   for (const p of due) {
     console.log(`🌱 Processing plant: ${p.nickname || p.species} (${p.id})`);
     console.log(`   Phone: ${p.phone_e164}, Personality: ${p.personality}`);
+    console.log(`   Skip soil check: ${p.skip_soil_check || false}`);
     
-    let temp = null, condition = 'Fair';
-    if (p.lat && p.lon) {
-      try {
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${p.lat}&lon=${p.lon}&appid=${process.env.OWM_API_KEY}&units=${units}`;
-        const w = await (await fetch(url)).json();
-        temp = w?.main?.temp ?? temp;
-        condition = w?.weather?.[0]?.main ?? condition;
-        console.log(`   Weather: ${temp}°${units === 'metric' ? 'C' : 'F'}, ${condition}`);
-      } catch (err) {
-        console.log(`   ⚠️ Weather fetch failed:`, err.message);
+    let body;
+    
+    // Check if we should skip soil check (after DAMP reply)
+    if (p.skip_soil_check) {
+      // Skip soil check - just tell user to water
+      console.log(`   🚰 Skipping soil check - sending direct water message`);
+      body = waterNowMessage({ 
+        personality: p.personality, 
+        nickname: p.nickname, 
+        species: p.species 
+      });
+      
+      // Clear the skip flag after using it
+      await updatePlant(p.id, { skip_soil_check: false });
+    } else {
+      // Normal flow - ask user to check soil first
+      let temp = null, condition = 'Fair';
+      if (p.lat && p.lon) {
+        try {
+          const url = `https://api.openweathermap.org/data/2.5/weather?lat=${p.lat}&lon=${p.lon}&appid=${process.env.OWM_API_KEY}&units=${units}`;
+          const w = await (await fetch(url)).json();
+          temp = w?.main?.temp ?? temp;
+          condition = w?.weather?.[0]?.main ?? condition;
+          console.log(`   Weather: ${temp}°${units === 'metric' ? 'C' : 'F'}, ${condition}`);
+        } catch (err) {
+          console.log(`   ⚠️ Weather fetch failed:`, err.message);
+        }
       }
+      
+      body = personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units });
     }
     
-    const body = personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units });
     console.log(`   📱 Sending SMS: "${body.substring(0, 50)}..."`);
     
     try {

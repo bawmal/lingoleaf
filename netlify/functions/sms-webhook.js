@@ -29,9 +29,9 @@ exports.handler = async (event) => {
       nickname: plant.nickname, 
       species: plant.species 
     }));
-    // No calibration needed - timing was perfect
+    // No database update - wait for DONE reply
   } else if (body === 'DAMP') {
-    // Soil is still moist - wait longer, adjust schedule
+    // Soil is still moist - calculate smart next check time
     const now = Date.now();
     const { adjusted } = computeAdjustedHours({
       species: plant.species,
@@ -40,9 +40,27 @@ exports.handler = async (event) => {
       light_exposure: plant.light_exposure,
       now: new Date()
     });
-    // Add 12 hours to next check (reminder was too early)
-    const next_due_ts = nextDueFrom(now, 12);
-    await updatePlant(plant.id, { next_due_ts });
+    
+    // Calculate remaining time in schedule
+    const totalInterval = adjusted * 3600000; // hours to milliseconds
+    const timeElapsed = now - plant.last_watered_ts;
+    const remainingTime = totalInterval - timeElapsed;
+    
+    // Next check at 60% of remaining time (weather-aware)
+    // If remaining time is negative or very small, default to 50% of full interval
+    const waitTime = remainingTime > 0 
+      ? Math.floor(remainingTime * 0.6) 
+      : Math.floor(totalInterval * 0.5);
+    
+    const next_due_ts = now + waitTime;
+    
+    // Mark that next message should skip soil check and just water
+    await updatePlant(plant.id, { 
+      next_due_ts,
+      skip_soil_check: true  // Flag to skip check next time
+    });
+    
+    console.log(`DAMP reply: Next check in ${Math.round(waitTime / 3600000)} hours (weather-aware)`);
     
     twiml.message(waitLongerMessage({ 
       personality: plant.personality, 
@@ -60,7 +78,14 @@ exports.handler = async (event) => {
       now: new Date()
     });
     const next_due_ts = nextDueFrom(now, adjusted);
-    await updatePlant(plant.id, { last_watered_ts: now, next_due_ts });
+    
+    // Reset timer and clear skip flag
+    await updatePlant(plant.id, { 
+      last_watered_ts: now, 
+      next_due_ts,
+      skip_soil_check: false  // Clear flag - next time do soil check
+    });
+    
     twiml.message(confirmMessage({ 
       personality: plant.personality, 
       nickname: plant.nickname, 
