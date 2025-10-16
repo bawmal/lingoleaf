@@ -1116,6 +1116,46 @@
                     }
                 });
             });
+
+            // Handle "Add Another Plant" flow
+            if (sessionStorage.getItem('addingAnotherPlant') === 'true') {
+                // User is adding another plant - pre-fill contact info
+                const lastEmail = localStorage.getItem('lingoleaf_email');
+                const lastPhone = localStorage.getItem('lingoleaf_phone');
+                const lastZipcode = localStorage.getItem('lingoleaf_zipcode');
+                const lastCity = localStorage.getItem('lingoleaf_city');
+                const lastCountry = localStorage.getItem('lingoleaf_country');
+
+                if (lastEmail) document.querySelector('input[name="email"]').value = lastEmail;
+                if (lastPhone) document.querySelector('input[name="phone"]').value = lastPhone;
+                if (lastZipcode) document.querySelector('input[name="zipcode"]').value = lastZipcode;
+                if (lastCity) document.querySelector('input[name="city"]').value = lastCity;
+                if (lastCountry) document.querySelector('input[name="country"]').value = lastCountry;
+
+                // Clear the flag
+                sessionStorage.removeItem('addingAnotherPlant');
+
+                // Scroll to form
+                document.querySelector('#signup').scrollIntoView({ behavior: 'smooth' });
+
+                // Update heading to show "Add Another Plant"
+                const heading = document.querySelector('#signup h2');
+                if (heading) {
+                    heading.textContent = 'Add Another Plant 🌿';
+                }
+            }
+
+            // Save contact info to localStorage on form submit
+            const signupForm = document.querySelector('form[name="beta-waitlist"]');
+            if (signupForm) {
+                signupForm.addEventListener('submit', function() {
+                    localStorage.setItem('lingoleaf_email', document.querySelector('input[name="email"]').value);
+                    localStorage.setItem('lingoleaf_phone', document.querySelector('input[name="phone"]').value);
+                    localStorage.setItem('lingoleaf_zipcode', document.querySelector('input[name="zipcode"]').value);
+                    localStorage.setItem('lingoleaf_city', document.querySelector('input[name="city"]').value);
+                    localStorage.setItem('lingoleaf_country', document.querySelector('input[name="country"]').value);
+                });
+            }
         });
     </script>
 </body>

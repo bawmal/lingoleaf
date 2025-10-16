@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to LingoLeaf! 🌱</title>
+    <title>Plant Registered! 🌱 | LingoLeaf</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,75 +30,127 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
     </style>
 </head>
-<body class="bg-cream min-h-screen flex items-center justify-center">
+<body class="bg-cream min-h-screen flex items-center justify-center py-12">
     
     <div class="max-w-2xl mx-auto px-6 text-center">
         <!-- Success Animation -->
         <div class="mb-8">
             <div class="w-32 h-32 mx-auto bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center animate-bounce-slow">
-                <span class="text-6xl">🌱</span>
+                <span class="text-6xl">🎉</span>
             </div>
         </div>
         
         <!-- Success Message -->
-        <h1 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
-            Welcome to the LingoLeaf Family! 
+        <h1 class="text-4xl lg:text-5xl font-bold text-forest mb-4">
+            Plant Registered Successfully! 
         </h1>
         
+        <p class="text-lg text-forest/70 mb-8">
+            Your plant is now part of the LingoLeaf family
+        </p>
+        
+        <!-- Plant Info Card -->
         <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-sage/20 mb-8">
-            <p class="text-xl text-forest/80 mb-6 leading-relaxed">
-                🎉 <strong>You're officially on the beta waitlist!</strong> Your plant is about to get a voice, and we couldn't be more excited to have you join us.
-            </p>
+            <div class="mb-6">
+                <div class="inline-block bg-sage/20 px-4 py-2 rounded-full mb-4">
+                    <span class="text-forest font-semibold">✅ Registration Complete</span>
+                </div>
+            </div>
             
-            <div class="grid md:grid-cols-2 gap-6 text-left">
-                <div class="bg-sage/10 p-4 rounded-2xl">
-                    <h3 class="font-semibold text-forest mb-2">📧 What's Next?</h3>
-                    <p class="text-sm text-forest/70">
-                        Check your email for a welcome message and beta updates as we approach our October 20th launch.
+            <div class="space-y-4 text-left">
+                <div class="bg-mint/10 p-6 rounded-2xl border-l-4 border-sage">
+                    <h3 class="font-semibold text-forest mb-3 text-lg">📱 Check Your Phone!</h3>
+                    <p class="text-forest/70 mb-2">
+                        You should receive a welcome text message from your plant's personal number.
+                    </p>
+                    <p class="text-sm text-forest/60">
+                        💡 <strong>Tip:</strong> Save that number in your contacts with your plant's name!
                     </p>
                 </div>
-                <div class="bg-mint/20 p-4 rounded-2xl">
-                    <h3 class="font-semibold text-forest mb-2">🌿 Early Access</h3>
-                    <p class="text-sm text-forest/70">
-                        You'll be among the first to experience AI plant personalities and smart care reminders.
+                
+                <div class="bg-sage/10 p-6 rounded-2xl">
+                    <h3 class="font-semibold text-forest mb-3 text-lg">📧 Check Your Email</h3>
+                    <p class="text-forest/70">
+                        We've sent you a welcome email with your plant's care schedule and instructions.
                     </p>
                 </div>
             </div>
         </div>
         
-        <!-- Countdown Reminder -->
-        <div class="bg-gradient-to-r from-forest to-sage text-white rounded-2xl p-6 mb-8">
-            <h3 class="text-xl font-bold mb-2">⏰ Launch Countdown</h3>
-            <p class="text-mint/90">October 20, 2025 - Mark your calendar!</p>
+        <!-- Add Another Plant Section -->
+        <div class="bg-gradient-to-br from-forest to-sage text-white rounded-3xl p-8 mb-8 shadow-xl">
+            <div class="mb-4">
+                <span class="text-5xl mb-4 block">🌿🪴🌱</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-3">Have More Plants?</h2>
+            <p class="text-mint/90 mb-6">
+                You can register up to <strong>5 plants</strong> total.<br>
+                Each plant gets its own phone number and personality!
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="addAnotherPlant()" class="bg-white text-forest px-8 py-4 rounded-full font-semibold hover:bg-mint transition-all transform hover:scale-105 shadow-lg">
+                    🌱 Add Another Plant
+                </button>
+                <button onclick="goHome()" class="bg-forest/50 backdrop-blur text-white px-8 py-4 rounded-full font-semibold hover:bg-forest/70 transition-all border-2 border-white/30">
+                    🏠 I'm Done for Now
+                </button>
+            </div>
+        </div>
+        
+        <!-- What's Next -->
+        <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h3 class="text-xl font-bold text-forest mb-4">What Happens Next?</h3>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div class="text-center">
+                    <div class="text-3xl mb-2">📅</div>
+                    <p class="font-semibold text-forest mb-1">Smart Reminders</p>
+                    <p class="text-forest/60">Get texts when it's time to check your plant's soil</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl mb-2">💬</div>
+                    <p class="font-semibold text-forest mb-1">Simple Replies</p>
+                    <p class="text-forest/60">Just reply DRY, DAMP, or DONE to each message</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl mb-2">🌱</div>
+                    <p class="font-semibold text-forest mb-1">Thriving Plants</p>
+                    <p class="text-forest/60">Never over or under-water your plants again!</p>
+                </div>
+            </div>
         </div>
         
         <!-- Social Sharing -->
         <div class="space-y-4">
             <p class="text-forest/70">
-                Know other plant parents who'd love this? Share LingoLeaf with friends!
+                Love LingoLeaf? Share it with fellow plant parents!
             </p>
             
             <div class="flex justify-center space-x-4">
-                <button onclick="shareOnTwitter()" class="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition-colors">
+                <button onclick="shareOnTwitter()" class="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition-colors text-sm">
                     Share on Twitter
                 </button>
-                <button onclick="copyLink()" class="bg-sage text-white px-6 py-3 rounded-full hover:bg-forest transition-colors">
+                <button onclick="copyLink()" class="bg-sage text-white px-6 py-3 rounded-full hover:bg-forest transition-colors text-sm">
                     Copy Link
                 </button>
             </div>
         </div>
-        
-        <!-- Back to Home -->
-        <div class="mt-12">
-            <a href="/" class="inline-block text-sage hover:text-forest font-medium transition-colors">
-                ← Back to LingoLeaf Home
-            </a>
-        </div>
     </div>
     
     <script>
+        function addAnotherPlant() {
+            // Store that user is adding another plant
+            sessionStorage.setItem('addingAnotherPlant', 'true');
+            // Go back to home page (form will pre-fill contact info)
+            window.location.href = '/#signup';
+        }
+        
+        function goHome() {
+            window.location.href = '/';
+        }
+        
         function shareOnTwitter() {
-            const text = "I just joined the LingoLeaf beta waitlist! 🌱 Finally, my plants will have a voice and remind me when they need care. Join me at";
+            const text = "I just registered my plant with LingoLeaf! 🌱 My plant now has its own phone number and reminds me when it needs water. Check it out:";
             const url = window.location.origin;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
         }
