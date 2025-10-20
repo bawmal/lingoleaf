@@ -320,48 +320,6 @@
         </div>
     </section>
 
-    <!-- Countdown Section -->
-    <section class="py-16 bg-gradient-to-r from-forest to-sage relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-8 left-8 w-20 h-20 bg-white rounded-full animate-float"></div>
-            <div class="absolute bottom-8 right-8 w-16 h-16 bg-mint rounded-full animate-sway"></div>
-        </div>
-        
-        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-            <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
-                🚀 Launch Countdown
-            </h2>
-            <p class="text-xl text-mint/90 mb-8">
-                LingoLeaf launches October 20th, 2025. Don't miss early access!
-            </p>
-            
-            <!-- Countdown Timer -->
-            <div class="grid grid-cols-4 gap-4 max-w-2xl mx-auto">
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <div id="days" class="text-4xl lg:text-5xl font-bold text-white mb-2">--</div>
-                    <div class="text-mint/80 text-sm font-medium uppercase tracking-wider">Days</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <div id="hours" class="text-4xl lg:text-5xl font-bold text-white mb-2">--</div>
-                    <div class="text-mint/80 text-sm font-medium uppercase tracking-wider">Hours</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <div id="minutes" class="text-4xl lg:text-5xl font-bold text-white mb-2">--</div>
-                    <div class="text-mint/80 text-sm font-medium uppercase tracking-wider">Minutes</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <div id="seconds" class="text-4xl lg:text-5xl font-bold text-white mb-2">--</div>
-                    <div class="text-mint/80 text-sm font-medium uppercase tracking-wider">Seconds</div>
-                </div>
-            </div>
-            
-            <div class="mt-8">
-                <a href="#signup" class="inline-block bg-white text-forest px-8 py-3 rounded-2xl font-semibold hover:bg-mint/90 transition-all duration-300 transform hover:-translate-y-1">
-                    Secure Your Spot Now
-                </a>
-            </div>
-        </div>
-    </section>
 
     <!-- Features Section -->
     <section id="features" class="py-20 bg-white relative">
@@ -947,31 +905,6 @@
     </footer>
 
     <script>
-        // Countdown Timer
-        function updateCountdown() {
-            const launchDate = new Date('October 20, 2025 00:00:00').getTime();
-            const now = new Date().getTime();
-            const distance = launchDate - now;
-
-            if (distance < 0) {
-                document.getElementById('days').textContent = '00';
-                document.getElementById('hours').textContent = '00';
-                document.getElementById('minutes').textContent = '00';
-                document.getElementById('seconds').textContent = '00';
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById('days').textContent = days.toString().padStart(2, '0');
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-        }
-
         // Phone number validation
         function validatePhoneNumber(phone) {
             // Remove all spaces and dashes for validation
@@ -1049,10 +982,6 @@
 
         // Simple form validation and smooth scrolling
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize countdown
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-
             // Phone number validation on input
             const phoneInput = document.getElementById('phone-input');
             const phoneError = document.getElementById('phone-error');
