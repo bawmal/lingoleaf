@@ -869,6 +869,24 @@
                     
                     <div data-netlify-recaptcha="true"></div>
                     
+                    <!-- SMS Consent Checkbox -->
+                    <div class="bg-sage/10 border border-sage/30 rounded-2xl p-4">
+                        <label class="flex items-start space-x-3 cursor-pointer group">
+                            <input 
+                                type="checkbox" 
+                                name="sms_consent" 
+                                required 
+                                class="mt-1 w-5 h-5 text-forest border-sage/30 rounded focus:ring-sage focus:ring-2 cursor-pointer flex-shrink-0"
+                            >
+                            <span class="text-sm text-forest/80 leading-relaxed">
+                                <span class="font-semibold text-forest">I consent to receive text messages</span> from LingoLeaf about my plant care reminders and updates. Reply STOP to opt out at any time.
+                            </span>
+                        </label>
+                        <p class="text-xs text-forest/60 mt-2 ml-8">
+                            By checking this box, you agree to receive SMS notifications. We'll only text you about your plants - no spam, ever! 🌱
+                        </p>
+                    </div>
+                    
                     <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-base sm:text-lg hover:shadow-glow transition-all duration-300 active:scale-95 min-h-[48px]">
                         Give Your Plants a Voice! 🌱
                     </button>
@@ -893,7 +911,7 @@
                     </div>
                 </div>
                 <div class="flex space-x-8 text-sm">
-                    <a href="#" class="text-sage hover:text-white transition-colors">Privacy</a>
+                    <a href="privacy-policy.html" class="text-sage hover:text-white transition-colors">Privacy</a>
                     <a href="#" class="text-sage hover:text-white transition-colors">Terms</a>
                     <a href="#" class="text-sage hover:text-white transition-colors">Contact</a>
                 </div>
