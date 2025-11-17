@@ -131,8 +131,28 @@ const OUTDOOR_LIGHT_MULT = {
   'covered': 1.05            // Covered/protected - very slow
 };
 
-// Legacy support for existing plants
+// Comprehensive light exposure multipliers for compass directions
 const LIGHT_MULT = { 
+  // Indoor options
+  'indoor-north': 1.25,     // Slowest drying (25% slower than baseline)
+  'indoor-east': 1.10,      // Morning sun only (10% slower)
+  'indoor-west': 1.05,      // Afternoon sun only (5% slower)
+  'indoor-south': 0.85,     // Bright all day (15% faster)
+  'indoor-away': 1.40,      // No windows (40% slower)
+  
+  // Outdoor covered options
+  'covered-north': 1.15,    // Most protected (15% slower)
+  'covered-east': 1.00,     // Morning sun (baseline)
+  'covered-west': 0.95,     // Afternoon sun (5% faster)
+  'covered-south': 0.90,    // Brightest covered (10% faster)
+  
+  // Outdoor exposed options
+  'exposed-north': 1.05,    // Gentle indirect light (5% slower)
+  'exposed-east': 0.90,     // Morning direct sun (10% faster)
+  'exposed-west': 0.85,     // Hot afternoon sun (15% faster)
+  'exposed-south': 0.75,    // Most intense all day (25% faster)
+  
+  // Legacy support for existing plants
   north: 1.15, 
   south: 0.90, 
   east: 1.00, 
