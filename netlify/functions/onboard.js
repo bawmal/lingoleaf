@@ -6,7 +6,20 @@ const { getSlotNumber, MAX_PLANTS_PER_USER } = require('./lib/twilio-pool');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
 
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+// Debug: Check if Twilio credentials are loaded
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+if (!accountSid || !authToken) {
+  console.error('❌ TWILIO CREDENTIALS MISSING!');
+  console.error('Account SID exists:', !!accountSid);
+  console.error('Auth Token exists:', !!authToken);
+} else {
+  console.log('✅ Twilio credentials loaded');
+  console.log('Account SID starts with:', accountSid.substring(0, 6));
+}
+
+const client = twilio(accountSid, authToken);
 
 function formatDuration(hours) {
   const days = Math.floor(hours / 24);
