@@ -1177,6 +1177,59 @@
                     localStorage.setItem('lingoleaf_country', document.querySelector('input[name="country"]').value);
                 });
             }
+
+            // Populate light exposure options based on Indoor / Outdoor selection
+            const locationSelect = document.querySelector('select[name="location"]');
+            const lightExposureSelect = document.querySelector('#light_exposure');
+            const indoorLightOptions = document.querySelector('#indoor_light_options');
+            const outdoorLightOptions = document.querySelector('#outdoor_light_options');
+
+            if (locationSelect && lightExposureSelect && indoorLightOptions && outdoorLightOptions) {
+                locationSelect.addEventListener('change', function () {
+                    const location = this.value;
+
+                    // reset base options
+                    lightExposureSelect.innerHTML = '<option value="">Choose...</option>';
+                    indoorLightOptions.style.display = 'none';
+                    outdoorLightOptions.style.display = 'none';
+
+                    let options = [];
+
+                    if (location === 'indoor') {
+                        options = [
+                            { value: 'indoor-north', label: 'North-facing window (lowest light)' },
+                            { value: 'indoor-east', label: 'East-facing window (gentle morning sun)' },
+                            { value: 'indoor-west', label: 'West-facing window (afternoon sun)' },
+                            { value: 'indoor-south', label: 'South-facing window (bright direct sun)' },
+                            { value: 'indoor-away', label: 'Away from windows (very low light)' }
+                        ];
+                        indoorLightOptions.style.display = 'block';
+                    } else if (location === 'outdoor-covered') {
+                        options = [
+                            { value: 'covered-north', label: 'North-facing covered (most protected)' },
+                            { value: 'covered-east', label: 'East-facing covered (morning sun)' },
+                            { value: 'covered-west', label: 'West-facing covered (afternoon sun)' },
+                            { value: 'covered-south', label: 'South-facing covered (brightest covered)' }
+                        ];
+                        outdoorLightOptions.style.display = 'block';
+                    } else if (location === 'outdoor-exposed') {
+                        options = [
+                            { value: 'exposed-north', label: 'North-facing open (gentle indirect light)' },
+                            { value: 'exposed-east', label: 'East-facing open (morning direct sun)' },
+                            { value: 'exposed-west', label: 'West-facing open (hot afternoon sun)' },
+                            { value: 'exposed-south', label: 'South-facing open (intense all-day sun)' }
+                        ];
+                        outdoorLightOptions.style.display = 'block';
+                    }
+
+                    options.forEach(opt => {
+                        const o = document.createElement('option');
+                        o.value = opt.value;
+                        o.textContent = opt.label;
+                        lightExposureSelect.appendChild(o);
+                    });
+                });
+            }
         });
     </script>
 </body>
