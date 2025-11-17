@@ -897,6 +897,16 @@
                         </div>
                         
                         <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Indoor or Outdoor? *</label>
+                            <select name="location" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="">Choose...</option>
+                                <option value="indoor">Indoor (inside home)</option>
+                                <option value="outdoor-covered">Outdoor (covered patio/balcony)</option>
+                                <option value="outdoor-exposed">Outdoor (fully exposed to elements)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
                             <label class="block text-sm font-medium text-forest mb-2">Light Exposure</label>
                             <select id="light_exposure" name="light_exposure" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
                                 <option value="">First select location above...</option>
@@ -906,7 +916,7 @@
                         <!-- Hidden indoor light options -->
                         <div id="indoor_light_options" style="display: none;">
                             <div class="mt-2 p-3 bg-forest/5 rounded-lg border border-sage/20">
-                                <p class="text-xs font-medium text-forest mb-2">🏠 Indoor Light Options:</p>
+                                <p class="text-xs font-medium text-forest mb-2">� Indoor Light Options:</p>
                                 <div id="indoor_light_select" class="space-y-1"></div>
                             </div>
                         </div>
@@ -917,16 +927,6 @@
                                 <p class="text-xs font-medium text-forest mb-2">🌻 Outdoor Light Options:</p>
                                 <div id="outdoor_light_select" class="space-y-1"></div>
                             </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Indoor or Outdoor? *</label>
-                            <select name="location" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                <option value="">Choose...</option>
-                                <option value="indoor">Indoor (inside home)</option>
-                                <option value="outdoor-covered">Outdoor (covered patio/balcony)</option>
-                                <option value="outdoor-exposed">Outdoor (fully exposed to elements)</option>
-                            </select>
                         </div>
                         
                         <div>
