@@ -53,139 +53,172 @@ function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus =
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to LingoLeaf</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to LingoLeaf</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f0;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f0;">
-    <tr>
-      <td style="padding: 40px 20px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-          
-          <!-- Hero Image / Header -->
-          <tr>
-            <td style="background-color: #e8f4e8; padding: 60px 40px; text-align: center;">
-              <div style="font-size: 80px; line-height: 1; margin-bottom: 20px;">🌿</div>
-              <h1 style="margin: 0; color: #2d5016; font-size: 36px; font-weight: normal; letter-spacing: 1px;">
-                Meet Your Plant's New Voice
-              </h1>
-            </td>
-          </tr>
-          
-          <!-- Main Content -->
-          <tr>
-            <td style="padding: 50px 40px;">
-              
-              <p style="margin: 0 0 30px 0; color: #4a4a4a; font-size: 18px; line-height: 1.8; text-align: center;">
-                🎉 Great news! Your <strong>${species}</strong>${nickname ? ` (${nickname})` : ''} has been successfully registered!
-              </p>
-              
-              ${twilioNumber ? `
-              <div style="background-color: #e8f4e8; padding: 20px; margin-bottom: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                  📞 Save This Number
-                </p>
-                <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 24px; font-weight: bold;">
-                  ${twilioNumber}
-                </p>
-                <p style="margin: 0; color: #4a4a4a; font-size: 14px;">
-                  This is <strong>${plantName}'s</strong> personal number (Plant ${slotIndex}). Save it as "${plantName} Plant" in your contacts!
-                </p>
-              </div>
-              ` : ''}
-              
-              <div style="background-color: #f9f9f5; padding: 30px; margin-bottom: 40px; border-left: 4px solid #7ba05b;">
-                <p style="margin: 0 0 10px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                  ${isDryStatus ? '🚨 Immediate Text Message Sent!' : 'Your First Watering Reminder'}
-                </p>
-                <p style="margin: 0; color: #4a4a4a; font-size: 16px; line-height: 1.7;">
-                  ${isDryStatus 
-                    ? `We've sent you an <strong>immediate text message</strong> because your soil is dry. Please water <strong>${plantName}</strong> right away and reply <strong>DONE</strong> to start your care schedule!`
-                    : `Expect a friendly reminder for <strong>${plantName}</strong> in about <strong>${duration}</strong>. We'll send you a text message asking you to check the soil!`
-                  }
-                </p>
-              </div>
-              
-              <h2 style="margin: 0 0 25px 0; color: #2d5016; font-size: 24px; font-weight: normal; text-align: center;">
-                How LingoLeaf Works
-              </h2>
-              
-              <div style="background-color: #f0f8ff; padding: 25px; margin-bottom: 20px; border-radius: 8px;">
-                <p style="margin: 0 0 15px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                  📱 Step 1: We'll ask you to check the soil
-                </p>
-                <p style="margin: 0 0 20px 0; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
-                  When it's time, you'll get a text: <em>"Check my soil and reply: DRY or DAMP"</em>
-                </p>
-                
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
-                  <tr>
-                    <td style="width: 48%; padding: 15px; background-color: #fff8e8; text-align: center; vertical-align: top; border-radius: 6px;">
-                      <p style="margin: 0 0 8px 0; font-size: 20px;">🏜️</p>
-                      <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 15px; font-weight: bold;">
-                        Reply "DRY"
-                      </p>
-                      <p style="margin: 0; color: #4a4a4a; font-size: 13px;">
-                        Soil needs water
-                      </p>
-                    </td>
-                    <td style="width: 4%;"></td>
-                    <td style="width: 48%; padding: 15px; background-color: #e8f0f8; text-align: center; vertical-align: top; border-radius: 6px;">
-                      <p style="margin: 0 0 8px 0; font-size: 20px;">💦</p>
-                      <p style="margin: 0 0 8px 0; color: #2d5016; font-size: 15px; font-weight: bold;">
-                        Reply "DAMP"
-                      </p>
-                      <p style="margin: 0; color: #4a4a4a; font-size: 13px;">
-                        Soil still moist
-                      </p>
-                    </td>
-                  </tr>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4;">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    
+                    <!-- Header with Plant Icon -->
+                    <tr>
+                        <td align="center" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 50px 20px;">
+                            <div style="font-size: 60px; margin-bottom: 20px;">🌿</div>
+                            <h1 style="margin: 0; color: #2d5a3d; font-size: 28px; font-weight: 600;">Meet Your Plant's New Voice</h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Success Message -->
+                    <tr>
+                        <td style="padding: 40px 40px 20px 40px;">
+                            <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0;">
+                                🎉 Great news! Your <strong>${species}</strong>${nickname ? ` (${nickname})` : ''} has been successfully registered!
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    ${twilioNumber ? `
+                    <!-- Save Number Section -->
+                    <tr>
+                        <td style="padding: 20px 40px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e8f5e9; border-radius: 8px; border: 1px solid #c8e6c9;">
+                                <tr>
+                                    <td align="center" style="padding: 30px 20px;">
+                                        <p style="margin: 0 0 10px 0; font-size: 16px; color: #2d5a3d; font-weight: 600;">
+                                            📞 Save This Number
+                                        </p>
+                                        <h2 style="margin: 0 0 15px 0; color: #1b5e20; font-size: 32px; font-weight: bold; letter-spacing: 1px;">
+                                            ${twilioNumber}
+                                        </h2>
+                                        <p style="margin: 0; font-size: 14px; color: #558b5b; line-height: 1.5;">
+                                            This is <strong>${plantName}</strong>'s personal number (Plant ${slotIndex}). Save it as "${plantName} Plant" in your contacts!
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    ` : ''}
+                    
+                    <!-- First Watering Reminder -->
+                    <tr>
+                        <td style="padding: 20px 40px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td style="border-left: 4px solid #4caf50; padding-left: 20px;">
+                                        <h3 style="margin: 0 0 15px 0; color: #2d5a3d; font-size: 20px; font-weight: 600;">
+                                            ${isDryStatus ? '🚨 Immediate Text Message Sent!' : 'Your First Watering Reminder'}
+                                        </h3>
+                                        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #555555;">
+                                            ${isDryStatus 
+                                                ? `We've sent you an <strong>immediate text message</strong> because your soil is dry. Please water <strong>${plantName}</strong> right away and reply <strong>DONE</strong> to start your care schedule!`
+                                                : `Expect a friendly reminder for <strong>${plantName}</strong> in about <strong>${duration}</strong>. We'll send you a text message asking you to check the soil!`
+                                            }
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- How LingoLeaf Works -->
+                    <tr>
+                        <td style="padding: 30px 40px 20px 40px;">
+                            <h2 style="margin: 0 0 25px 0; text-align: center; color: #2d5a3d; font-size: 24px; font-weight: 600;">
+                                How LingoLeaf Works
+                            </h2>
+                        </td>
+                    </tr>
+                    
+                    <!-- Step 1 -->
+                    <tr>
+                        <td style="padding: 10px 40px;">
+                            <h4 style="margin: 0 0 10px 0; color: #2d5a3d; font-size: 17px; font-weight: 600;">
+                                📱 Step 1: We'll ask you to check the soil
+                            </h4>
+                            <p style="margin: 0 0 15px 0; font-size: 14px; color: #666666; line-height: 1.5;">
+                                When it's time, you'll get a text: <em>"Check my soil and reply: DRY or DAMP"</em>
+                            </p>
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td width="50%" style="padding-right: 10px;">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fff3e0; border-radius: 6px; border: 1px solid #ffe0b2;">
+                                            <tr>
+                                                <td align="center" style="padding: 20px;">
+                                                    <div style="font-size: 30px; margin-bottom: 10px;">🔥</div>
+                                                    <p style="margin: 0 0 5px 0; font-weight: 600; color: #e65100; font-size: 15px;">Reply "DRY"</p>
+                                                    <p style="margin: 0; font-size: 13px; color: #bf360c;">Soil needs water</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td width="50%" style="padding-left: 10px;">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #e3f2fd; border-radius: 6px; border: 1px solid #bbdefb;">
+                                            <tr>
+                                                <td align="center" style="padding: 20px;">
+                                                    <div style="font-size: 30px; margin-bottom: 10px;">�</div>
+                                                    <p style="margin: 0 0 5px 0; font-weight: 600; color: #0277bd; font-size: 15px;">Reply "DAMP"</p>
+                                                    <p style="margin: 0; font-size: 13px; color: #01579b;">Soil still moist</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Step 2 -->
+                    <tr>
+                        <td style="padding: 20px 40px 10px 40px;">
+                            <h4 style="margin: 0 0 10px 0; color: #2d5a3d; font-size: 17px; font-weight: 600;">
+                                💧 Step 2: If DRY, we'll tell you to water
+                            </h4>
+                            <p style="margin: 0; font-size: 14px; color: #666666; line-height: 1.5;">
+                                You'll get: <em>"Water me NOW! Reply DONE when finished"</em>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Step 3 -->
+                    <tr>
+                        <td style="padding: 20px 40px;">
+                            <h4 style="margin: 0 0 10px 0; color: #2d5a3d; font-size: 17px; font-weight: 600;">
+                                ✅ Step 3: Reply DONE after watering
+                            </h4>
+                            <p style="margin: 0; font-size: 14px; color: #666666; line-height: 1.5;">
+                                We'll reset the timer and check back at the perfect time!
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Call to Action -->
+                    <tr>
+                        <td align="center" style="padding: 30px 40px 40px 40px;">
+                            <p style="margin: 0; font-size: 18px; color: #2d5a3d; font-weight: 500;">
+                                Let's work together to help ${plantName} thrive! 🌱
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background-color: #2d5a3d; padding: 40px 20px;">
+                            <h3 style="margin: 0 0 10px 0; color: #ffffff; font-size: 22px; font-weight: 600;">LingoLeaf</h3>
+                            <p style="margin: 0 0 20px 0; color: #c8e6c9; font-size: 14px; font-style: italic;">Your Plants, With a Voice</p>
+                            <p style="margin: 0; color: #a5d6a7; font-size: 12px; line-height: 1.5;">
+                                If you didn't sign up for LingoLeaf, you can safely ignore this email.
+                            </p>
+                        </td>
+                    </tr>
+                    
                 </table>
-                
-                <p style="margin: 0 0 15px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                  💧 Step 2: If DRY, we'll tell you to water
-                </p>
-                <p style="margin: 0 0 20px 0; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
-                  You'll get: <em>"Water me NOW! Reply DONE when finished"</em>
-                </p>
-                
-                <p style="margin: 0 0 15px 0; color: #2d5016; font-size: 16px; font-weight: bold;">
-                  ✅ Step 3: Reply DONE after watering
-                </p>
-                <p style="margin: 0; color: #4a4a4a; font-size: 14px; line-height: 1.6;">
-                  We'll reset the timer and check back at the perfect time!
-                </p>
-              </div>
-              
-              <div style="text-align: center; margin: 40px 0 30px 0; padding: 30px; background-color: #f9f9f5;">
-                <p style="margin: 0; color: #2d5016; font-size: 18px; line-height: 1.6;">
-                  Let's work together to help ${plantName} thrive! 🌱
-                </p>
-              </div>
-              
             </td>
-          </tr>
-          
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #2d5016; padding: 40px; text-align: center;">
-              <p style="margin: 0 0 10px 0; color: #ffffff; font-size: 20px; font-weight: 600;">
-                LingoLeaf
-              </p>
-              <p style="margin: 0 0 20px 0; color: #b8d4a8; font-size: 14px; font-style: italic;">
-                Your Plants, With a Voice
-              </p>
-              <p style="margin: 0; color: #b8d4a8; font-size: 12px; line-height: 1.6;">
-                If you didn't sign up for LingoLeaf, you can safely ignore this email.
-              </p>
-            </td>
-          </tr>
-          
-        </table>
-      </td>
-    </tr>
-  </table>
+        </tr>
+    </table>
 </body>
 </html>
   `;
