@@ -18,7 +18,7 @@ create table if not exists public.plants (
   nickname          text,
   personality       text check (personality in ('sassy','zen','anxious','formal')) not null,
   pot_size          text check (pot_size in ('small','medium','large')) not null,
-  pot_material      text check (pot_material in ('plastic','terracotta')) not null,
+  pot_material      text check (pot_material in ('plastic','terracotta','ceramic-drainage','ceramic-no-drainage','other')) not null,
   light_exposure    text check (light_exposure in (
     'north','south','east','west',
     'indoor-north','indoor-east','indoor-west','indoor-south','indoor-away',
