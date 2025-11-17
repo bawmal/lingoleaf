@@ -19,7 +19,12 @@ create table if not exists public.plants (
   personality       text check (personality in ('sassy','zen','anxious','formal')) not null,
   pot_size          text check (pot_size in ('small','large')) not null,
   pot_material      text check (pot_material in ('plastic','terracotta')) not null,
-  light_exposure    text check (light_exposure in ('north','south','east','west')) not null,
+  light_exposure    text check (light_exposure in (
+    'north','south','east','west',
+    'indoor-north','indoor-east','indoor-west','indoor-south','indoor-away',
+    'covered-north','covered-east','covered-west','covered-south',
+    'exposed-north','exposed-east','exposed-west','exposed-south'
+  )) not null,
   base_hours        integer not null,
   winter_multiplier numeric not null,
   adjusted_hours    integer not null,
