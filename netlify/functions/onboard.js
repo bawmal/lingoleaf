@@ -292,15 +292,133 @@ exports.handler = async (event) => {
     next_due_ts = nextDueFrom(lastWateredTs, sched.effective);
   }
 
-  const row = await createPlant({
-    id: randomUUID(), created_at: new Date().toISOString(),
-    email, phone_e164: phone, zipcode, city, country, lat, lon, species, nickname, personality,
-    pot_size, pot_material, light_exposure,
-    twilio_number: twilioNumber, slot_index: slotIndex,
-    base_hours: sched.base, winter_multiplier: sched.winter, adjusted_hours: sched.adjusted,
-    calibration_hours: 0, last_watered_ts: lastWateredTs, next_due_ts, timezone: 'America/Toronto',
-    skip_soil_check: false
-  });
+  let row;
+  try {
+    row = await createPlant({
+      id: randomUUID(), created_at: new Date().toISOString(),
+      email, phone_e164: phone, zipcode, city, country, lat, lon, species, nickname, personality,
+      pot_size, pot_material, light_exposure,
+      twilio_number: twilioNumber, slot_index: slotIndex,
+      base_hours: sched.base, winter_multiplier: sched.winter, adjusted_hours: sched.adjusted,
+      calibration_hours: 0, last_watered_ts: lastWateredTs, next_due_ts, timezone: 'America/Toronto',
+      skip_soil_check: false
+    });
+  } catch (error) {
+    // Handle duplicate phone number error
+    if (error.code === '23505' && error.message.includes('unique_user_slot')) {
+      const plantCount = existingPlants.length;
+      const remaining = MAX_PLANTS_PER_USER - plantCount;
+      
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'text/html' },
+        body: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Number Already Registered - LingoLeaf</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8f4e8 0%, #f5f5f0 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            text-align: center;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2d5016;
+            margin: 0 0 20px 0;
+            font-size: 28px;
+        }
+        p {
+            color: #4a4a4a;
+            line-height: 1.6;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        .stats {
+            background: #e8f4e8;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+        .stats strong {
+            color: #2d5016;
+            font-size: 24px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #7ba05b 0%, #2d5016 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        .secondary-button {
+            display: inline-block;
+            color: #7ba05b;
+            padding: 15px 30px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🌱</div>
+        <h1>Phone Number Already Registered</h1>
+        <p>This phone number already has <strong>${plantCount} plant${plantCount === 1 ? '' : 's'}</strong> registered with LingoLeaf.</p>
+        
+        <div class="stats">
+            <strong>${plantCount} / ${MAX_PLANTS_PER_USER}</strong>
+            <p style="margin: 0; color: #2d5016; font-weight: 600;">Plants Registered</p>
+        </div>
+        
+        ${remaining > 0 ? `
+        <p style="color: #7ba05b; font-weight: 600;">✅ You can register ${remaining} more plant${remaining === 1 ? '' : 's'}!</p>
+        <a href="/#signup" class="button">Add Another Plant 🌿</a>
+        ` : `
+        <p style="color: #d97706; font-weight: 600;">⚠️ You've reached the maximum of ${MAX_PLANTS_PER_USER} plants per phone number.</p>
+        `}
+        
+        <br>
+        <a href="/" class="secondary-button">← Back to Home</a>
+    </div>
+</body>
+</html>
+        `
+      };
+    }
+    
+    // Re-throw other errors
+    throw error;
+  }
 
   // Send welcome SMS (or immediate watering reminder if soil is dry)
   let welcomeMessage;
