@@ -291,10 +291,12 @@ exports.handler = async (event) => {
   
   if (initial_soil_status === 'just_watered') {
     // Full interval - just watered, so wait the complete duration
-    next_due_ts = nextDueFrom(lastWateredTs, sched.effective);
+    // Don't apply winter multiplier to first watering (only subsequent waterings)
+    next_due_ts = nextDueFrom(lastWateredTs, sched.adjusted);
   } else if (initial_soil_status === 'damp') {
     // Half interval - soil is moist, check in ~50% of normal time
-    next_due_ts = nextDueFrom(lastWateredTs, Math.floor(sched.effective * 0.5));
+    // Don't apply winter multiplier to first watering
+    next_due_ts = nextDueFrom(lastWateredTs, Math.floor(sched.adjusted * 0.5));
   } else if (initial_soil_status === 'dry') {
     // IMMEDIATE - soil is dry NOW, send reminder right away
     // Set next_due_ts to now so it triggers immediately
@@ -441,7 +443,7 @@ exports.handler = async (event) => {
     welcomeMessage = `🚨 ${nickname || species} needs water NOW! Your soil is dry. Water your plant, then reply DONE to start your care schedule. 🌱`;
   } else {
     // Normal welcome message
-    welcomeMessage = createWelcomeMessage(species, nickname, sched.effective);
+    welcomeMessage = createWelcomeMessage(species, nickname, sched.adjusted);
   }
   
   try {
