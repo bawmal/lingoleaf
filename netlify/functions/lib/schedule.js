@@ -115,7 +115,23 @@ const LOCATION_MULT = {
   'outdoor-exposed': 0.70  // Full exposure - wind/sun/rain, 30% faster
 };
 
-// Light exposure (existing, will be enhanced in Phase 2)
+// Smart conditional light exposure (Phase 2 Enhanced)
+const INDOOR_LIGHT_MULT = {
+  'bright-direct': 0.80,     // South-facing window - high evaporation
+  'bright-indirect': 1.00,  // Near window, no direct - baseline
+  'medium': 1.10,            // East/west-facing - moderate
+  'low': 1.25,               // North-facing or far - slow drying
+  'artificial': 1.15         // Grow lights - consistent but moderate
+};
+
+const OUTDOOR_LIGHT_MULT = {
+  'full-sun': 0.85,          // 6+ hours direct sun - high evaporation
+  'part-sun': 1.00,          // 3-6 hours direct sun - baseline
+  'mostly-shade': 1.15,      // <3 hours direct sun - slower
+  'covered': 1.05            // Covered/protected - very slow
+};
+
+// Legacy support for existing plants
 const LIGHT_MULT = { 
   north: 1.15, 
   south: 0.90, 
