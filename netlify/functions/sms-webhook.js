@@ -50,6 +50,8 @@ exports.handler = async (event) => {
       pot_size: plant.pot_size,
       pot_material: plant.pot_material,
       light_exposure: plant.light_exposure,
+      location: plant.location,
+      zipcode: plant.zipcode,
       now: new Date()
     });
     

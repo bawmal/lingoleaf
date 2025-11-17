@@ -224,7 +224,7 @@ exports.handler = async (event) => {
     data = Object.fromEntries(new URLSearchParams(event.body || ''));
   }
 
-  const { email, phone, zipcode, city, country, species, nickname, personality, pot_size, pot_material, light_exposure, initial_soil_status } = data;
+  const { email, phone, zipcode, city, country, species, nickname, personality, pot_size, pot_material, light_exposure, location, initial_soil_status } = data;
 
   // Check how many plants this user already has
   const existingPlants = await getPlantsByPhone(phone);
