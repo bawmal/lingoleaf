@@ -13,7 +13,21 @@ async function createPlant(row) {
     },
     body: JSON.stringify(row)
   });
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) {
+    const errorText = await res.text();
+    let errorObj;
+    try {
+      errorObj = JSON.parse(errorText);
+    } catch (e) {
+      throw new Error(errorText);
+    }
+    // Preserve database error structure
+    const error = new Error(errorObj.message || errorText);
+    error.code = errorObj.code;
+    error.details = errorObj.details;
+    error.hint = errorObj.hint;
+    throw error;
+  }
   const [created] = await res.json();
   return created;
 }
