@@ -352,6 +352,8 @@ exports.handler = async (event) => {
       skip_soil_check: false
     });
   } catch (error) {
+    console.log('ERROR CAUGHT:', error.code, error.message);  // ADD THIS LINE
+    // Handle duplicate phone number error
     // Handle duplicate phone number error
     if (error.code === '23505' && error.message.includes('unique_user_slot')) {
       const plantCount = existingPlants.length;
