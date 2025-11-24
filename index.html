@@ -1319,29 +1319,62 @@
             });
 
             // Handle contact form submission
-            document.querySelector('form[name="contact"]').addEventListener('submit', function(e) {
+            document.getElementById('contactForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(this);
-                const name = formData.get('name');
-                const subject = formData.get('subject');
-                const message = formData.get('message');
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
                 
-                // Create email content
-                const emailSubject = `LingoLeaf Contact: ${subject.charAt(0).toUpperCase() + subject.slice(1)}`;
-                const emailBody = `Name: ${name}\nSubject: ${subject}\n\nMessage:\n${message}`;
-                
-                // Create mailto link
-                const mailtoLink = `mailto:info@lingoleaf.ai?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-                
-                // Open email client
-                window.location.href = mailtoLink;
-                
-                // Close modal after a short delay
-                setTimeout(() => {
-                    closeContactModal();
-                    this.reset();
-                }, 500);
+                try {
+                    const formData = new FormData(this);
+                    const data = {
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        subject: formData.get('subject'),
+                        message: formData.get('message')
+                    };
+                    
+                    const response = await fetch('/.netlify/functions/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        // Success
+                        submitButton.textContent = '✅ Sent!';
+                        submitButton.classList.remove('from-forest', 'to-green-600');
+                        submitButton.classList.add('from-green-600', 'to-green-700');
+                        
+                        // Reset form and close modal after delay
+                        setTimeout(() => {
+                            this.reset();
+                            closeContactModal();
+                            submitButton.textContent = originalButtonText;
+                            submitButton.classList.remove('from-green-600', 'to-green-700');
+                            submitButton.classList.add('from-forest', 'to-green-600');
+                            submitButton.disabled = false;
+                        }, 2000);
+                    } else {
+                        throw new Error(result.error || 'Failed to send message');
+                    }
+                } catch (error) {
+                    console.error('Contact form error:', error);
+                    submitButton.textContent = '❌ Failed. Try again?';
+                    submitButton.classList.remove('from-forest', 'to-green-600');
+                    submitButton.classList.add('from-red-600', 'to-red-700');
+                    
+                    setTimeout(() => {
+                        submitButton.textContent = originalButtonText;
+                        submitButton.classList.remove('from-red-600', 'to-red-700');
+                        submitButton.classList.add('from-forest', 'to-green-600');
+                        submitButton.disabled = false;
+                    }, 3000);
+                }
             });
         });
     </script>
