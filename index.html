@@ -1196,7 +1196,7 @@
             });
 
             // Handle "Add Another Plant" flow
-            if (sessionStorage.getItem('addingAnotherPlant') === 'true') {
+            if (localStorage.getItem('lingoleaf_addingAnother') === 'true') {
                 // User is adding another plant - pre-fill contact info
                 const lastEmail = localStorage.getItem('lingoleaf_email');
                 const lastPhone = localStorage.getItem('lingoleaf_phone');
@@ -1211,7 +1211,7 @@
                 if (lastCountry) document.querySelector('input[name="country"]').value = lastCountry;
 
                 // Clear the flag
-                sessionStorage.removeItem('addingAnotherPlant');
+                localStorage.removeItem('lingoleaf_addingAnother');
 
                 // Scroll to form
                 document.querySelector('#signup').scrollIntoView({ behavior: 'smooth' });
