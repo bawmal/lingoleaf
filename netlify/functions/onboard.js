@@ -356,7 +356,9 @@ exports.handler = async (event) => {
     // Handle duplicate phone number error
     // Handle duplicate phone number error
     if (error.code === '23505' && error.message.includes('unique_user_slot')) {
-      const plantCount = existingPlants.length;
+      // Recount plants since existingPlants might be stale
+      const currentPlants = await getPlantsByPhone(phone);
+      const plantCount = currentPlants.length;
       const remaining = MAX_PLANTS_PER_USER - plantCount;
       
       return {
