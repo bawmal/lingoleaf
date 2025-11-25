@@ -1,0 +1,15 @@
+name: Hourly Plant Check
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour at minute 0
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  check-plants:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger plant watering check
+        run: |
+          curl -f https://fantastic-tanuki-1c4474.netlify.app/.netlify/functions/schedule-check
+          echo "Plant check completed at $(date)"
