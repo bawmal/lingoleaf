@@ -6,7 +6,11 @@ const twilio = require('twilio');
 
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-exports.handler = async () => {
+exports.handler = async (event) => {
+  // Log invocation source for debugging
+  const source = event?.httpMethod ? 'HTTP' : 'SCHEDULED';
+  console.log(`🚀 Schedule check triggered via: ${source}`);
+  console.log(`⏰ Execution time: ${new Date().toISOString()}`);
   const nowTs = Date.now();
   console.log(`🔍 Checking for plants due at timestamp: ${nowTs}`);
   
