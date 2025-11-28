@@ -6,6 +6,14 @@ const twilio = require('twilio');
 
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
+// Helper: Determine temperature units based on country
+// US, US territories, Liberia, Myanmar use Fahrenheit; rest of world uses Celsius
+function getUnitsForCountry(country) {
+  const imperialCountries = ['US', 'USA', 'United States', 'Liberia', 'Myanmar', 'Burma'];
+  const countryUpper = (country || '').toUpperCase();
+  return imperialCountries.some(c => countryUpper.includes(c.toUpperCase())) ? 'imperial' : 'metric';
+}
+
 exports.handler = async (event) => {
   // Log invocation source for debugging
   const source = event?.httpMethod ? 'HTTP' : 'SCHEDULED';
@@ -16,13 +24,16 @@ exports.handler = async (event) => {
   
   const due = await listDuePlants(nowTs);
   console.log(`📊 Found ${due.length} plants due for watering`);
-  
-  const units = process.env.OWM_UNITS || 'metric'; // 'metric' or 'imperial'
 
   for (const p of due) {
     console.log(`🌱 Processing plant: ${p.nickname || p.species} (${p.id})`);
     console.log(`   Phone: ${p.phone_e164}, Personality: ${p.personality}`);
+    console.log(`   Country: ${p.country || 'Unknown'}`);
     console.log(`   Skip soil check: ${p.skip_soil_check || false}`);
+    
+    // Determine temperature units based on plant's country
+    const units = getUnitsForCountry(p.country);
+    console.log(`   Units: ${units === 'imperial' ? 'Fahrenheit' : 'Celsius'}`);
     
     let body;
     
