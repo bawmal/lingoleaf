@@ -64,7 +64,7 @@ exports.handler = async (event) => {
         }
       }
       
-      body = personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units });
+      body = await personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units });
     }
     
     console.log(`   📱 Sending SMS: "${body.substring(0, 50)}..."`);

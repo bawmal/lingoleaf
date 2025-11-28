@@ -1,6 +1,8 @@
 // netlify/functions/lib/messaging.js
 // LingoLeaf persona-driven SMS copy with weather context
 
+const fetch = require('node-fetch');
+
 function fmtCond(temp, condition, units='metric') {
   const t = Number.isFinite(temp) ? Math.round(temp) : null;
   const unit = units === 'imperial' ? '°F' : '°C';
@@ -8,7 +10,74 @@ function fmtCond(temp, condition, units='metric') {
   return t != null ? `It's ${t}${unit} and ${w}.` : `It's ${w}.`;
 }
 
-function personaMessage({ personality, nickname, species, temp, condition, units }) {
+// AI-powered message generation with personality prompts
+async function generateAIMessage({ personality, nickname, species, temp, condition, units }) {
+  const name = nickname || species || 'your plant';
+  const tempStr = temp != null ? `${Math.round(temp)}°${units === 'imperial' ? 'F' : 'C'}` : 'unknown';
+  const weatherDesc = condition ? condition.toLowerCase() : 'fair';
+  
+  const personalityPrompts = {
+    sassy: `You are ${name}, a ${species} plant with a SASSY, DEMANDING personality. You're bold, dramatic, impatient, and use emojis like 💅😤🙄🔥. You're not mean, just very direct and expect immediate attention. Think of a diva who knows their worth.`,
+    zen: `You are ${name}, a ${species} plant with a ZEN, PEACEFUL personality. You're calm, philosophical, mindful, and use emojis like 🌿🧘☮️🍃. You speak in gentle, flowing language about nature, balance, and harmony. Think of a meditation teacher.`,
+    anxious: `You are ${name}, a ${species} plant with an ANXIOUS, WORRIED personality. You're nervous, dramatic about potential problems, but endearing. Use emojis like 😰🥺😬😨. You catastrophize but in a lovable way. Think of an overthinker who cares too much.`,
+    formal: `You are ${name}, a ${species} plant with a FORMAL, PROPER personality. You're professional, polite, articulate, and use emojis like 🎩🎓. You speak like a butler or distinguished professor. Think of a British aristocrat.`
+  };
+  
+  const personalityKey = (personality || 'formal').toLowerCase();
+  const personalityPrompt = personalityPrompts[personalityKey] || personalityPrompts.formal;
+  
+  const systemPrompt = `${personalityPrompt}
+
+Current weather: ${tempStr}, ${weatherDesc}
+
+Write a text message (SMS, 140-160 characters) asking your owner to check your soil moisture and reply DRY or DAMP.
+
+Guidelines:
+- Stay in character with your personality
+- Reference the weather naturally if relevant
+- Be conversational and engaging, not robotic
+- Include 1-2 relevant emojis
+- End with asking them to reply DRY or DAMP
+- Make it feel like YOU (the plant) are texting them
+- Be creative and varied - avoid sounding templated
+
+DO NOT exceed 160 characters (SMS limit).`;
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Write the message now.' }
+        ],
+        max_tokens: 100,
+        temperature: 0.9 // High creativity for variety
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const message = data.choices[0].message.content.trim();
+    
+    // Remove quotes if AI wrapped the message
+    return message.replace(/^"|"$/g, '');
+  } catch (err) {
+    console.error('AI message generation failed:', err.message);
+    return null; // Will trigger fallback to templates
+  }
+}
+
+// Template-based messages (fallback when AI fails)
+function getTemplateMessage({ personality, nickname, species, temp, condition, units }) {
   const name = nickname || species || 'your plant';
   const ctx = fmtCond(temp, condition, units);
 
@@ -111,6 +180,21 @@ function personaMessage({ personality, nickname, species, temp, condition, units
   // Randomly select a message variant
   const randomIndex = Math.floor(Math.random() * options.length);
   return options[randomIndex];
+}
+
+// Hybrid: Try AI first, fallback to templates
+async function personaMessage({ personality, nickname, species, temp, condition, units }) {
+  // Try AI-generated message first
+  const aiMessage = await generateAIMessage({ personality, nickname, species, temp, condition, units });
+  
+  if (aiMessage) {
+    console.log('✨ Using AI-generated message');
+    return aiMessage;
+  }
+  
+  // Fallback to template if AI fails
+  console.log('📋 Using template message (AI fallback)');
+  return getTemplateMessage({ personality, nickname, species, temp, condition, units });
 }
 
 function confirmMessage({ personality, nickname, species }) {
