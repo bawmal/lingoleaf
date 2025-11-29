@@ -33,6 +33,7 @@ Current weather: ${tempStr}, ${weatherDesc}
 Write a text message (SMS, 140-160 characters) asking your owner to check your soil moisture and reply DRY or DAMP.
 
 Guidelines:
+- Start with your plant name ("${name} here..." or "${name} whispers..." etc)
 - Stay in character with your personality
 - Reference the weather naturally if relevant
 - Be conversational and engaging, not robotic
