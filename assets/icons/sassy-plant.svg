@@ -1,0 +1,37 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#ff9f43" stroke="#ee5a24" stroke-width="2"/>
+  
+  <!-- Plant with sassy personality -->
+  <g transform="translate(32, 28)">
+    <!-- Main leaf -->
+    <ellipse cx="0" cy="0" rx="12" ry="8" fill="#ff6b6b"/>
+    
+    <!-- Sunglasses -->
+    <rect x="-8" y="-2" width="16" height="4" fill="#2c3e50" rx="2"/>
+    <circle cx="-4" cy="0" r="3" fill="#2c3e50"/>
+    <circle cx="4" cy="0" r="3" fill="#2c3e50"/>
+    <rect x="-1" y="-2" width="2" height="4" fill="#2c3e50"/>
+    
+    <!-- Sassy smile -->
+    <path d="M-6 4 Q0 8 6 4" stroke="#2c3e50" stroke-width="2" fill="none"/>
+    
+    <!-- Hand on hip gesture (leaf) -->
+    <ellipse cx="-10" cy="2" rx="4" ry="2" fill="#ff6b6b" transform="rotate(-30 -10 2)"/>
+  </g>
+  
+  <!-- Stem -->
+  <rect x="30" y="36" width="4" height="8" fill="#ee5a24"/>
+  
+  <!-- Pot with attitude -->
+  <path d="M26 44L28 52H36L38 44H26Z" fill="#ff6b6b"/>
+  <rect x="24" y="42" width="16" height="3" fill="#ee5a24"/>
+  
+  <!-- Sparkle effects -->
+  <g fill="#ffd700" opacity="0.8">
+    <circle cx="18" cy="20" r="2"/>
+    <circle cx="46" cy="18" r="1.5"/>
+    <circle cx="20" cy="40" r="1"/>
+    <circle cx="44" cy="42" r="1.5"/>
+  </g>
+</svg>

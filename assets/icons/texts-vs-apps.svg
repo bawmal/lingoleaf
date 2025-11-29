@@ -1,0 +1,64 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#87a96b" stroke="#6b8e5a" stroke-width="2"/>
+  
+  <!-- Phone (left) - Texts -->
+  <g transform="translate(20, 24)">
+    <rect x="-8" y="-12" width="16" height="24" fill="#2c3e50" stroke="#34495e" stroke-width="1" rx="2"/>
+    <rect x="-6" y="-10" width="12" height="16" fill="#3498db"/>
+    <!-- Text messages -->
+    <g fill="#ffffff" font-family="Arial, sans-serif" font-size="3">
+      <rect x="-4" y="-8" width="8" height="2" rx="1" fill="#2ecc71"/>
+      <rect x="-4" y="-5" width="6" height="2" rx="1" fill="#ecf0f1"/>
+      <rect x="-4" y="-2" width="7" height="2" rx="1" fill="#2ecc71"/>
+      <rect x="-4" y="1" width="5" height="2" rx="1" fill="#ecf0f1"/>
+    </g>
+    <!-- Check marks for delivered messages -->
+    <g fill="#2ecc71" font-size="4">
+      <text x="2" y="-7">✓</text>
+      <text x="1" y="-1">✓</text>
+    </g>
+  </g>
+  
+  <!-- VS symbol -->
+  <text x="32" y="28" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">VS</text>
+  
+  <!-- App icon (right) - Apps -->
+  <g transform="translate(44, 24)">
+    <rect x="-8" y="-12" width="16" height="24" fill="#2c3e50" stroke="#34495e" stroke-width="1" rx="2"/>
+    <rect x="-6" y="-10" width="12" height="16" fill="#34495e"/>
+    <!-- App icons -->
+    <g>
+      <rect x="-4" y="-8" width="4" height="4" fill="#e74c3c" rx="1"/>
+      <rect x="1" y="-8" width="4" height="4" fill="#f39c12" rx="1"/>
+      <rect x="-4" y="-3" width="4" height="4" fill="#9b59b6" rx="1"/>
+      <rect x="1" y="-3" width="4" height="4" fill="#1abc9c" rx="1"/>
+    </g>
+    <!-- Notification badges -->
+    <g fill="#e74c3c">
+      <circle cx="3" cy="-6" r="2"/>
+      <text x="3" y="-5" text-anchor="middle" fill="#ffffff" font-size="2">3</text>
+      <circle cx="3" cy="-1" r="2"/>
+      <text x="3" y="0" text-anchor="middle" fill="#ffffff" font-size="2">5</text>
+    </g>
+  </g>
+  
+  <!-- Success arrow pointing to phone -->
+  <g stroke="#2ecc71" stroke-width="2" fill="none">
+    <path d="M14 40 L20 36 L18 38 M20 36 L18 34"/>
+  </g>
+  
+  <!-- Plant at bottom -->
+  <g transform="translate(32, 48)">
+    <ellipse cx="0" cy="-4" rx="4" ry="2" fill="#90ee90"/>
+    <rect x="-1" y="-2" width="2" height="3" fill="#228b22"/>
+    <path d="M-3 2L-2 5H2L3 2H-3Z" fill="#8b7355"/>
+    <rect x="-4" y="0" width="8" height="2" fill="#6b5a45"/>
+  </g>
+  
+  <!-- Stats -->
+  <g fill="#ffffff" font-family="Arial, sans-serif" font-size="6" text-anchor="middle">
+    <text x="20" y="56">98%</text>
+    <text x="44" y="56">20%</text>
+  </g>
+</svg>

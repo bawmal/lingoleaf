@@ -1,0 +1,26 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#87a96b" stroke="#6b8e5a" stroke-width="2"/>
+  
+  <!-- Small sprout -->
+  <g transform="translate(32, 32)">
+    <!-- Seed -->
+    <ellipse cx="0" cy="8" rx="8" ry="4" fill="#8b7355"/>
+    
+    <!-- Tiny sprout -->
+    <path d="M0 4C-2 4 -3 2 -3 0C-3 -2 -2 -4 0 -4C2 -4 3 -2 3 0C3 2 2 4 0 4Z" fill="#90ee90"/>
+    
+    <!-- First leaves -->
+    <ellipse cx="-2" cy="-4" rx="3" ry="2" fill="#90ee90" transform="rotate(-20 -2 -4)"/>
+    <ellipse cx="2" cy="-4" rx="3" ry="2" fill="#90ee90" transform="rotate(20 2 -4)"/>
+    
+    <!-- Small root -->
+    <path d="M0 8 L0 12" stroke="#654321" stroke-width="2"/>
+    <path d="M0 10 L-2 12" stroke="#654321" stroke-width="1"/>
+    <path d="M0 10 L2 12" stroke="#654321" stroke-width="1"/>
+  </g>
+  
+  <!-- "FREE" label -->
+  <rect x="20" y="48" width="24" height="8" fill="#2ecc71" rx="4"/>
+  <text x="32" y="54" text-anchor="middle" fill="#ffffff" font-size="6" font-weight="bold">FREE</text>
+</svg>

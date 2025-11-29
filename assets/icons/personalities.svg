@@ -1,0 +1,73 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#87a96b" stroke="#6b8e5a" stroke-width="2"/>
+  
+  <!-- Four personality faces -->
+  
+  <!-- Sassy (top-left) - sunglasses -->
+  <g transform="translate(16, 16)">
+    <circle cx="0" cy="0" r="8" fill="#ff9f43"/>
+    <!-- Sunglasses -->
+    <rect x="-5" y="-2" width="10" height="3" fill="#2c3e50" rx="1"/>
+    <circle cx="-2" cy="-1" r="2" fill="#2c3e50"/>
+    <circle cx="2" cy="-1" r="2" fill="#2c3e50"/>
+    <!-- Confident smile -->
+    <path d="M-3 2 Q0 4 3 2" stroke="#2c3e50" stroke-width="1" fill="none"/>
+  </g>
+  
+  <!-- Zen (top-right) - meditation -->
+  <g transform="translate(48, 16)">
+    <circle cx="0" cy="0" r="8" fill="#55efc4"/>
+    <!-- Closed eyes -->
+    <path d="M-3 -2 Q-2 -1 -1 -2" stroke="#2c3e50" stroke-width="1" fill="none"/>
+    <path d="M1 -2 Q2 -1 3 -2" stroke="#2c3e50" stroke-width="1" fill="none"/>
+    <!-- Peaceful smile -->
+    <path d="M-2 2 Q0 3 2 2" stroke="#2c3e50" stroke-width="1" fill="none"/>
+    <!-- Halo -->
+    <circle cx="0" cy="-6" r="3" stroke="#ffd700" stroke-width="1" fill="none"/>
+  </g>
+  
+  <!-- Anxious (bottom-left) - worried -->
+  <g transform="translate(16, 48)">
+    <circle cx="0" cy="0" r="8" fill="#ff6b6b"/>
+    <!-- Worried eyes -->
+    <circle cx="-2" cy="-2" r="1" fill="#2c3e50"/>
+    <circle cx="2" cy="-2" r="1" fill="#2c3e50"/>
+    <!-- Worried mouth -->
+    <path d="M-2 2 Q0 1 2 2" stroke="#2c3e50" stroke-width="1" fill="none"/>
+    <!-- Sweat drop -->
+    <ellipse cx="5" cy="-3" rx="1" ry="2" fill="#4a90e2"/>
+  </g>
+  
+  <!-- Formal (bottom-right) - monocle -->
+  <g transform="translate(48, 48)">
+    <circle cx="0" cy="0" r="8" fill="#6c5ce7"/>
+    <!-- Monocle -->
+    <circle cx="-2" cy="-1" r="3" stroke="#2c3e50" stroke-width="1" fill="none"/>
+    <circle cx="-2" cy="-1" r="0.5" fill="#2c3e50"/>
+    <!-- Eye -->
+    <circle cx="2" cy="-1" r="0.5" fill="#2c3e50"/>
+    <!-- Formal smile -->
+    <path d="M-2 2 Q0 3 2 2" stroke="#2c3e50" stroke-width="1" fill="none"/>
+    <!-- Top hat hint -->
+    <rect x="-3" y="-6" width="6" height="1" fill="#2c3e50"/>
+  </g>
+  
+  <!-- Center plant connecting all personalities -->
+  <path d="M32 26C30 26 28 28 28 30C28 32 30 34 32 34C34 34 36 32 36 30C36 28 34 26 32 26Z" fill="#a8d5ba"/>
+  
+  <!-- Connection lines -->
+  <g stroke="#ffffff" stroke-width="1" opacity="0.4">
+    <line x1="24" y1="20" x2="30" y2="28"/>
+    <line x1="40" y1="20" x2="34" y2="28"/>
+    <line x1="24" y1="44" x2="30" y2="32"/>
+    <line x1="40" y1="44" x2="34" y2="32"/>
+  </g>
+  
+  <!-- Stem -->
+  <rect x="30" y="34" width="4" height="8" fill="#6b8e5a"/>
+  
+  <!-- Pot -->
+  <path d="M26 42L28 50H36L38 42H26Z" fill="#8b7355"/>
+  <rect x="24" y="40" width="16" height="3" fill="#6b5a45"/>
+</svg>

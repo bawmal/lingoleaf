@@ -1,0 +1,54 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#87a96b" stroke="#6b8e5a" stroke-width="2"/>
+  
+  <!-- Window frame -->
+  <rect x="12" y="12" width="40" height="30" fill="#e8f4f8" stroke="#8b7355" stroke-width="2" rx="2"/>
+  <line x1="32" y1="12" x2="32" y2="42" stroke="#8b7355" stroke-width="2"/>
+  <line x1="12" y1="27" x2="52" y2="27" stroke="#8b7355" stroke-width="2"/>
+  
+  <!-- Compass rose -->
+  <g transform="translate(32, 27)">
+    <!-- Outer circle -->
+    <circle cx="0" cy="0" r="12" fill="#ffffff" stroke="#6b8e5a" stroke-width="1" opacity="0.9"/>
+    
+    <!-- Cardinal directions -->
+    <g fill="#2c3e50" font-family="Arial, sans-serif" font-size="8" font-weight="bold">
+      <text x="0" y="-8" text-anchor="middle">N</text>
+      <text x="8" y="3" text-anchor="middle">E</text>
+      <text x="0" y="10" text-anchor="middle">S</text>
+      <text x="-8" y="3" text-anchor="middle">W</text>
+    </g>
+    
+    <!-- Compass needle -->
+    <path d="M0 -6 L2 0 L0 6 L-2 0 Z" fill="#ff6b6b"/>
+    <path d="M0 -6 L2 0 L0 2 L-2 0 Z" fill="#4a90e2"/>
+  </g>
+  
+  <!-- Sun rays from top-left (North-East) -->
+  <g stroke="#ffd700" stroke-width="2" opacity="0.6">
+    <line x1="16" y1="16" x2="20" y2="20"/>
+    <line x1="14" y1="20" x2="18" y2="24"/>
+    <line x1="20" y1="14" x2="24" y2="18"/>
+  </g>
+  
+  <!-- Plant on windowsill -->
+  <g transform="translate(32, 48)">
+    <!-- Plant leaves showing growth toward light -->
+    <ellipse cx="-4" cy="-4" rx="6" ry="3" fill="#90ee90" transform="rotate(-30 -4 -4)"/>
+    <ellipse cx="4" cy="-4" rx="6" ry="3" fill="#90ee90" transform="rotate(30 4 -4)"/>
+    <ellipse cx="0" cy="-6" rx="5" ry="3" fill="#90ee90"/>
+    <rect x="-1" y="-2" width="2" height="4" fill="#228b22"/>
+    
+    <!-- Pot -->
+    <path d="M-4 2L-3 6H3L4 2H-4Z" fill="#8b7355"/>
+    <rect x="-5" y="0" width="10" height="2" fill="#6b5a45"/>
+  </g>
+  
+  <!-- Light rays hitting plant -->
+  <g stroke="#ffd700" stroke-width="1" opacity="0.4" stroke-dasharray="2,2">
+    <line x1="20" y1="20" x2="30" y2="44"/>
+    <line x1="24" y1="18" x2="32" y2="42"/>
+    <line x1="28" y1="16" x2="34" y2="40"/>
+  </g>
+</svg>

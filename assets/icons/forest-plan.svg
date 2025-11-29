@@ -1,0 +1,42 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+  
+  <!-- Forest of plants -->
+  <g transform="translate(32, 32)">
+    <!-- Large central plant -->
+    <g>
+      <path d="M-4 2L-2 8H2L4 2H-4Z" fill="#8b7355"/>
+      <rect x="-5" y="0" width="10" height="2" fill="#6b5a45"/>
+      <rect x="-1" y="-4" width="2" height="4" fill="#228b22"/>
+      <ellipse cx="0" cy="-6" rx="5" ry="4" fill="#90ee90"/>
+      <ellipse cx="-3" cy="-4" rx="3" ry="2" fill="#90ee90" transform="rotate(-30 -3 -4)"/>
+      <ellipse cx="3" cy="-4" rx="3" ry="2" fill="#90ee90" transform="rotate(30 3 -4)"/>
+    </g>
+    
+    <!-- Small left plant -->
+    <g transform="translate(-10, 4) scale(0.7)">
+      <path d="M-2 1L-1 4H1L2 1H-2Z" fill="#8b7355"/>
+      <rect x="-2" y="0" width="4" height="1" fill="#6b5a45"/>
+      <rect x="0" y="-2" width="1" height="2" fill="#228b22"/>
+      <ellipse cx="0" cy="-3" rx="2" ry="1.5" fill="#90ee90"/>
+    </g>
+    
+    <!-- Small right plant -->
+    <g transform="translate(10, 4) scale(0.7)">
+      <path d="M-2 1L-1 4H1L2 1H-2Z" fill="#8b7355"/>
+      <rect x="-2" y="0" width="4" height="1" fill="#6b5a45"/>
+      <rect x="0" y="-2" width="1" height="2" fill="#228b22"/>
+      <ellipse cx="0" cy="-3" rx="2" ry="1.5" fill="#90ee90"/>
+    </g>
+    
+    <!-- Crown/Star on main plant -->
+    <g fill="#ffd700">
+      <path d="M0 -10 L1 -8 L3 -8 L1.5 -6.5 L2.5 -4.5 L0 -6 L-2.5 -4.5 L-1.5 -6.5 L-3 -8 L-1 -8 Z"/>
+    </g>
+  </g>
+  
+  <!-- "FOREST" label -->
+  <rect x="18" y="48" width="28" height="8" fill="#27ae60" rx="4"/>
+  <text x="32" y="54" text-anchor="middle" fill="#ffffff" font-size="5" font-weight="bold">FOREST</text>
+</svg>

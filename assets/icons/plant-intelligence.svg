@@ -1,0 +1,29 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#87a96b" stroke="#6b8e5a" stroke-width="2"/>
+  
+  <!-- Plant leaf -->
+  <path d="M32 20C28 20 24 24 24 30C24 36 28 40 32 40C36 40 40 36 40 30C40 24 36 20 32 20Z" fill="#a8d5ba"/>
+  
+  <!-- Brain/neural network pattern -->
+  <circle cx="28" cy="26" r="2" fill="#ffffff" opacity="0.8"/>
+  <circle cx="36" cy="26" r="2" fill="#ffffff" opacity="0.8"/>
+  <circle cx="32" cy="30" r="2" fill="#ffffff" opacity="0.8"/>
+  <circle cx="28" cy="34" r="2" fill="#ffffff" opacity="0.8"/>
+  <circle cx="36" cy="34" r="2" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Neural connections -->
+  <line x1="28" y1="26" x2="32" y2="30" stroke="#ffffff" stroke-width="1" opacity="0.6"/>
+  <line x1="36" y1="26" x2="32" y2="30" stroke="#ffffff" stroke-width="1" opacity="0.6"/>
+  <line x1="32" y1="30" x2="28" y2="34" stroke="#ffffff" stroke-width="1" opacity="0.6"/>
+  <line x1="32" y1="30" x2="36" y2="34" stroke="#ffffff" stroke-width="1" opacity="0.6"/>
+  <line x1="28" y1="26" x2="36" y2="34" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="36" y1="26" x2="28" y2="34" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  
+  <!-- Stem -->
+  <rect x="30" y="40" width="4" height="8" fill="#6b8e5a"/>
+  
+  <!-- Pot -->
+  <path d="M26 48L28 56H36L38 48H26Z" fill="#8b7355"/>
+  <rect x="24" y="46" width="16" height="3" fill="#6b5a45"/>
+</svg>

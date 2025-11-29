@@ -1,0 +1,32 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+  
+  <!-- Growing plant -->
+  <g transform="translate(32, 32)">
+    <!-- Pot -->
+    <path d="M-6 4L-4 10H4L6 4H-6Z" fill="#8b7355"/>
+    <rect x="-7" y="2" width="14" height="3" fill="#6b5a45"/>
+    
+    <!-- Multiple stems -->
+    <rect x="-1" y="-2" width="2" height="6" fill="#228b22"/>
+    <rect x="-3" y="0" width="1.5" height="4" fill="#228b22"/>
+    <rect x="1.5" y="0" width="1.5" height="4" fill="#228b22"/>
+    
+    <!-- Multiple leaves -->
+    <ellipse cx="0" cy="-4" rx="4" ry="3" fill="#90ee90"/>
+    <ellipse cx="-2" cy="-2" rx="3" ry="2" fill="#90ee90" transform="rotate(-30 -2 -2)"/>
+    <ellipse cx="2" cy="-2" rx="3" ry="2" fill="#90ee90" transform="rotate(30 2 -2)"/>
+    <ellipse cx="-3" cy="1" rx="2" ry="1.5" fill="#90ee90" transform="rotate(-45 -3 1)"/>
+    <ellipse cx="3" cy="1" rx="2" ry="1.5" fill="#90ee90" transform="rotate(45 3 1)"/>
+    
+    <!-- Growth arrow -->
+    <g stroke="#2ecc71" stroke-width="2" fill="none">
+      <path d="M8 -8 L8 -4 L6 -6 M8 -4 L10 -6"/>
+    </g>
+  </g>
+  
+  <!-- "GROWTH" label -->
+  <rect x="18" y="48" width="28" height="8" fill="#3498db" rx="4"/>
+  <text x="32" y="54" text-anchor="middle" fill="#ffffff" font-size="5" font-weight="bold">GROWTH</text>
+</svg>
