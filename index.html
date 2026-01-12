@@ -101,30 +101,34 @@
             overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
+        .hero-leaves-right {
             position: absolute;
-            top: -100px;
-            right: -100px;
-            width: 400px;
-            height: 600px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><path d="M100,0 Q150,50 150,100 T100,200 Q50,250 50,300" fill="%2302B91A" opacity="0.1"/></svg>');
+            top: -50px;
+            right: -50px;
+            width: 424px;
+            height: 586px;
+            background: url('images/leaves-decoration.png');
             background-size: contain;
             background-repeat: no-repeat;
+            mix-blend-mode: multiply;
             pointer-events: none;
+            z-index: 1;
         }
 
-        .hero::after {
-            content: '';
+        .hero-leaves-left {
             position: absolute;
-            bottom: -100px;
+            top: 100px;
             left: -100px;
-            width: 400px;
-            height: 600px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><path d="M100,0 Q50,50 50,100 T100,200 Q150,250 150,300" fill="%2302B91A" opacity="0.1"/></svg>');
+            width: 300px;
+            height: 400px;
+            background: url('images/leaves-decoration.png');
             background-size: contain;
             background-repeat: no-repeat;
+            mix-blend-mode: multiply;
             pointer-events: none;
+            transform: scaleX(-1) rotate(30deg);
+            opacity: 0.7;
+            z-index: 1;
         }
 
         .beta-badge {
@@ -1601,6 +1605,12 @@
                 text-align: center;
             }
 
+            /* Hide leaves decoration on mobile */
+            .hero-leaves-right,
+            .hero-leaves-left {
+                display: none;
+            }
+
             /* Hero Section */
             .hero {
                 padding: 40px 16px 60px;
@@ -1947,6 +1957,9 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <div class="hero-leaves-right"></div>
+        <div class="hero-leaves-left"></div>
+        
         <div class="beta-badge">
             ✨ FREE 30-DAY BETA (Limited Spots)
         </div>
