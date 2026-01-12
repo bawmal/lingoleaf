@@ -18,3 +18,8 @@
 [[scheduled.functions]]
   name = "schedule-check"
   cron = "0 * * * *"
+
+# Scheduled job: check trial expiry daily at 9am UTC
+[[scheduled.functions]]
+  name = "check-trial-expiry"
+  cron = "0 9 * * *"
