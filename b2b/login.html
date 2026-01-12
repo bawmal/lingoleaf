@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LingoLeaf for Business</title>
+    <title>Log In - LingoLeaf for Business</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -164,10 +165,17 @@
     </div>
 
     <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://qrmexlkpspnqxddlxsxz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybWV4bGtwc3BucXhkZGx4c3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTcyNjUsImV4cCI6MjA1MjI5MzI2NX0.CnI8X6E1lMnVKGaXVpRpxAWmCA1kXvVmBn1OvhMFRGg';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         // Check if already logged in
-        if (localStorage.getItem('token')) {
-            window.location.href = '/b2b/dashboard.html';
-        }
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                window.location.href = '/b2b/dashboard.html';
+            }
+        });
         
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -180,24 +188,14 @@
             errorDiv.style.display = 'none';
             
             try {
-                const response = await fetch('/.netlify/functions/auth-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: document.getElementById('email').value,
-                        password: document.getElementById('password').value
-                    })
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
                 });
                 
-                const data = await response.json();
+                if (error) throw error;
                 
-                if (response.ok && data.token) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('shop', JSON.stringify(data.shop));
-                    window.location.href = '/b2b/dashboard.html';
-                } else {
-                    throw new Error(data.error || 'Login failed');
-                }
+                window.location.href = '/b2b/dashboard.html';
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.style.display = 'block';

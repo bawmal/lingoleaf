@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -464,32 +465,69 @@
     </div>
 
     <script>
-        const token = localStorage.getItem('token');
-        const shop = JSON.parse(localStorage.getItem('shop') || '{}');
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://qrmexlkpspnqxddlxsxz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybWV4bGtwc3BucXhkZGx4c3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTcyNjUsImV4cCI6MjA1MjI5MzI2NX0.CnI8X6E1lMnVKGaXVpRpxAWmCA1kXvVmBn1OvhMFRGg';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Check auth
-        if (!token) {
-            window.location.href = '/b2b/login.html';
+        let currentUser = null;
+        let currentShop = null;
+        
+        // Check auth on page load
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = '/b2b/login.html';
+                return;
+            }
+            currentUser = session.user;
+            
+            // Get or create shop record
+            const { data: shop, error } = await supabase
+                .from('shops')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            
+            if (shop) {
+                currentShop = shop;
+            } else {
+                // Create shop if doesn't exist (for Google sign-ups)
+                const { data: newShop } = await supabase
+                    .from('shops')
+                    .insert({
+                        id: currentUser.id,
+                        email: currentUser.email,
+                        business_name: currentUser.user_metadata?.business_name || currentUser.email.split('@')[0],
+                        plan: 'trial'
+                    })
+                    .select()
+                    .single();
+                currentShop = newShop;
+            }
+            
+            // Set shop name
+            document.getElementById('shopName').textContent = currentShop?.business_name || 'Your Shop';
+            document.getElementById('planName').textContent = (currentShop?.plan || 'trial').charAt(0).toUpperCase() + (currentShop?.plan || 'trial').slice(1);
+            
+            // Load customers
+            loadCustomers();
         }
         
-        // Set shop name
-        document.getElementById('shopName').textContent = shop.businessName || 'Your Shop';
-        document.getElementById('planName').textContent = (shop.plan || 'trial').charAt(0).toUpperCase() + (shop.plan || 'trial').slice(1);
+        checkAuth();
         
         // Load customers
         async function loadCustomers() {
             try {
-                const response = await fetch('/.netlify/functions/customers', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                if (!currentShop) return;
                 
-                if (response.status === 401) {
-                    logout();
-                    return;
-                }
+                const { data: customers, error } = await supabase
+                    .from('b2b_customers')
+                    .select('*')
+                    .eq('shop_id', currentShop.id)
+                    .order('created_at', { ascending: false });
                 
-                const data = await response.json();
-                const customers = data.customers || [];
+                if (error) throw error;
                 
                 // Update stats
                 document.getElementById('totalCustomers').textContent = customers.length;
@@ -556,32 +594,25 @@
             btn.disabled = true;
             
             try {
-                const response = await fetch('/.netlify/functions/customers', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
+                const { error } = await supabase
+                    .from('b2b_customers')
+                    .insert({
+                        shop_id: currentShop.id,
                         name: document.getElementById('customerName').value,
                         phone: document.getElementById('customerPhone').value,
-                        email: document.getElementById('customerEmail').value,
-                        plantType: document.getElementById('plantType').value,
-                        plantName: document.getElementById('plantName').value,
+                        email: document.getElementById('customerEmail').value || null,
+                        plant_type: document.getElementById('plantType').value,
+                        plant_name: document.getElementById('plantName').value || null,
                         personality: document.getElementById('personality').value
-                    })
-                });
+                    });
                 
-                if (response.ok) {
-                    closeAddModal();
-                    this.reset();
-                    loadCustomers();
-                } else {
-                    const data = await response.json();
-                    alert(data.error || 'Failed to add customer');
-                }
+                if (error) throw error;
+                
+                closeAddModal();
+                this.reset();
+                loadCustomers();
             } catch (error) {
-                alert('Error adding customer');
+                alert(error.message || 'Error adding customer');
             } finally {
                 btn.textContent = 'Add Customer';
                 btn.disabled = false;
@@ -620,16 +651,14 @@
             if (!confirm('Are you sure you want to delete this customer?')) return;
             
             try {
-                const response = await fetch(`/.netlify/functions/customers?id=${customerId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const { error } = await supabase
+                    .from('b2b_customers')
+                    .delete()
+                    .eq('id', customerId)
+                    .eq('shop_id', currentShop.id);
                 
-                if (response.ok) {
-                    loadCustomers();
-                } else {
-                    alert('Failed to delete customer');
-                }
+                if (error) throw error;
+                loadCustomers();
             } catch (error) {
                 alert('Error deleting customer');
             }
@@ -645,9 +674,8 @@
         }
         
         // Logout
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('shop');
+        async function logout() {
+            await supabase.auth.signOut();
             window.location.href = '/b2b/login.html';
         }
         
@@ -655,9 +683,6 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeAddModal();
         });
-        
-        // Load on page load
-        loadCustomers();
     </script>
 </body>
 </html>
