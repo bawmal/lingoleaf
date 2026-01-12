@@ -3,10 +3,24 @@ const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
+    // Handle CORS preflight
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: ''
+        };
+    }
+
     // Only allow POST
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
+            headers: { 'Access-Control-Allow-Origin': '*' },
             body: JSON.stringify({ error: 'Method not allowed' })
         };
     }
@@ -17,6 +31,7 @@ exports.handler = async (event) => {
         if (!email) {
             return {
                 statusCode: 400,
+                headers: { 'Access-Control-Allow-Origin': '*' },
                 body: JSON.stringify({ error: 'Email is required' })
             };
         }
@@ -61,6 +76,7 @@ exports.handler = async (event) => {
         console.error('Stripe checkout error:', error);
         return {
             statusCode: 500,
+            headers: { 'Access-Control-Allow-Origin': '*' },
             body: JSON.stringify({ error: error.message })
         };
     }
