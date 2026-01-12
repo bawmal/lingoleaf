@@ -1553,110 +1553,414 @@
             background: #EBEBEB;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Responsive - Tablet */
+        @media (max-width: 1024px) {
             .hero-title {
-                font-size: 48px;
+                font-size: 60px;
             }
 
             .polaroid-container {
-                height: 200px;
+                gap: 16px;
             }
 
             .polaroid img {
-                width: 120px;
-                height: 120px;
+                width: 140px;
+                height: 140px;
             }
 
-            .section-title {
+            .testimonial-container {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .phone-mockup {
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            /* Hero Section */
+            .hero {
+                padding: 60px 16px 40px;
+            }
+
+            .hero-title {
                 font-size: 36px;
+                line-height: 1.1;
+                margin-bottom: 24px;
             }
 
+            .hero-subtitle {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+                margin-bottom: 24px;
+            }
+
+            .beta-badge {
+                font-size: 12px;
+                padding: 10px 16px;
+                margin-bottom: 20px;
+            }
+
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+
+            /* Polaroid Cards */
+            .polaroid-container {
+                height: auto;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+                padding: 20px 0;
+            }
+
+            .string-line {
+                display: none;
+            }
+
+            .polaroid {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none !important;
+            }
+
+            .polaroid img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .polaroid-label {
+                font-size: 10px;
+                padding: 6px 8px;
+            }
+
+            .pin {
+                width: 8px;
+                height: 8px;
+                top: -4px;
+            }
+
+            /* Navigation */
             nav {
                 flex-direction: column;
-                gap: 16px;
-                padding: 20px;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .nav-cta {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Section Titles */
+            .section-title {
+                font-size: 28px;
+                line-height: 1.2;
+            }
+
+            .section-subtitle {
+                font-size: 14px;
+            }
+
+            /* Testimonials */
+            .testimonials {
+                padding: 60px 16px;
             }
 
             .testimonial-content .section-title {
-                font-size: 40px;
+                font-size: 28px;
             }
 
             .stats-row {
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: 24px;
+                gap: 16px;
+            }
+
+            .stat-item {
+                min-width: 80px;
+            }
+
+            .stat-text {
+                font-size: 12px;
             }
 
             .testimonial-cards {
                 flex-direction: column;
                 align-items: center;
+                gap: 16px;
             }
 
             .testimonial-card {
                 width: 100%;
-                max-width: 306px;
+                max-width: 100%;
+                padding: 16px;
+            }
+
+            /* Problem Section */
+            .problem-section {
+                padding: 60px 16px;
             }
 
             .problem-container {
                 grid-template-columns: 1fr;
+                gap: 32px;
             }
 
             .problem-title {
-                font-size: 32px;
+                font-size: 28px;
             }
 
             .problem-phone {
                 order: -1;
                 padding-top: 0;
+                max-width: 250px;
+                margin: 0 auto;
+            }
+
+            .problem-card {
+                padding: 16px;
+            }
+
+            /* Solution Section */
+            .solution-section {
+                padding: 60px 16px;
             }
 
             .solution-title {
-                font-size: 32px;
+                font-size: 28px;
             }
 
             .solution-card {
                 grid-template-columns: 1fr;
+                padding: 24px;
+                gap: 24px;
             }
 
             .solution-text {
-                font-size: 18px;
+                font-size: 16px;
+            }
+
+            .solution-image {
+                height: 200px;
+            }
+
+            /* Features Section */
+            .features {
+                padding: 60px 16px;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+
+            /* PlantSona Section */
+            .plantsona-section {
+                padding: 60px 16px;
             }
 
             .plantsona-card {
                 flex-direction: column;
+                padding: 24px;
+            }
+
+            .plantsona-content {
+                padding: 0;
+            }
+
+            .plantsona-title {
+                font-size: 28px;
             }
 
             .plantsona-image {
                 width: 100%;
-                height: 250px;
+                height: 200px;
+            }
+
+            .plantsona-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Personalities Section */
+            .personalities-section {
+                padding: 60px 16px;
             }
 
             .personalities-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .personality-card {
+                padding: 16px;
+            }
+
+            .personality-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .personality-card-title {
+                font-size: 16px;
+            }
+
+            .personality-quote {
+                font-size: 12px;
+            }
+
+            /* Pricing Section */
+            .pricing {
+                padding: 60px 16px;
+            }
+
+            .pricing-wrapper {
+                flex-direction: column;
+            }
+
+            .pricing-card {
+                max-width: 100% !important;
+                width: 100%;
             }
 
             .pricing-decoration {
                 display: none;
             }
 
+            .pricing-price {
+                font-size: 48px;
+            }
+
+            /* Signup Section */
+            .signup {
+                padding: 60px 16px;
+            }
+
+            .signup-container {
+                padding: 0;
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .footer-content {
+            .form-input,
+            .form-select {
+                padding: 14px;
+                font-size: 16px;
+            }
+
+            .consent-box {
+                padding: 16px;
+            }
+
+            .checkbox-label {
+                font-size: 13px;
+            }
+
+            .submit-button {
+                padding: 16px;
+                font-size: 16px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 40px 16px 24px;
+            }
+
+            .footer-top {
                 flex-direction: column;
-                gap: 32px;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-brand {
+                justify-content: center;
             }
 
             .footer-links {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .footer-decoration {
+                font-size: 80px;
+                bottom: -30px;
+            }
+
+            /* Contact Modal */
+            .contact-modal-content {
+                width: 95%;
+                max-height: 85vh;
+            }
+
+            .contact-modal-header {
+                padding: 20px;
+            }
+
+            .contact-modal-header h2 {
+                font-size: 20px;
+            }
+
+            .contact-form {
+                padding: 20px;
+            }
+
+            .contact-buttons {
                 flex-direction: column;
-                gap: 16px;
-                text-align: center;
+            }
+        }
+
+        /* Responsive - Small Mobile */
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .polaroid img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .personalities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .stat-item {
+                width: 100%;
             }
         }
     </style>
