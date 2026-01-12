@@ -2312,12 +2312,35 @@
                     <li>✓ Seasonal Dormancy</li>
                     <li>✓ Predictive Logic</li>
                 </ul>
-                <a href="#signup" class="pricing-cta">Join Beta</a>
+                <a href="#signup" class="pricing-cta">Start Free Trial</a>
+                <button onclick="openSubscribeModal()" class="pricing-cta-secondary" style="margin-top: 12px; background: transparent; border: 2px solid #02B91A; color: #02B91A; cursor: pointer; width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 16px;">Already a user? Subscribe</button>
             </div>
             <div class="pricing-decoration">LingoLeaf</div>
         </div>
         
         <p style="text-align: center; margin-top: 40px; color: #6F6F6F;">🎉 Free for 30 days. No credit card required. Cancel anytime.</p>
+    
+    <!-- Subscribe Modal -->
+    <div id="subscribeModal" class="contact-modal">
+        <div class="contact-modal-content" style="max-width: 400px;">
+            <button class="contact-close" onclick="closeSubscribeModal()">&times;</button>
+            <h2 style="font-family: 'DM Serif Display', serif; font-size: 28px; margin-bottom: 8px;">Subscribe to LingoLeaf</h2>
+            <p style="color: #6F6F6F; margin-bottom: 24px;">Enter your email to continue to payment</p>
+            
+            <form id="subscribeForm">
+                <div class="contact-field">
+                    <label for="subscribe-email">Email Address *</label>
+                    <input type="email" id="subscribe-email" name="email" required placeholder="your@email.com">
+                </div>
+                
+                <button type="submit" class="contact-submit-btn" style="width: 100%;">
+                    Continue to Payment →
+                </button>
+            </form>
+            
+            <p style="font-size: 12px; color: #999; margin-top: 16px; text-align: center;">Secure payment powered by Stripe</p>
+        </div>
+    </div>
     </section>
 
     <!-- Signup Section -->
@@ -2557,6 +2580,52 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeContactModal();
+                closeSubscribeModal();
+            }
+        });
+
+        // Subscribe Modal Functions
+        function openSubscribeModal() {
+            document.getElementById('subscribeModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSubscribeModal() {
+            document.getElementById('subscribeModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Subscribe form submission - redirect to Stripe Checkout
+        document.getElementById('subscribeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('subscribe-email').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Redirecting...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/.netlify/functions/create-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error(data.error || 'Failed to create checkout session');
+                }
+            } catch (error) {
+                alert('Sorry, there was an error. Please try again or contact support.');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
         });
 
