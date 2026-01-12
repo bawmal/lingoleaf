@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled - LingoLeaf</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #FFF5F5 0%, #FFFFFF 100%);
+            padding: 24px;
+        }
+        .container {
+            background: white;
+            border-radius: 32px;
+            padding: 64px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        .icon {
+            width: 80px;
+            height: 80px;
+            background: #FEE2E2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: #1C1C1C;
+        }
+        p {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #02B91A, #18DA63);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 12px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+        .btn-secondary {
+            display: inline-block;
+            background: #F5F5F5;
+            color: #555;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #EBEBEB;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✕</div>
+        <h1>Payment Cancelled</h1>
+        <p>No worries! Your trial is still active. You can subscribe anytime before it expires to keep your plants happy.</p>
+        
+        <div class="buttons">
+            <a href="/#pricing" class="btn">Try Again</a>
+            <a href="/" class="btn-secondary">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

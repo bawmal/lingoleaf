@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - LingoLeaf</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #D4ECD9 0%, #FFFFFF 100%);
+            padding: 24px;
+        }
+        .container {
+            background: white;
+            border-radius: 32px;
+            padding: 64px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        .icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #02B91A, #18DA63);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: #1C1C1C;
+        }
+        p {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #02B91A, #18DA63);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+        .details {
+            background: #F5FFF7;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #E5F5E8;
+        }
+        .details-row:last-child {
+            border-bottom: none;
+        }
+        .details-label {
+            color: #555;
+            font-size: 14px;
+        }
+        .details-value {
+            font-weight: 700;
+            color: #02B91A;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✓</div>
+        <h1>Welcome to LingoLeaf!</h1>
+        <p>Your subscription is now active. Your plants are about to get a whole lot happier!</p>
+        
+        <div class="details">
+            <div class="details-row">
+                <span class="details-label">Plan</span>
+                <span class="details-value">LingoLeaf Beta</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Price</span>
+                <span class="details-value">$2.99/month</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Status</span>
+                <span class="details-value">Active ✓</span>
+            </div>
+        </div>
+        
+        <a href="/" class="btn">Go to Dashboard →</a>
+    </div>
+</body>
+</html>
