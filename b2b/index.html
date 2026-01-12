@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoLeaf for Business - Plant Care SMS for Nurseries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --green-primary: #02B91A;
+            --green-light: #18DA63;
+            --green-dark: #0A8F1A;
+            --bg-light: #F5FFF7;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: #1C1C1C;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+        
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            color: var(--green-primary);
+        }
+        
+        .logo span {
+            color: #1C1C1C;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: var(--green-primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--green-primary);
+            border: 2px solid var(--green-primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 60px 80px;
+            background: linear-gradient(180deg, #D4ECD9 0%, #FFFFFF 100%);
+        }
+        
+        .hero-content {
+            max-width: 600px;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: white;
+            border: 1px solid rgba(2, 185, 26, 0.3);
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 24px;
+        }
+        
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 56px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        
+        .hero h1 .green {
+            color: var(--green-primary);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 32px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 60px;
+            background: white;
+        }
+        
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 42px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 60px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: var(--bg-light);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+        
+        .feature-card p {
+            color: #555;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 60px;
+            background: var(--bg-light);
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+        
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            color: #555;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 100px 60px;
+            background: white;
+        }
+        
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background: white;
+            border: 2px solid #E5E5E5;
+            border-radius: 24px;
+            padding: 40px;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--green-primary);
+            position: relative;
+        }
+        
+        .pricing-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green-primary);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .pricing-price {
+            font-family: 'DM Serif Display', serif;
+            font-size: 48px;
+            color: var(--green-primary);
+        }
+        
+        .pricing-price span {
+            font-size: 18px;
+            color: #555;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 32px 0;
+        }
+        
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #EEE;
+            color: #555;
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 100px 60px;
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 42px;
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta p {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-bottom: 32px;
+        }
+        
+        .cta .btn {
+            background: white;
+            color: var(--green-primary);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 40px 60px;
+            background: #1C1C1C;
+            color: white;
+            text-align: center;
+        }
+        
+        footer a {
+            color: var(--green-light);
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 24px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 100px 24px 60px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .features, .how-it-works, .pricing, .cta {
+                padding: 60px 24px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps {
+                flex-direction: column;
+                gap: 40px;
+            }
+            
+            .pricing-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">LingoLeaf <span>for Business</span></div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="/b2b/login.html" class="btn btn-secondary">Login</a>
+            <a href="/b2b/signup.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🌱 For Plant Nurseries & Garden Centers</div>
+            <h1><span class="green">Delight</span> Your Customers After They Leave</h1>
+            <p>Send personalized plant care SMS reminders to your customers. Help their plants thrive, build loyalty, and drive repeat visits.</p>
+            <div class="hero-buttons">
+                <a href="/b2b/signup.html" class="btn btn-primary">Start Free Trial →</a>
+                <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <h2 class="section-title">Why Nurseries Love LingoLeaf</h2>
+        <p class="section-subtitle">Turn one-time buyers into lifelong plant parents</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Automated SMS Care</h3>
+                <p>Customers get timely watering reminders and care tips via text. No app download needed.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Fun Personalities</h3>
+                <p>Messages come from the plant itself! Choose sassy, zen, anxious, or formal tones.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Drive Repeat Visits</h3>
+                <p>Happy plants = happy customers who come back for more. Reduce plant deaths, increase loyalty.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Quick Setup</h3>
+                <p>Add customers in seconds. Just name, phone, and plant type. We handle the rest.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Simple Dashboard</h3>
+                <p>See all your customers, their plants, and message history in one clean view.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌦️</div>
+                <h3>Weather-Smart</h3>
+                <p>Reminders adapt to local weather. No watering tips when it's raining!</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Get started in under 5 minutes</p>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Sign Up Your Nursery</h3>
+                <p>Create your account with your business name and contact info.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Add Customers</h3>
+                <p>When someone buys a plant, add their name, phone, and plant type.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>They Get Care Tips</h3>
+                <p>Customers receive fun, personalized SMS reminders to keep their plants alive.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <h2 class="section-title">Simple Pricing</h2>
+        <p class="section-subtitle">Start free, upgrade when you're ready</p>
+        
+        <div class="pricing-cards">
+            <div class="pricing-card">
+                <div class="pricing-name">Starter</div>
+                <div class="pricing-price">Free</div>
+                <ul class="pricing-features">
+                    <li>✓ Up to 25 customers</li>
+                    <li>✓ All personality types</li>
+                    <li>✓ Basic dashboard</li>
+                    <li>✓ Email support</li>
+                </ul>
+                <a href="/b2b/signup.html" class="btn btn-secondary" style="width: 100%; text-align: center;">Get Started</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-name">Pro</div>
+                <div class="pricing-price">$29<span>/month</span></div>
+                <ul class="pricing-features">
+                    <li>✓ Unlimited customers</li>
+                    <li>✓ Custom message templates</li>
+                    <li>✓ Analytics dashboard</li>
+                    <li>✓ Priority support</li>
+                    <li>✓ Your branding on messages</li>
+                </ul>
+                <a href="/b2b/signup.html" class="btn btn-primary" style="width: 100%; text-align: center;">Start Free Trial</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Ready to Help Your Customers' Plants Thrive?</h2>
+        <p>Join nurseries already using LingoLeaf to build customer loyalty.</p>
+        <a href="/b2b/signup.html" class="btn">Start Your Free Trial →</a>
+    </section>
+
+    <footer>
+        <p>© 2025 LingoLeaf for Business. <a href="https://lingoleaf.ai">Consumer App</a> | <a href="mailto:info@lingoleaf.ai">Contact</a></p>
+    </footer>
+</body>
+</html>
