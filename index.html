@@ -1582,15 +1582,34 @@
 
         /* Responsive - Mobile */
         @media (max-width: 768px) {
+            /* Navigation - NOT sticky on mobile */
+            nav {
+                position: relative;
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .nav-cta {
+                width: 100%;
+                text-align: center;
+            }
+
             /* Hero Section */
             .hero {
-                padding: 60px 16px 40px;
+                padding: 40px 16px 60px;
             }
 
             .hero-title {
-                font-size: 36px;
+                font-size: 32px;
                 line-height: 1.1;
-                margin-bottom: 24px;
+                margin-bottom: 20px;
             }
 
             .hero-subtitle {
@@ -1614,58 +1633,9 @@
                 font-size: 16px;
             }
 
-            /* Polaroid Cards */
+            /* Hide Polaroid Cards on Mobile */
             .polaroid-container {
-                height: auto;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 12px;
-                padding: 20px 0;
-            }
-
-            .string-line {
                 display: none;
-            }
-
-            .polaroid {
-                position: relative;
-                top: auto;
-                left: auto;
-                transform: none !important;
-            }
-
-            .polaroid img {
-                width: 100px;
-                height: 100px;
-            }
-
-            .polaroid-label {
-                font-size: 10px;
-                padding: 6px 8px;
-            }
-
-            .pin {
-                width: 8px;
-                height: 8px;
-                top: -4px;
-            }
-
-            /* Navigation */
-            nav {
-                flex-direction: column;
-                gap: 12px;
-                padding: 16px;
-            }
-
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 12px;
-            }
-
-            .nav-cta {
-                width: 100%;
-                text-align: center;
             }
 
             /* Section Titles */
