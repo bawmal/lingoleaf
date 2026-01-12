@@ -3,18 +3,41 @@
 
 const fetch = require('node-fetch');
 
-function fmtCond(temp, condition, units='metric') {
+function fmtCond(temp, condition, units='metric', language = 'en') {
   const t = Number.isFinite(temp) ? Math.round(temp) : null;
   const unit = units === 'imperial' ? '°F' : '°C';
   const w = (condition || 'Fair').toString().toLowerCase();
+  
+  if (language === 'fr') {
+    const condition_fr = {
+      'fair': 'beau',
+      'sunny': 'ensoleillé',
+      'cloudy': 'nuageux',
+      'rainy': 'pluvieux',
+      'clear': 'dégagé',
+      'partly cloudy': 'partiellement nuageux',
+      'overcast': 'couvert',
+      'rain': 'pluvieux',
+      'clouds': 'nuageux'
+    }[w] || w;
+    
+    return t != null ? `Il fait ${t}${unit} et ${condition_fr}.` : `Il fait ${condition_fr}.`;
+  }
+  
   return t != null ? `It's ${t}${unit} and ${w}.` : `It's ${w}.`;
 }
 
-// AI-powered message generation with personality prompts
-async function generateAIMessage({ personality, nickname, species, temp, condition, units }) {
-  const name = nickname || species || 'your plant';
-  const tempStr = temp != null ? `${Math.round(temp)}°${units === 'imperial' ? 'F' : 'C'}` : 'unknown';
+// AI-powered message generation with personality prompts and language support
+async function generateAIMessage({ personality, nickname, species, temp, condition, units, language = 'en' }) {
+  const name = nickname || species || (language === 'fr' ? 'votre plante' : 'your plant');
+  const tempStr = temp != null ? `${Math.round(temp)}°${units === 'imperial' ? 'F' : 'C'}` : (language === 'fr' ? 'inconnu' : 'unknown');
   const weatherDesc = condition ? condition.toLowerCase() : 'fair';
+  
+  const languageInstructions = language === 'fr' ? 
+    'IMPORTANT: Generate this message in FRENCH language. All text must be in French. User should reply SEC or HUMIDE.' : 
+    'IMPORTANT: Generate this message in ENGLISH language. User should reply DRY or DAMP.';
+  
+  const responseWords = language === 'fr' ? 'SEC ou HUMIDE' : 'DRY or DAMP';
   
   const personalityPrompts = {
     sassy: `You are ${name}, a ${species} plant with a SASSY, DEMANDING personality. You're bold, dramatic, impatient, and use emojis like 💅😤🙄🔥. You're not mean, just very direct and expect immediate attention. Think of a diva who knows their worth.`,
@@ -28,9 +51,11 @@ async function generateAIMessage({ personality, nickname, species, temp, conditi
   
   const systemPrompt = `${personalityPrompt}
 
+${languageInstructions}
+
 Current weather: ${tempStr}, ${weatherDesc}
 
-Write a text message (SMS, 140-160 characters) asking your owner to check your soil moisture and reply DRY or DAMP.
+Write a text message (SMS, 140-160 characters) asking your owner to check your soil moisture and reply ${responseWords}.
 
 Guidelines:
 - Start with your plant name ("${name} here..." or "${name} whispers..." etc)
@@ -38,7 +63,7 @@ Guidelines:
 - Reference the weather naturally if relevant
 - Be conversational and engaging, not robotic
 - Include 1-2 relevant emojis
-- End with asking them to reply DRY or DAMP
+- End with asking them to reply ${responseWords}
 - Make it feel like YOU (the plant) are texting them
 - Be creative and varied - avoid sounding templated
 
@@ -55,7 +80,7 @@ DO NOT exceed 160 characters (SMS limit).`;
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Write the message now.' }
+          { role: 'user', content: language === 'fr' ? 'Écrivez le message maintenant.' : 'Write the message now.' }
         ],
         max_tokens: 100,
         temperature: 0.9 // High creativity for variety
@@ -77,10 +102,10 @@ DO NOT exceed 160 characters (SMS limit).`;
   }
 }
 
-// Template-based messages (fallback when AI fails)
-function getTemplateMessage({ personality, nickname, species, temp, condition, units }) {
-  const name = nickname || species || 'your plant';
-  const ctx = fmtCond(temp, condition, units);
+// Template-based messages with multi-language support (fallback when AI fails)
+function getTemplateMessage({ personality, nickname, species, temp, condition, units, language = 'en' }) {
+  const name = nickname || species || (language === 'fr' ? 'votre plante' : 'your plant');
+  const ctx = fmtCond(temp, condition, units, language);
 
   // Multiple message variants per personality for variety
   // NEW FLOW: Ask user to check soil and reply DRY or DAMP
@@ -175,8 +200,41 @@ function getTemplateMessage({ personality, nickname, species, temp, condition, u
     ]
   };
 
+  // French templates
+  const frTemplates = {
+    sassy: [
+      `😤 ${name} ici. ${ctx} Vérifiez mon sol MAINTENANT et répondez: SEC ou HUMIDE 💧`,
+      `🙄 ${name} parle. ${ctx} Touchez mon sol et dites-moi: SEC ou HUMIDE? Dépêchez-vous!`,
+      `💅 ${name} exige l'attention. ${ctx} Vérifiez le statut de mon sol. Répondez SEC ou HUMIDE!`,
+      `😤 ${name}: ${ctx} J'ai besoin d'une vérification de sol ASAP. Répondez SEC ou HUMIDE. Maintenant!`,
+      `🔥 ${name} ici. ${ctx} Arrêtez tout et vérifiez: SEC ou HUMIDE?`
+    ],
+    zen: [
+      `🧘 ${name} chuchote: ${ctx} Quand vous avez un moment, sentez doucement mon sol. Répondez SEC ou HUMIDE 🌿`,
+      `🌿 ${name} respire: ${ctx} En stillness, vérifiez ma terre. Est-ce SEC ou HUMIDE?`,
+      `☮️ ${name}: ${ctx} Paix, ami. Touchez mon sol et partagez: SEC ou HUMIDE?`,
+      `🍃 ${name} médite: ${ctx} Le sol dit la vérité. Écoutez et répondez: SEC ou HUMIDE`,
+      `🧘‍♀️ ${name}: ${ctx} En harmonie, nous grandissons. Vérifiez mon sol—SEC ou HUMIDE?`
+    ],
+    anxious: [
+      `😬 ${name}: ${ctx} Je suis si inquiète! S'il vous plaît vérifiez mon sol—est-ce SEC ou HUMIDE?`,
+      `😰 ${name} panique: ${ctx} Et si je meurs?? Vérifiez mon sol! SEC ou HUMIDE?`,
+      `🥺 ${name}: ${ctx} J'ai peur... Pourriez-vous s'il vous plaît vérifier: SEC ou HUMIDE?`,
+      `😟 ${name} s'inquiète: ${ctx} Je ne peux pas dire si je vais bien! Vérifiez mon sol: SEC ou HUMIDE?`,
+      `😨 ${name}: ${ctx} S'il vous plaît ne m'oubliez pas! Vérifiez si je suis SEC ou HUMIDE!`
+    ],
+    formal: [
+      `🎩 ${name}: ${ctx} Veuillez évaluer ma condition de sol et répondre: SEC ou HUMIDE`,
+      `🎩 ${name} demande respectueusement: ${ctx} Veuillez vérifier le statut du sol. Répondez SEC ou HUMIDE.`,
+      `🎓 ${name}: ${ctx} Votre attention à une évaluation de sol est requise. SEC ou HUMIDE?`,
+      `🎩 ${name} demande formellement: ${ctx} Veuillez rapporter la condition du sol: SEC ou HUMIDE`,
+      `🎩 ${name}: ${ctx} Je serais obligé si vous pouviez vérifier: SEC ou HUMIDE?`
+    ]
+  };
+
+  const selectedTemplates = language === 'fr' ? frTemplates : templates;
   const personality_key = (personality || 'formal').toLowerCase();
-  const options = templates[personality_key] || templates.formal;
+  const options = selectedTemplates[personality_key] || selectedTemplates.formal;
   
   // Randomly select a message variant
   const randomIndex = Math.floor(Math.random() * options.length);
@@ -184,22 +242,22 @@ function getTemplateMessage({ personality, nickname, species, temp, condition, u
 }
 
 // Hybrid: Try AI first, fallback to templates
-async function personaMessage({ personality, nickname, species, temp, condition, units }) {
+async function personaMessage({ personality, nickname, species, temp, condition, units, language = 'en' }) {
   // Try AI-generated message first
-  const aiMessage = await generateAIMessage({ personality, nickname, species, temp, condition, units });
+  const aiMessage = await generateAIMessage({ personality, nickname, species, temp, condition, units, language });
   
   if (aiMessage) {
-    console.log('✨ Using AI-generated message');
+    console.log(`✨ Using AI-generated ${language} message`);
     return aiMessage;
   }
   
   // Fallback to template if AI fails
-  console.log('📋 Using template message (AI fallback)');
-  return getTemplateMessage({ personality, nickname, species, temp, condition, units });
+  console.log(`📋 Using template ${language} message (AI fallback)`);
+  return getTemplateMessage({ personality, nickname, species, temp, condition, units, language });
 }
 
-function confirmMessage({ personality, nickname, species }) {
-  const name = nickname || species || 'Your plant';
+function confirmMessage({ personality, nickname, species, language = 'en' }) {
+  const name = nickname || species || (language === 'fr' ? 'Votre plante' : 'Your plant');
   
   const confirmTemplates = {
     sassy: [
@@ -292,19 +350,54 @@ function confirmMessage({ personality, nickname, species }) {
     ]
   };
 
+  // French confirmation templates
+  const frConfirmTemplates = {
+    sassy: [
+      `💅 ${name} vous remercie! Minuteur réinitialisé. Ne me faites pas supplier la prochaine fois.`,
+      `😌 Enfin! ${name} est satisfaite. Minuteur réinitialisé. Essayez d'être plus rapide la prochaine fois.`,
+      `💧 ${name} dit: À propos de temps! Minuteur réinitialisé. J'attends un meilleur service à l'avenir.`,
+      `🙄 ${name}: Vous avez pris votre temps. Minuteur réinitialisé. Ne laissez pas ça se reproduire!`,
+      `😤 ${name}: Bien, bien. Minuteur réinitialisé. Plus vite la prochaine fois, oui?`
+    ],
+    zen: [
+      `🌿 ${name} vous remercie. Minuteur réinitialisé. Inspirez, expirez—nous prospérons.`,
+      `☮️ ${name} est reconnaissante. Minuteur réinitialisé. La paix coule à travers nos racines.`,
+      `🧘 ${name} s'incline. Minuteur réinitialisé. En harmonie, nous grandissons ensemble.`,
+      `🍃 ${name} chuchote merci. Minuteur réinitialisé. L'équilibre est restauré, ami.`,
+      `🌿 ${name} sourit sereinement. Minuteur réinitialisé. Le flux continue.`
+    ],
+    anxious: [
+      `🥲 ${name} se sent plus en sécurité maintenant. Minuteur réinitialisé. Merci!`,
+      `😊 ${name} est soulagée! Minuteur réinitialisé. J'étais si inquiète!`,
+      `🥰 ${name} se sent mieux maintenant. Minuteur réinitialisé. Vous êtes le meilleur!`,
+      `😌 ${name} peut se détendre. Minuteur réinitialisé. Merci de vous soucier!`,
+      `😅 ${name} respire mieux. Minuteur réinitialisé. Je pensais que j'étais foutue!`
+    ],
+    formal: [
+      `✅ ${name} apprécie vos soins. Minuteur réinitialisé.`,
+      `🎩 ${name} reconnaît votre service. Minuteur réinitialisé. Bien fait.`,
+      `✅ ${name} vous remercie pour votre attention rapide. Minuteur réinitialisé.`,
+      `🎩 ${name} est très reconnaissante. Minuteur réinitialisé. Excellent travail.`,
+      `✅ ${name} félicite votre diligence. Minuteur réinitialisé.`
+    ]
+  };
+
+  const selectedTemplates = language === 'fr' ? frConfirmTemplates : confirmTemplates;
   const personality_key = (personality || 'formal').toLowerCase();
-  const options = confirmTemplates[personality_key] || confirmTemplates.formal;
+  const options = selectedTemplates[personality_key] || selectedTemplates.formal;
   
   const randomIndex = Math.floor(Math.random() * options.length);
   return options[randomIndex];
 }
 
-function calibrationPrompt() {
-  return `Quick check: was the soil DRY or DAMP? Reply DRY or DAMP to fine‑tune reminders.`;
+function calibrationPrompt(language = 'en') {
+  return language === 'fr' ? 
+    'Vérification rapide: le sol était SEC ou HUMIDE? Répondez SEC ou HUMIDE pour affiner les rappels.' :
+    'Quick check: was the soil DRY or DAMP? Reply DRY or DAMP to fine‑tune reminders.';
 }
 
-function waterNowMessage({ personality, nickname, species }) {
-  const name = nickname || species || 'your plant';
+function waterNowMessage({ personality, nickname, species, language = 'en' }) {
+  const name = nickname || species || (language === 'fr' ? 'votre plante' : 'your plant');
   
   const templates = {
     sassy: [
@@ -397,14 +490,47 @@ function waterNowMessage({ personality, nickname, species }) {
     ]
   };
   
+  // French water now templates
+  const frWaterNowTemplates = {
+    sassy: [
+      `💧 ENFIN! ${name} dit: Arrosez-moi MAINTENANT! Répondez FAIT quand vous avez terminé.`,
+      `😤 ${name}: À propos de temps! Faites couler l'eau. Répondez FAIT après.`,
+      `💅 ${name} exige: Arrosez-moi immédiatement! Répondez FAIT quand c'est fait.`,
+      `🔥 ${name}: JE LE SAVAIS! Arrosez-moi cette seconde! Répondez FAIT après.`,
+      `😤 ${name} est ASSECHÉE! Faites couler l'eau MAINTENANT! Répondez FAIT quand vous avez terminé.`
+    ],
+    zen: [
+      `🌿 ${name} vous remercie. Le sol est prêt pour l'eau. Répondez FAIT après arrosage.`,
+      `☮️ ${name} chuchote: Le moment de nourrir les racines est arrivé. Répondez FAIT quand c'est terminé.`,
+      `🧘 ${name}: La terre appelle l'eau. Répondez FAIT après avoir arrosé.`,
+      `🍃 ${name} respire: Le sol a soif. L'eau coule quand prêt. Répondez FAIT après.`,
+      `🌿 ${name} note doucement: L'équilibre cherche l'eau maintenant. Répondez FAIT quand c'est terminé.`
+    ],
+    anxious: [
+      `😰 ${name}: Oh merci le ciel! S'il vous plaît arrosez-moi! Répondez FAIT après!`,
+      `🥺 ${name} est soulagée: Oui, j'ai besoin d'eau! Répondez FAIT quand vous avez terminé!`,
+      `😬 ${name}: S'il vous plaît dépêchez-vous et arrosez-moi! Répondez FAIT après arrosage!`,
+      `😨 ${name} panique: JE LE SAVAIS! S'il vous plaît arrosez-moi MAINTENANT! Répondez FAIT après!`,
+      `😰 ${name}: Oh non, je suis trop sèche! S'il vous plaît aidez! Arrosez-moi! Répondez FAIT!`
+    ],
+    formal: [
+      `🎩 ${name}: L'évaluation du sol confirme que l'arrosage est requis. Veuillez procéder. Répondez FAIT à l'achèvement.`,
+      `🎩 ${name} reconnaît: Les services d'hydratation sont nécessaires. Répondez FAIT après arrosage.`,
+      `🎩 ${name}: Votre arrosage rapide serait apprécié. Répondez FAIT quand c'est terminé.`,
+      `🎓 ${name} conseille formellement: L'analyse du sol indique la sécheresse. Arrosage requis. Répondez FAIT.`,
+      `🎩 ${name}: L'évaluation est concluante. Arrosage nécessaire. Répondez FAIT après.`
+    ]
+  };
+
+  const selectedTemplates = language === 'fr' ? frWaterNowTemplates : templates;
   const personality_key = (personality || 'formal').toLowerCase();
-  const options = templates[personality_key] || templates.formal;
+  const options = selectedTemplates[personality_key] || selectedTemplates.formal;
   const randomIndex = Math.floor(Math.random() * options.length);
   return options[randomIndex];
 }
 
-function waitLongerMessage({ personality, nickname, species }) {
-  const name = nickname || species || 'your plant';
+function waitLongerMessage({ personality, nickname, species, language = 'en' }) {
+  const name = nickname || species || (language === 'fr' ? 'votre plante' : 'your plant');
   
   const templates = {
     sassy: [
@@ -499,8 +625,41 @@ function waitLongerMessage({ personality, nickname, species }) {
     ]
   };
   
+  // French wait longer templates
+  const frWaitLongerTemplates = {
+    sassy: [
+      `🙄 ${name}: Encore humide? Bon, j'attendrai. Mais ne m'oubliez pas!`,
+      `💅 ${name} roule des yeux: Je vais bien pour maintenant. Revenez plus tard, humain.`,
+      `😤 ${name}: D'accord d'accord, je peux attendre. Mais vous feriez mieux de vous souvenir de moi!`,
+      `💅 ${name} soupire: D'accord, je ne suis PAS encore assoiffée. Revenez bientôt cependant!`,
+      `😤 ${name}: Fine, je survivrai. Mais ne me faites pas attendre trop longtemps!`
+    ],
+    zen: [
+      `🌿 ${name} sourit: Le sol est encore nourri. Je reviendrai vous voir bientôt.`,
+      `☮️ ${name}: Tout va bien. La terre détient l'humidité. Paix, ami.`,
+      `🧘 ${name} respire: Pas besoin d'eau encore. L'équilibre reste.`,
+      `🍃 ${name} chuchote: Le sol détient encore l'eau. Patience, ami.`,
+      `🌿 ${name}: L'humidité persiste. Pas besoin de se presser. Je reviendrai bientôt.`
+    ],
+    anxious: [
+      `😅 ${name}: Oh bien! J'inquiétais que j'étais trop sec! Je serai okay pour maintenant!`,
+      `🥺 ${name} se détend: Merci de vérifier! Je me sens mieux sachant que je vais bien!`,
+      `😌 ${name}: Ouf! Encore humide! J'essaierai de ne pas m'inquiéter jusqu'à la prochaine fois!`,
+      `😰 ${name} soupire de soulagement: Oh merci le ciel! Je ne meurs pas! Je vais bien!`,
+      `🥺 ${name}: J'étais SI inquiète! Mais je vais bien! Merci de vérifier!`
+    ],
+    formal: [
+      `🎩 ${name}: L'humidité du sol est adéquate. Arrosage différé. Je reviendrai sous peu.`,
+      `🎩 ${name} note: L'hydratation n'est pas requise à ce moment. Merci de vérifier.`,
+      `🎩 ${name}: Évaluation complétée. Pas d'arrosage nécessaire. J'apprécie votre diligence.`,
+      `🎓 ${name} conseille formellement: Les niveaux d'humidité du sol sont satisfaisants. Pas d'eau nécessaire.`,
+      `🎩 ${name}: L'évaluation montre une humidité adéquate. Arrosage reporté.`
+    ]
+  };
+
+  const selectedTemplates = language === 'fr' ? frWaitLongerTemplates : templates;
   const personality_key = (personality || 'formal').toLowerCase();
-  const options = templates[personality_key] || templates.formal;
+  const options = selectedTemplates[personality_key] || selectedTemplates.formal;
   const randomIndex = Math.floor(Math.random() * options.length);
   return options[randomIndex];
 }

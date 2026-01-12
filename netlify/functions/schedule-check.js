@@ -44,7 +44,8 @@ exports.handler = async (event) => {
       body = waterNowMessage({ 
         personality: p.personality, 
         nickname: p.nickname, 
-        species: p.species 
+        species: p.species,
+        language: p.language || 'en'
       });
       
       // Clear the skip flag after using it
@@ -64,7 +65,7 @@ exports.handler = async (event) => {
         }
       }
       
-      body = await personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units });
+      body = await personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units, language: p.language || 'en' });
     }
     
     console.log(`   📱 Sending SMS: "${body.substring(0, 50)}..."`);

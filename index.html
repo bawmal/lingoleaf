@@ -2,1388 +2,2288 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="description" content="Weather-aware plant care assistant. Get SMS reminders when your plants need water. Works on any phone.">
-    <title>LingoLeaf - Your Plants, With a Voice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoLeaf - Plant Care That Knows Your Weather</title>
+    <meta name="description" content="Smart reminders that adapt to rain, heat, cold, and seasons. AI-powered plant care with weather intelligence.">
     
-    <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'forest': '#0f4c3a',
-                        'sage': '#87a96b',
-                        'mint': '#a8d5ba',
-                        'cream': '#faf8f5',
-                        'earth': '#8b5a3c',
-                        'moss': '#6b8e5a',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'sway': 'sway 4s ease-in-out infinite',
-                        'fade-up': 'fadeUp 0.8s ease-out forwards',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-15px)' },
-                        },
-                        sway: {
-                            '0%, 100%': { transform: 'rotate(-2deg)' },
-                            '50%': { transform: 'rotate(2deg)' },
-                        },
-                        fadeUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                    },
-                    boxShadow: {
-                        'soft': '0 4px 20px rgba(15, 76, 58, 0.1)',
-                        'medium': '0 8px 30px rgba(15, 76, 58, 0.15)',
-                        'strong': '0 15px 40px rgba(15, 76, 58, 0.2)',
-                        'glow': '0 0 30px rgba(135, 169, 107, 0.3)',
-                    },
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        .organic-shape {
-            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .message-bubble-plant {
-            background: linear-gradient(135deg, #87a96b, #6b8e5a);
-            border-radius: 20px 20px 20px 5px;
+
+        :root {
+            --green-primary: #02B91A;
+            --green-dark: #028E01;
+            --green-light: #18DA63;
+            --green-bg: #0BBA68;
+            --cream: #faf8f5;
+            --warm-gray: #78716c;
+            --text-dark: #1C1C1C;
+            --text-gray: #353535;
         }
-        
-        .message-bubble-user {
-            background: linear-gradient(135deg, #a8d5ba, #87a96b);
-            border-radius: 20px 20px 5px 20px;
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-dark);
+            overflow-x: hidden;
         }
-        
-        /* Mobile optimizations */
-        @media (max-width: 640px) {
-            h1 {
-                font-size: clamp(1.75rem, 8vw, 3rem);
-                line-height: 1.2;
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 60px;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-dark);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--green-primary);
+        }
+
+        .nav-cta {
+            background: var(--green-light);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+
+        .nav-cta:hover {
+            background: var(--green-primary);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 24px 200px;
+            background: linear-gradient(180deg, #D4ECD9 0%, rgba(238, 255, 241, 0) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 600px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><path d="M100,0 Q150,50 150,100 T100,200 Q50,250 50,300" fill="%2302B91A" opacity="0.1"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 400px;
+            height: 600px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><path d="M100,0 Q50,50 50,100 T100,200 Q150,250 150,300" fill="%2302B91A" opacity="0.1"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        .beta-badge {
+            background: white;
+            border: 1px solid rgba(2, 185, 26, 0.3);
+            border-radius: 30px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 32px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 80px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: capitalize;
+        }
+
+        .hero-title .green {
+            color: var(--green-primary);
+        }
+
+        .cta-button {
+            background: var(--green-light);
+            color: white;
+            padding: 18px 36px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .cta-button:hover {
+            background: var(--green-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+
+        .cta-button::after {
+            content: '→';
+            font-size: 20px;
+        }
+
+        /* Polaroid Cards */
+        .polaroid-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 300px;
+            margin: 80px auto 0;
+        }
+
+        .string-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #333;
+            transform: translateY(-20px);
+        }
+
+        .polaroid {
+            position: absolute;
+            background: white;
+            padding: 12px;
+            padding-bottom: 48px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform-origin: top center;
+        }
+
+        .polaroid img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .polaroid-label {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 12px;
+            color: var(--text-dark);
+        }
+
+        .pin {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .polaroid:nth-child(1) {
+            left: 0;
+            transform: rotate(-8deg);
+            animation: sway1 4s ease-in-out infinite;
+        }
+
+        .polaroid:nth-child(2) {
+            left: 20%;
+            transform: rotate(5deg);
+            animation: sway2 3.5s ease-in-out infinite;
+        }
+
+        .polaroid:nth-child(3) {
+            left: 40%;
+            transform: rotate(-3deg);
+            animation: sway3 4.2s ease-in-out infinite;
+        }
+
+        .polaroid:nth-child(4) {
+            left: 60%;
+            transform: rotate(6deg);
+            animation: sway4 3.8s ease-in-out infinite;
+        }
+
+        .polaroid:nth-child(5) {
+            right: 0;
+            transform: rotate(-7deg);
+            animation: sway5 4.1s ease-in-out infinite;
+        }
+
+        @keyframes sway1 {
+            0%, 100% { transform: rotate(-8deg) translateY(0); }
+            50% { transform: rotate(-6deg) translateY(-10px); }
+        }
+
+        @keyframes sway2 {
+            0%, 100% { transform: rotate(5deg) translateY(0); }
+            50% { transform: rotate(3deg) translateY(-8px); }
+        }
+
+        @keyframes sway3 {
+            0%, 100% { transform: rotate(-3deg) translateY(0); }
+            50% { transform: rotate(-1deg) translateY(-12px); }
+        }
+
+        @keyframes sway4 {
+            0%, 100% { transform: rotate(6deg) translateY(0); }
+            50% { transform: rotate(4deg) translateY(-9px); }
+        }
+
+        @keyframes sway5 {
+            0%, 100% { transform: rotate(-7deg) translateY(0); }
+            50% { transform: rotate(-5deg) translateY(-11px); }
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 120px 24px;
+            background: linear-gradient(180deg, rgba(238, 255, 241, 0) 0%, #D4ECD9 100%);
+        }
+
+        .testimonial-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .phone-mockup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-mockup img {
+            max-width: 380px;
+            width: 100%;
+            height: auto;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .testimonial-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            text-align: center;
+        }
+
+        .testimonial-content .section-title {
+            font-size: 80px;
+            font-weight: 700;
+            line-height: 100%;
+            letter-spacing: -0.05em;
+            text-transform: capitalize;
+            color: #353535;
+        }
+
+        .stats-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 39px;
+            justify-content: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-item.column {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .stat-star {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(180deg, #FFEB7A 0%, #FFAB34 100%);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        .stat-star.empty {
+            background: linear-gradient(180deg, #EDF4EE 0%, #CECECE 100%);
+        }
+
+        .stat-icon {
+            width: 51px;
+            height: 51px;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-text {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 21px;
+            color: #1C1C1C;
+        }
+
+        .testimonial-cards {
+            display: flex;
+            flex-direction: row;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .testimonial-card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            background: #F6F6F6;
+            padding: 30px;
+            border-radius: 39px;
+            width: 306px;
+            min-height: 230px;
+        }
+
+        .testimonial-avatar {
+            width: 61px;
+            height: 58px;
+            border-radius: 18px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .testimonial-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .testimonial-text {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 21px;
+            color: #1C1C1C;
+            text-align: left;
+        }
+
+        .testimonial-author {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 18px;
+            color: #1C1C1C;
+        }
+
+        /* Problem Section */
+        .problem-section {
+            padding: 120px 24px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #E7F1E9 100%);
+        }
+
+        .problem-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .problem-content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .problem-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            line-height: 135%;
+            letter-spacing: -0.05em;
+            text-transform: capitalize;
+            color: #1C1C1C;
+        }
+
+        .problem-cards {
+            background: #FFFFFF;
+            border-radius: 43px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .problem-card {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 24px 0;
+            border-bottom: 1px solid #E7F1E9;
+        }
+
+        .problem-card:last-child {
+            border-bottom: none;
+        }
+
+        .problem-emoji {
+            font-size: 39px;
+            line-height: 41px;
+            flex-shrink: 0;
+        }
+
+        .problem-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .problem-card-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 26px;
+            color: #1C1C1C;
+        }
+
+        .problem-card-description {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 21px;
+            color: #1C1C1C;
+            margin-bottom: 10px;
+        }
+
+        .problem-badge {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border-radius: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 18px;
+            width: fit-content;
+        }
+
+        .problem-badge.red {
+            background: rgba(255, 89, 89, 0.18);
+            color: #E64F4F;
+        }
+
+        .problem-badge.blue {
+            background: rgba(23, 114, 218, 0.08);
+            color: #1772DA;
+        }
+
+        .problem-badge.orange {
+            background: rgba(227, 91, 0, 0.21);
+            color: #E35B00;
+        }
+
+        .problem-phone {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 60px;
+        }
+
+        .problem-phone img {
+            max-width: 321px;
+            width: 100%;
+            height: auto;
+            border-radius: 39px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Solution Section */
+        .solution-section {
+            padding: 120px 24px;
+            background: linear-gradient(180deg, #E7F1E9 0%, #FFFFFF 100%);
+        }
+
+        .solution-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .solution-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            line-height: 135%;
+            letter-spacing: -0.05em;
+            text-transform: capitalize;
+            color: #251513;
+            margin-bottom: 48px;
+            max-width: 698px;
+        }
+
+        .solution-card {
+            background: #FFFFFF;
+            border-radius: 43px;
+            padding: 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .solution-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .solution-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .solution-check {
+            width: 32px;
+            height: 32px;
+            background: var(--green-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .solution-text {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 31px;
+            color: #2A2A2A;
+        }
+
+        .solution-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .solution-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 24px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 24px;
+            background: white;
+        }
+
+        .features .section-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            line-height: 130%;
+            text-align: center;
+            letter-spacing: -0.05em;
+            text-transform: capitalize;
+            color: #251513;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 38px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #FFFFFF;
+            box-shadow: 0px 4px 18.2px 3px rgba(0, 0, 0, 0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-image {
+            width: 100%;
+            height: 227px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 14.625px;
+            margin: 10px;
+            width: calc(100% - 20px);
+        }
+
+        .feature-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 13px;
+        }
+
+        .feature-icon {
+            position: absolute;
+            bottom: -26px;
+            left: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            z-index: 2;
+        }
+
+        .feature-content {
+            padding: 36px 20px 24px;
+        }
+
+        .feature-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 26px;
+            color: #353535;
+            margin-bottom: 8px;
+        }
+
+        .feature-description {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 21px;
+            color: #555555;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.3;
+            letter-spacing: -0.05em;
+            text-transform: capitalize;
+        }
+
+        /* Plantsona / Plant Identification Section */
+        .plantsona-section {
+            padding: 120px 24px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plantsona-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .plantsona-bg-top,
+        .plantsona-bg-bottom {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1400px;
+            height: 200px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .plantsona-bg-top {
+            top: 0;
+        }
+
+        .plantsona-bg-bottom {
+            bottom: 0;
+            transform: translateX(-50%) rotate(180deg);
+        }
+
+        .plantsona-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #18DA63;
+            position: relative;
+            opacity: 0.15;
+        }
+
+        .plantsona-circle::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #0BBA68;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .plantsona-container {
+            max-width: 916px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .plantsona-card {
+            background: #FFFFFF;
+            border-radius: 39px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .plantsona-content {
+            padding: 48px;
+            flex: 1;
+        }
+
+        .plantsona-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            line-height: 130%;
+            letter-spacing: -0.01em;
+            text-transform: capitalize;
+            color: #251513;
+            margin-bottom: 16px;
+        }
+
+        .plantsona-description {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 21px;
+            color: #555555;
+            max-width: 315px;
+        }
+
+        .plantsona-image {
+            width: 605px;
+            height: 358px;
+            flex-shrink: 0;
+        }
+
+        .plantsona-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .plantsona-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green-primary);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            margin-top: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .plantsona-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+
+        /* Personalities Section */
+        .personalities-section {
+            padding: 120px 24px;
+            background: white;
+        }
+
+        .personalities-section .section-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            line-height: 130%;
+            text-align: center;
+            letter-spacing: -0.05em;
+            text-transform: capitalize;
+            color: #251513;
+            margin-bottom: 16px;
+        }
+
+        .personalities-section .section-subtitle {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #555555;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        .personalities-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .personality-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0px 4px 18.2px 3px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .personality-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .personality-avatar.sassy {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+        }
+
+        .personality-avatar.zen {
+            background: linear-gradient(135deg, #18DA63 0%, #0BBA68 100%);
+        }
+
+        .personality-avatar.anxious {
+            background: linear-gradient(135deg, #FFAB34 0%, #FF8E53 100%);
+        }
+
+        .personality-avatar.formal {
+            background: linear-gradient(135deg, #18DA63 0%, #00BFC9 100%);
+        }
+
+        .personality-card-title {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 26px;
+            color: #1C1C1C;
+        }
+
+        .personality-quote {
+            font-family: 'DM Sans', sans-serif;
+            font-style: italic;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555555;
+            flex-grow: 1;
+        }
+
+        .personality-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            width: fit-content;
+        }
+
+        .personality-badge.popular {
+            background: rgba(2, 185, 26, 0.15);
+            color: #02B91A;
+        }
+
+        .personality-badge.calming {
+            background: rgba(0, 191, 201, 0.15);
+            color: #00BFC9;
+        }
+
+        .personality-badge.endearing {
+            background: rgba(255, 171, 52, 0.15);
+            color: #E35B00;
+        }
+
+        .personality-badge.professional {
+            background: rgba(23, 114, 218, 0.15);
+            color: #1772DA;
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            color: var(--text-gray);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 80px;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0px 4px 18.2px 3px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0px 8px 30px 5px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-gray);
+        }
+
+        .feature-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555555;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 120px 24px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #E7F1E9 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .pricing-decoration {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: clamp(80px, 15vw, 200px);
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 1.2px #C1DCC7;
+            white-space: nowrap;
+            user-select: none;
+            opacity: 0.8;
+        }
+
+        .pricing-card {
+            background: white;
+            border: 1px solid #D6D6D6;
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(326.83deg, #0BBA68 51.48%, #18DA63 90.89%);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .pricing-header {
+            text-align: center;
+        }
+
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pricing-price {
+            font-size: 64px;
+            font-weight: 600;
+            background: linear-gradient(245.43deg, #16BB87 27.76%, #008159 97.16%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .pricing-card.featured .pricing-price {
+            color: white;
+            background: none;
+            -webkit-text-fill-color: white;
+        }
+
+        .pricing-badge {
+            background: #09AD7A;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 42px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .pricing-card.featured .pricing-badge {
+            background: #FFA200;
+        }
+
+        .pricing-features {
+            list-style: none;
+            font-size: 14px;
+            line-height: 2.7;
+            color: #676A75;
+        }
+
+        .pricing-card.featured .pricing-features {
+            color: white;
+        }
+
+        .pricing-cta {
+            background: #E9E9E9;
+            color: #9D9D9D;
+            padding: 12px 24px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: white;
+            color: #006D4B;
+        }
+
+        /* Signup Section */
+        .signup {
+            padding: 120px 24px;
+            background: white;
+        }
+
+        .signup-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-gray);
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #CFCFCF;
+            border-radius: 16px;
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--green-primary);
+        }
+
+        .form-input::placeholder {
+            color: #A0A0A0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .consent-box {
+            background: #DCEADF;
+            border: 1px solid rgba(130, 188, 153, 0.31);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+        }
+
+        .checkbox-label {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #125D1C;
+        }
+
+        .submit-button {
+            width: 100%;
+            background: linear-gradient(160.09deg, #0BBA68 -13.43%, #05542F 208.35%);
+            color: #E7F1E9;
+            padding: 20px;
+            border: 1px solid rgba(130, 188, 153, 0.31);
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: #0BBA68;
+            padding: 60px 24px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 24px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #FFFFFF;
+            border-radius: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .footer-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            color: white;
+        }
+
+        .footer-tagline {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: white;
+            margin-top: 8px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 42px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: #E7F1E9;
+        }
+
+        .footer-decoration {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: clamp(150px, 25vw, 337px);
+            line-height: 1;
+            color: #17DA62;
+            white-space: nowrap;
+            user-select: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        /* Contact Modal */
+        .contact-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-modal.show {
+            display: flex;
+        }
+
+        .contact-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .contact-modal-content {
+            position: relative;
+            background: #FFFFFF;
+            border-radius: 24px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
-            
-            /* Ensure minimum tap target size */
-            a, button {
-                min-height: 44px;
-                min-width: 44px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-        
-        /* Performance: Reduce animations on mobile */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+
+        .contact-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            border-bottom: 1px solid #E7F1E9;
+        }
+
+        .contact-modal-header h2 {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .contact-close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .contact-close-btn:hover {
+            background: #F0F0F0;
+            color: var(--text-dark);
+        }
+
+        .contact-form {
+            padding: 32px;
+        }
+
+        .contact-field {
+            margin-bottom: 20px;
+        }
+
+        .contact-field label {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .contact-field input,
+        .contact-field select,
+        .contact-field textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #D6D6D6;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--text-dark);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .contact-field input:focus,
+        .contact-field select:focus,
+        .contact-field textarea:focus {
+            outline: none;
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 3px rgba(2, 185, 26, 0.1);
+        }
+
+        .contact-field input::placeholder,
+        .contact-field textarea::placeholder {
+            color: #A0A0A0;
+        }
+
+        .contact-field textarea {
+            resize: none;
+            min-height: 120px;
+        }
+
+        .contact-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .contact-submit-btn {
+            flex: 1;
+            background: var(--green-primary);
+            color: white;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .contact-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+
+        .contact-cancel-btn {
+            flex: 1;
+            background: #F5F5F5;
+            color: var(--text-dark);
+            padding: 16px 24px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .contact-cancel-btn:hover {
+            background: #EBEBEB;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 48px;
+            }
+
+            .polaroid-container {
+                height: 200px;
+            }
+
+            .polaroid img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .testimonial-content .section-title {
+                font-size: 40px;
+            }
+
+            .stats-row {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 24px;
+            }
+
+            .testimonial-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .testimonial-card {
+                width: 100%;
+                max-width: 306px;
+            }
+
+            .problem-container {
+                grid-template-columns: 1fr;
+            }
+
+            .problem-title {
+                font-size: 32px;
+            }
+
+            .problem-phone {
+                order: -1;
+                padding-top: 0;
+            }
+
+            .solution-title {
+                font-size: 32px;
+            }
+
+            .solution-card {
+                grid-template-columns: 1fr;
+            }
+
+            .solution-text {
+                font-size: 18px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plantsona-card {
+                flex-direction: column;
+            }
+
+            .plantsona-image {
+                width: 100%;
+                height: 250px;
+            }
+
+            .personalities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-decoration {
+                display: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
             }
         }
     </style>
 </head>
-<body class="bg-cream font-sans overflow-x-hidden">
-    
+<body>
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-sage/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2 sm:space-x-3">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center">
-                        <img src="/Logo.jpeg" alt="LingoLeaf" class="w-full h-full object-contain">
-                    </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-forest">LingoLeaf</h1>
-                        <p class="text-xs text-sage hidden sm:block">Your Plants, With a Voice</p>
-                    </div>
-                </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-forest hover:text-sage transition-colors font-medium min-h-[44px] flex items-center">Features</a>
-                    <a href="/plantsona.html" class="text-purple-600 hover:text-purple-700 transition-colors font-medium flex items-center space-x-1 min-h-[44px]">
-                        <span>🎭</span>
-                        <span>PlantSona</span>
-                    </a>
-                    <a href="#personalities" class="text-forest hover:text-sage transition-colors font-medium min-h-[44px] flex items-center">Personalities</a>
-                    <a href="#signup" class="bg-gradient-to-r from-sage to-forest text-white px-6 py-2 rounded-full hover:shadow-glow transition-all duration-300 min-h-[44px] flex items-center">Get Started</a>
-                </div>
-                <a href="#signup" class="md:hidden bg-gradient-to-r from-sage to-forest text-white px-4 py-2 rounded-full text-sm font-semibold min-h-[44px] flex items-center">Join Beta</a>
-            </div>
-        </div>
+    <nav>
+        <div class="logo">LingoLeaf</div>
+        <a href="#features">Features</a>
+        <a href="#plantsona">PlantSona</a>
+        <a href="#personalities">Personalities</a>
+        <a href="#signup" class="nav-cta">Get Started</a>
     </nav>
 
     <!-- Hero Section -->
-    <section class="pt-24 pb-16 relative overflow-hidden">
-        <div class="absolute top-20 right-10 w-32 h-32 bg-mint/20 rounded-full animate-float"></div>
-        <div class="absolute bottom-20 left-10 w-24 h-24 bg-sage/20 organic-shape animate-sway"></div>
+    <section class="hero">
+        <div class="beta-badge">
+            ✨ FREE 90-DAY BETA (Limited Spots)
+        </div>
         
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                
-                <!-- Left Content -->
-                <div class="space-y-6 sm:space-y-8 animate-fade-up">
-                    <div class="space-y-4">
-                        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-forest leading-[1.1]">
-                            Plant Care That <span class="text-sage">Knows</span><br>
-                            Your Weather
-                        </h1>
-                        
-                        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-forest/80 leading-tight">
-                            Smart reminders that adapt to rain, heat, cold, and seasons 🌦️
-                        </h2>
-                    </div>
-                    
-                    <div class="space-y-3 mt-6">
-                        <p class="text-lg sm:text-xl text-forest/80 leading-relaxed max-w-xl">
-                            Your plant texts you when it's thirsty—in its own personality.<br>
-                            Sassy, zen, anxious, or formal. You choose.
-                        </p>
-                    </div>
-                    
-                    <div class="mt-8 space-y-4">
-                        <div class="inline-flex items-center bg-gradient-to-r from-mint/20 to-sage/20 border-2 border-sage/30 px-6 py-3 rounded-full">
-                            <span class="text-forest font-bold text-base sm:text-lg">✨ FREE 90-DAY BETA (Limited Spots)</span>
-                        </div>
-                        
-                        <div class="flex flex-wrap gap-4 text-sm text-forest/70">
-                            <span class="flex items-center"><span class="text-sage mr-1">✓</span> No credit card</span>
-                            <span class="flex items-center"><span class="text-sage mr-1">✓</span> Works on any phone</span>
-                            <span class="flex items-center"><span class="text-sage mr-1">✓</span> Cancel anytime</span>
-                        </div>
-                        
-                        <div class="inline-flex items-center bg-orange-50 border-2 border-orange-300 px-5 py-2.5 rounded-full">
-                            <span class="text-orange-600 font-bold text-sm sm:text-base">👥 87 signed up • Only 13 spots left!</span>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <a href="#signup" class="inline-block bg-gradient-to-r from-forest to-sage text-white px-6 sm:px-8 py-4 rounded-2xl font-semibold text-base sm:text-lg hover:shadow-strong transition-all duration-300 active:scale-95 text-center min-h-[44px]">
-                            Join Beta List
-                        </a>
-                    </div>
-                    
-                    <p class="text-xs sm:text-sm text-forest/60">
-                        Trusted by 100+ plant parents  •  No credit card required
-                    </p>
-                </div>
-                
-                <!-- Right Content - Phone Mockup -->
-                <div class="relative flex justify-center mt-8 lg:mt-0">
-                    <!-- Phone Frame -->
-                    <div class="w-72 sm:w-80 h-[550px] sm:h-[600px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-[3rem] p-3 shadow-strong">
-                        <!-- Screen -->
-                        <div class="w-full h-full bg-gradient-to-b from-white to-gray-50 rounded-[2.5rem] p-6 relative overflow-hidden">
-                            
-                            <!-- Status Bar -->
-                            <div class="flex justify-between items-center text-xs text-gray-500 mb-6">
-                                <span class="font-medium">9:41 AM</span>
-                                <div class="flex items-center space-x-1">
-                                    <div class="w-4 h-2 bg-sage rounded-sm"></div>
-                                    <div class="w-6 h-3 border border-gray-300 rounded-sm">
-                                        <div class="w-4 h-2 bg-sage rounded-sm m-0.5"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Chat Header -->
-                            <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-gray-100">
-                                <div class="w-10 h-10 bg-gradient-to-br from-sage to-forest rounded-full flex items-center justify-center">
-                                    <span class="text-white text-lg">🌿</span>
-                                </div>
-                                <div>
-                                    <h3 class="font-semibold text-forest">LingoLeaf Messages</h3>
-                                    <p class="text-xs text-sage">Leafy (Pothos)</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Messages -->
-                            <div class="space-y-4">
-                                <!-- Plant Message 1 -->
-                                <div class="flex justify-start">
-                                    <div class="message-bubble-plant text-white p-4 max-w-[85%] shadow-soft">
-                                        <p class="text-sm font-medium leading-relaxed">
-                                            Listen up! It's 95° out here and I'm wilting. Drop everything and water me NOW! 💧
-                                        </p>
-                                        <p class="text-xs opacity-75 mt-2">2 min ago</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- User Reply -->
-                                <div class="flex justify-end">
-                                    <div class="message-bubble-user text-white p-3 max-w-[70%] shadow-soft">
-                                        <p class="text-sm">Dry</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Plant Message 2 -->
-                                <div class="flex justify-start">
-                                    <div class="message-bubble-plant text-white p-4 max-w-[85%] shadow-soft">
-                                        <p class="text-sm font-medium leading-relaxed">
-                                            Time to water! 💧 Give me a good drink. I'll check back in 4 days (accounting for this weekend's rain ☔)
-                                        </p>
-                                        <p class="text-xs opacity-75 mt-2">now</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Floating Elements -->
-                    <div class="absolute -top-6 -right-6 w-12 h-12 bg-mint/30 rounded-full animate-float"></div>
-                    <div class="absolute -bottom-6 -left-6 w-8 h-8 bg-sage/30 rounded-full animate-sway"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+        <p class="hero-subtitle">Smart reminders that adapt to rain, heat, cold, and seasons 🌦️</p>
+        
+        <h1 class="hero-title">
+            <span class="green">PLANT</span> CARE THAT KNOWS<br>YOUR WEATHER
+        </h1>
+        
+        <a href="#signup" class="cta-button">Join Beta List</a>
 
-    <!-- Trust Bar -->
-    <section class="py-4 sm:py-6 bg-white border-y border-sage/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-12 text-center">
-                <div class="flex items-center space-x-2 min-h-[44px]">
-                    <span class="text-xl sm:text-2xl">⭐⭐⭐⭐⭐</span>
-                    <span class="text-forest font-semibold text-sm sm:text-base">4.8/5 rating</span>
-                </div>
-                <div class="hidden md:block w-px h-8 bg-sage/30"></div>
-                <div class="flex items-center space-x-2 min-h-[44px]">
-                    <span class="text-xl sm:text-2xl">🌱</span>
-                    <span class="text-forest font-semibold text-sm sm:text-base">80%+ plant survival rate</span>
-                </div>
-                <div class="hidden md:block w-px h-8 bg-sage/30"></div>
-                <div class="flex items-center space-x-2 min-h-[44px]">
-                    <span class="text-xl sm:text-2xl">📱</span>
-                    <span class="text-forest font-semibold text-sm sm:text-base">Works on any phone</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Social Proof Section -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl lg:text-4xl font-bold text-forest mb-4">
-                    Join 87 Plant Parents Testing LingoLeaf
-                </h2>
+        <!-- Polaroid Cards -->
+        <div class="polaroid-container">
+            <div class="string-line"></div>
+            
+            <div class="polaroid">
+                <div class="pin" style="background: #1772DA;"></div>
+                <img src="images/window-tracking.png" alt="Window Tracking">
+                <div class="polaroid-label">Window Tracking</div>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <!-- Testimonial 1 -->
-                <div class="bg-gradient-to-br from-sage/10 to-mint/10 p-8 rounded-3xl border border-sage/20 text-center">
-                    <div class="text-4xl mb-4">💬</div>
-                    <blockquote class="text-lg text-forest font-medium leading-relaxed mb-4">
-                        "This is exactly what I've been looking for!"
-                    </blockquote>
-                    <p class="text-sm text-forest/60">— Waitlist member</p>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="bg-gradient-to-br from-sage/10 to-mint/10 p-8 rounded-3xl border border-sage/20 text-center">
-                    <div class="text-4xl mb-4">💬</div>
-                    <blockquote class="text-lg text-forest font-medium leading-relaxed mb-4">
-                        "Finally, a plant app that checks the weather!"
-                    </blockquote>
-                    <p class="text-sm text-forest/60">— Waitlist member</p>
-                </div>
-
-                <!-- Testimonial 3 -->
-                <div class="bg-gradient-to-br from-sage/10 to-mint/10 p-8 rounded-3xl border border-sage/20 text-center">
-                    <div class="text-4xl mb-4">💬</div>
-                    <blockquote class="text-lg text-forest font-medium leading-relaxed mb-4">
-                        "I love that it works via text. So much simpler."
-                    </blockquote>
-                    <p class="text-sm text-forest/60">— Waitlist member</p>
-                </div>
+            <div class="polaroid">
+                <div class="pin" style="background: #00BFC9;"></div>
+                <img src="images/pot-size.png" alt="Pot Size Matters">
+                <div class="polaroid-label">Pot Size Actually Matters</div>
+            </div>
+            
+            <div class="polaroid">
+                <div class="pin" style="background: #FFAB34;"></div>
+                <img src="images/plant-intelligent.png" alt="Plant Intelligent">
+                <div class="polaroid-label">Plant Intelligent</div>
+            </div>
+            
+            <div class="polaroid">
+                <div class="pin" style="background: #E35B00;"></div>
+                <img src="images/real-time-weather.png" alt="Real-Time Weather">
+                <div class="polaroid-label">Real-Time Weather</div>
+            </div>
+            
+            <div class="polaroid">
+                <div class="pin" style="background: #02B91A;"></div>
+                <img src="images/unique-personalities.png" alt="Unique Personalities">
+                <div class="polaroid-label">Unique Personalities</div>
             </div>
         </div>
     </section>
 
+    <!-- Testimonial Section -->
+    <section class="testimonials">
+        <div class="testimonial-container">
+            <div class="phone-mockup">
+                <img src="images/phone-mockup.png" alt="LingoLeaf SMS Preview">
+            </div>
+            
+            <div class="testimonial-content">
+                <h2 class="section-title">Join 87 Plant Parents<br>Testing LingoLeaf</h2>
+                
+                <div class="stats-row">
+                    <div class="stat-item column">
+                        <div class="stat-stars">
+                            <div class="stat-star"></div>
+                            <div class="stat-star"></div>
+                            <div class="stat-star"></div>
+                            <div class="stat-star"></div>
+                            <div class="stat-star empty"></div>
+                        </div>
+                        <div class="stat-text">4.8/5 rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🌱</div>
+                        <div class="stat-text">80%+ plant<br>survival rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📱</div>
+                        <div class="stat-text">Works on<br>any phone</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-cards">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <img src="images/avatar-1.png" alt="User" onerror="this.style.background='linear-gradient(135deg, #FF6B6B, #FF8E8E)'; this.style.display='block'; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';">
+                        </div>
+                        <p class="testimonial-text">"This is exactly what I've been looking for!"</p>
+                        <p class="testimonial-author">– Waitlist member</p>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <img src="images/avatar-2.png" alt="User" onerror="this.style.background='linear-gradient(135deg, #4ECDC4, #44A08D)'; this.style.display='block'; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';">
+                        </div>
+                        <p class="testimonial-text">"Finally, a plant app that checks the weather!"</p>
+                        <p class="testimonial-author">– Waitlist member</p>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <img src="images/avatar-3.png" alt="User" onerror="this.style.background='linear-gradient(135deg, #F7B731, #F79F1F)'; this.style.display='block'; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';">
+                        </div>
+                        <p class="testimonial-text">"I love that it works via text. So much simpler."</p>
+                        <p class="testimonial-author">– Waitlist member</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Problem Section -->
-    <section class="py-20 bg-gradient-to-br from-cream to-white relative">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl lg:text-6xl font-black text-forest mb-6">
-                    You're Not Bad at Plants.<br>
-                    <span class="text-forest/80">You're Just Getting Bad Advice.</span>
-                </h2>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <!-- Problem 1 -->
-                <div class="bg-white p-8 rounded-3xl shadow-soft border-l-4 border-red-400">
-                    <div class="text-4xl mb-4">😢</div>
-                    <h3 class="text-xl font-bold text-forest mb-3">"Water every 7 days"</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        Doesn't account for weather, seasons, or your home.<br>
-                        Same schedule in July heat and January cold?<br>
-                        <strong class="text-red-600">That's why plants die.</strong>
-                    </p>
-                </div>
+    <section class="problem-section">
+        <div class="problem-container">
+            <div class="problem-content">
+                <h2 class="problem-title">You're Not Bad at Plants. You're Just Getting Bad Advice.</h2>
                 
-                <!-- Problem 2 -->
-                <div class="bg-white p-8 rounded-3xl shadow-soft border-l-4 border-orange-400">
-                    <div class="text-4xl mb-4">📱</div>
-                    <h3 class="text-xl font-bold text-forest mb-3">Downloaded 3 plant apps</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        They ignore that it's been raining all week.<br>
-                        Or that it's 95° and your plant is stressed.<br>
-                        <strong class="text-orange-600">Notifications become noise. You ignore them.</strong>
-                    </p>
-                </div>
-                
-                <!-- Problem 3 -->
-                <div class="bg-white p-8 rounded-3xl shadow-soft border-l-4 border-purple-400">
-                    <div class="text-4xl mb-4">💀</div>
-                    <h3 class="text-xl font-bold text-forest mb-3">Killed 5 plants this year</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        Overwatered during that rainy April.<br>
-                        Underwatered during the July heatwave.<br>
-                        <strong class="text-purple-600">No idea what to do when fall hits.</strong>
-                    </p>
-                </div>
-            </div>
-            
-            <div class="mt-16 text-center">
-                <div class="inline-block bg-gradient-to-r from-forest/10 to-mint/10 border border-forest/20 px-8 py-6 rounded-3xl">
-                    <p class="text-lg font-medium text-forest mb-4">
-                        The problem isn't YOU. It's that generic advice doesn't work for:
-                    </p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-medium text-forest/80">
-                        <div>• YOUR specific plant</div>
-                        <div>• In YOUR specific home</div>
-                        <div>• With YOUR specific weather</div>
-                        <div>• Through ALL the seasons</div>
+                <div class="problem-cards">
+                    <div class="problem-card">
+                        <div class="problem-emoji">😢</div>
+                        <div class="problem-card-content">
+                            <h3 class="problem-card-title">Water every 7 days</h3>
+                            <p class="problem-card-description">Doesn't account for weather, seasons, or your home. Same schedule in July heat and January cold?</p>
+                            <div class="problem-badge red">That's why plants die.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-card">
+                        <div class="problem-emoji">📱</div>
+                        <div class="problem-card-content">
+                            <h3 class="problem-card-title">Downloaded 3 plant apps</h3>
+                            <p class="problem-card-description">They ignore that it's been raining all week. Or that it's 95° and your plant is stressed.</p>
+                            <div class="problem-badge blue">Notifications become noise. You ignore them.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-card">
+                        <div class="problem-emoji">💀</div>
+                        <div class="problem-card-content">
+                            <h3 class="problem-card-title">Killed 5 plants this year</h3>
+                            <p class="problem-card-description">They ignore that it's been raining all week. Or that it's 95° and your plant is stressed.</p>
+                            <div class="problem-badge orange">Notifications become noise. You ignore them.</div>
+                        </div>
                     </div>
                 </div>
+            </div>
+            
+            <div class="problem-phone">
+                <img src="images/problem-phone.png" alt="LingoLeaf App Preview">
             </div>
         </div>
     </section>
 
+    <!-- Solution Section -->
+    <section class="solution-section">
+        <div class="solution-container">
+            <h2 class="solution-title">The problem isn't YOU. It's that generic advice doesn't work for:</h2>
+            
+            <div class="solution-card">
+                <div class="solution-list">
+                    <div class="solution-item">
+                        <div class="solution-check">✓</div>
+                        <span class="solution-text">YOUR specific plant</span>
+                    </div>
+                    <div class="solution-item">
+                        <div class="solution-check">✓</div>
+                        <span class="solution-text">In YOUR specific home</span>
+                    </div>
+                    <div class="solution-item">
+                        <div class="solution-check">✓</div>
+                        <span class="solution-text">With YOUR specific weather</span>
+                    </div>
+                    <div class="solution-item">
+                        <div class="solution-check">✓</div>
+                        <span class="solution-text">Through ALL the seasons</span>
+                    </div>
+                </div>
+                
+                <div class="solution-image">
+                    <img src="images/solution-plants.png" alt="Happy Plants">
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-20 bg-white relative">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
-                    Why LingoLeaf Works (When Apps Don't)
-                </h2>
+    <section id="features" class="features">
+        <h2 class="section-title">Why LingoLeaf Works (When Apps Don't)</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-image">
+                    <img src="images/feature-pot-size.png" alt="Pot Size Matters">
+                    <div class="feature-icon" style="background: #FFAB34;">🪴</div>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Pot Size Actually Matters</h3>
+                    <p class="feature-description">Calculates how fast soil dries based on pot size and material (terracotta vs. plastic). Saves you from watering a huge plant like a small one.</p>
+                </div>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/plant-intelligence.svg" alt="Plant Intelligence" class="w-10 h-10">
-                    </div>
-                    <h3 class="text-2xl font-bold text-forest mb-4">Plant Intelligence</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        Every species has unique needs. We know the difference between your thirsty basil and drought-loving succulent, setting perfect care schedules.
-                    </p>
+            <div class="feature-card">
+                <div class="feature-image">
+                    <img src="images/feature-weather.png" alt="Real-Time Weather">
+                    <div class="feature-icon" style="background: #E64F4F;">🌡️</div>
                 </div>
-                
-                <!-- Feature 2 -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/weather-intelligence.svg" alt="Weather Intelligence" class="w-10 h-10">
-                    </div>
-                    <h3 class="text-2xl font-bold text-forest mb-4">Real-Time Weather Intelligence</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        We check the actual weather at your location before every reminder. Hot and sunny? Urgent alert. Cool and rainy? We mention it. Plus seasonal adjustments for winter dormancy to prevent root rot.
-                    </p>
+                <div class="feature-content">
+                    <h3 class="feature-title">Real-Time Weather Intelligence</h3>
+                    <p class="feature-description">We check the actual weather at your location before every reminder. Hot and sunny? Urgent alert. Cool and rainy? We mention it. Plus seasonal adjustments for winter dormancy to prevent root rot.</p>
                 </div>
-                
-                <!-- Feature 3 -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/personalities.svg" alt="Unique Personalities" class="w-10 h-10">
-                    </div>
-                    <h3 class="text-2xl font-bold text-forest mb-4">Unique Personalities</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        Choose your plant's voice - sassy, zen, formal, or anxious. Each message feels personal and builds a real emotional connection.
-                    </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-image">
+                    <img src="images/feature-plant-intelligence.png" alt="Plant Intelligence">
+                    <div class="feature-icon" style="background: #02B91A;">🌱</div>
                 </div>
-
-                <!-- Feature 4 -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/pot-size.svg" alt="Pot Size Matters" class="w-10 h-10">
-                    </div>
-                    <h3 class="text-2xl font-bold text-forest mb-4">Pot Size Actually Matters</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        Calculates how fast soil dries based on pot size and material (terracotta vs. plastic). Saves you from watering a huge plant like a small one.
-                    </p>
+                <div class="feature-content">
+                    <h3 class="feature-title">Unique Personalities</h3>
+                    <p class="feature-description">Each plant gets a unique voice that matches their breed and temperament. These aren't generic alerts - they're personal conversations that create emotional connection.</p>
                 </div>
-
-                <!-- Feature 5 -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/window-direction.svg" alt="Window Direction Tracking" class="w-10 h-10">
-                    </div>
-                    <h3 class="text-2xl font-bold text-forest mb-4">Window Direction Tracking</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        Factors in light exposure from your window's direction (North, South, East, West) to create a precise evaporation model tailored to your home's natural light.
-                    </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-image">
+                    <img src="images/feature-unique-personalities.png" alt="Plant Intelligence">
+                    <div class="feature-icon" style="background: #00BFC9;">🌿</div>
                 </div>
-
-                <!-- Feature 6 -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/texts-vs-apps.svg" alt="Texts > Apps" class="w-10 h-10">
-                    </div>
-                    <h3 class="text-2xl font-bold text-forest mb-4">Texts > Apps</h3>
-                    <p class="text-forest/70 leading-relaxed">
-                        98% of texts get read within 3 minutes. Only 20% of app notifications get opened. Works on flip phones. No download. No login. Just texts.
-                    </p>
+                <div class="feature-content">
+                    <h3 class="feature-title">Plant Intelligence</h3>
+                    <p class="feature-description">Every species has unique needs. We know the difference between your thirsty basil and drought-loving succulent, setting perfect care schedules.</p>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-image">
+                    <img src="images/feature-window.png" alt="Window Direction Tracking">
+                    <div class="feature-icon" style="background: #1772DA;">🪟</div>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Window Direction Tracking</h3>
+                    <p class="feature-description">Factors in light exposure from your window's direction (North, South, East, West) to create a precise evaporation model tailored to your home's natural light.</p>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-image">
+                    <img src="images/feature-texts.png" alt="Texts > Apps">
+                    <div class="feature-icon" style="background: #8D50F7;">📱</div>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Texts > Apps</h3>
+                    <p class="feature-description">98% of texts get read within 3 minutes. Only 20% of app notifications get opened. Works on flip phones. No download. No login. Just texts.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- PlantSona Section -->
-    <section class="py-20 bg-gradient-to-br from-purple-50 via-white to-green-50 relative overflow-hidden">
-        <div class="absolute top-10 left-10 w-32 h-32 bg-purple-200/30 rounded-full animate-float"></div>
-        <div class="absolute bottom-10 right-10 w-40 h-40 bg-green-200/30 organic-shape animate-sway"></div>
-        
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Left: Content -->
-                <div class="space-y-6">
-                    <h2 class="text-4xl lg:text-5xl font-bold text-forest">
-                        Meet PlantSona 🎭
-                    </h2>
-                    <p class="text-xl text-gray-600 leading-relaxed">
-                        Upload a photo and your plant introduces itself! It'll tell you its name, where it's from, and exactly how to care for it—all in its own unique voice.
-                    </p>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span class="text-purple-600">📸</span>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-forest">AI Plant Identification</h3>
-                                <p class="text-gray-600">Upload a photo and our AI identifies your plant species instantly</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span class="text-green-600">🎭</span>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-forest">Choose a Personality</h3>
-                                <p class="text-gray-600">Sassy, Zen, Anxious, or Formal - pick the voice that fits your plant</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span class="text-blue-600">💬</span>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-forest">Personalized Care Instructions</h3>
-                                <p class="text-gray-600">Get scientifically accurate care tips in your plant's unique voice</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4">
-                        <a href="/plantsona.html" class="inline-block bg-gradient-to-r from-purple-600 to-green-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                            Try PlantSona Now →
-                        </a>
-                    </div>
+    <!-- Plantsona / Plant Identification Section -->
+    <section id="plantsona" class="plantsona-section">
+        <div class="plantsona-bg">
+            <div class="plantsona-bg-top">
+                <div class="plantsona-circle"></div>
+                <div class="plantsona-circle"></div>
+                <div class="plantsona-circle"></div>
+            </div>
+            <div class="plantsona-bg-bottom">
+                <div class="plantsona-circle"></div>
+                <div class="plantsona-circle"></div>
+                <div class="plantsona-circle"></div>
+            </div>
+        </div>
+        <div class="plantsona-container">
+            <div class="plantsona-card">
+                <div class="plantsona-content">
+                    <h2 class="plantsona-title">Plant Identification</h2>
+                    <p class="plantsona-description">If you aren't sure what plant you have, just take a picture of it and PlantSona will instantly let you know what it is and what it needs.</p>
+                    <a href="plantsona.html" class="plantsona-btn">Try PlantSona →</a>
                 </div>
-
-                <!-- Right: Visual Demo -->
-                <div class="relative">
-                    <div class="bg-white rounded-3xl shadow-2xl p-8 transform hover:scale-105 transition-transform duration-300">
-                        <div class="space-y-6">
-                            <!-- Mock Upload -->
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center bg-gray-50">
-                                <div class="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                                    <span class="text-3xl">🌿</span>
-                                </div>
-                                <p class="text-sm text-gray-600">Upload your plant photo</p>
-                            </div>
-                            
-                            <!-- Mock Personality Selection -->
-                            <div class="grid grid-cols-4 gap-2">
-                                <div class="border-2 border-purple-500 bg-purple-50 rounded-lg p-3 text-center">
-                                    <div class="text-2xl mb-1">😤</div>
-                                    <p class="text-xs font-semibold">Sassy</p>
-                                </div>
-                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
-                                    <div class="text-2xl mb-1">🧘</div>
-                                    <p class="text-xs">Zen</p>
-                                </div>
-                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
-                                    <div class="text-2xl mb-1">😰</div>
-                                    <p class="text-xs">Anxious</p>
-                                </div>
-                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
-                                    <div class="text-2xl mb-1">🎩</div>
-                                    <p class="text-xs">Formal</p>
-                                </div>
-                            </div>
-
-                            <!-- Mock Result -->
-                            <div class="bg-gradient-to-br from-purple-50 to-green-50 rounded-xl p-4">
-                                <p class="text-sm font-semibold text-gray-700 mb-2">Your Plant Says:</p>
-                                <p class="text-gray-800 italic">"Hey there! I'm Aloe Vera from the Arabian Peninsula. I don't like wet feet, so let my soil dry out between waterings. Give me bright light and I'll be your best friend! 🌵"</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Floating Elements -->
-                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-purple-300/40 rounded-full animate-float"></div>
-                    <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-green-300/40 rounded-full animate-sway"></div>
+                <div class="plantsona-image">
+                    <img src="images/plant-identification.png" alt="Plant Identification">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Personalities Section -->
-    <section id="personalities" class="py-20 bg-gradient-to-br from-cream via-white to-mint/10 relative overflow-hidden">
-        <div class="absolute top-10 right-10 w-40 h-40 bg-sage/10 organic-shape animate-float"></div>
-        <div class="absolute bottom-10 left-10 w-32 h-32 bg-mint/10 rounded-full animate-sway"></div>
+    <section id="personalities" class="personalities-section">
+        <h2 class="section-title">Choose Your Plant's Personality</h2>
+        <p class="section-subtitle">Every plant deserves a voice that matches your vibe. Pick the personality that makes you smile.</p>
         
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
-                    Choose Your Plant's Personality
-                </h2>
-                <p class="text-xl text-forest/70 max-w-2xl mx-auto">
-                    Every plant deserves a voice that matches your vibe. Pick the personality that makes you smile.
-                </p>
+        <div class="personalities-grid">
+            <div class="personality-card">
+                <div class="personality-avatar sassy">😤</div>
+                <h3 class="personality-card-title">Sassy & Direct</h3>
+                <p class="personality-quote">"Listen up! It's 95° out here and I'm wilting. Drop everything and water me NOW! 💧"</p>
+                <span class="personality-badge popular">Most Popular</span>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Sassy -->
-                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-orange-400 group">
-                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/sassy-plant.svg" alt="Sassy Personality" class="w-16 h-16">
-                    </div>
-                    <h3 class="text-xl font-bold text-forest mb-3">Sassy & Direct</h3>
-                    <div class="bg-orange-50 p-4 rounded-2xl mb-4">
-                        <p class="text-sm italic text-orange-800 leading-relaxed">
-                            "Listen up! It's 95° out here and I'm wilting. Drop everything and water me NOW! 💧"
-                        </p>
-                    </div>
-                    <span class="inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium">Most Popular</span>
-                </div>
-                
-                <!-- Zen -->
-                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-green-400 group">
-                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/zen-plant.svg" alt="Zen Personality" class="w-16 h-16">
-                    </div>
-                    <h3 class="text-xl font-bold text-forest mb-3">Zen & Peaceful</h3>
-                    <div class="bg-green-50 p-4 rounded-2xl mb-4">
-                        <p class="text-sm italic text-green-800 leading-relaxed">
-                            "When you have a peaceful moment, dear friend, I could use some water. No rush. 🙏"
-                        </p>
-                    </div>
-                    <span class="inline-block bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">Calming</span>
-                </div>
-                
-                <!-- Anxious -->
-                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-pink-400 group">
-                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/anxious-plant.svg" alt="Anxious Personality" class="w-16 h-16">
-                    </div>
-                    <h3 class="text-xl font-bold text-forest mb-3">Anxious & Worried</h3>
-                    <div class="bg-pink-50 p-4 rounded-2xl mb-4">
-                        <p class="text-sm italic text-pink-800 leading-relaxed">
-                            "Oh no! I'm so dry and scared! What if I wilt?! Please help me! 😱💧"
-                        </p>
-                    </div>
-                    <span class="inline-block bg-pink-100 text-pink-800 text-xs px-3 py-1 rounded-full font-medium">Endearing</span>
-                </div>
-                
-                <!-- Formal -->
-                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-blue-400 group">
-                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <img src="assets/icons/formal-plant.svg" alt="Formal Personality" class="w-16 h-16">
-                    </div>
-                    <h3 class="text-xl font-bold text-forest mb-3">Formal & Proper</h3>
-                    <div class="bg-blue-50 p-4 rounded-2xl mb-4">
-                        <p class="text-sm italic text-blue-800 leading-relaxed">
-                            "Good day! I do believe a prompt watering would be most appreciated at your convenience."
-                        </p>
-                    </div>
-                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-medium">Professional</span>
-                </div>
+            <div class="personality-card">
+                <div class="personality-avatar zen">😌</div>
+                <h3 class="personality-card-title">Zen & Peaceful</h3>
+                <p class="personality-quote">"When you have a peaceful moment, dear friend, I could use some water. No rush. 🙏"</p>
+                <span class="personality-badge calming">Calming</span>
+            </div>
+            
+            <div class="personality-card">
+                <div class="personality-avatar anxious">😰</div>
+                <h3 class="personality-card-title">Anxious & Worried</h3>
+                <p class="personality-quote">"Oh no! I'm so dry and scared! What if I wilt?! Please help me! 😢💦"</p>
+                <span class="personality-badge endearing">Endearing</span>
+            </div>
+            
+            <div class="personality-card">
+                <div class="personality-avatar formal">🎩</div>
+                <h3 class="personality-card-title">Formal & Proper</h3>
+                <p class="personality-quote">"Good day! I do believe a prompt watering would be most appreciated at your convenience."</p>
+                <span class="personality-badge professional">Professional</span>
             </div>
         </div>
     </section>
 
     <!-- Pricing Section -->
-    <section class="py-20 bg-white relative">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
-                    Choose Your Plant Care Plan
-                </h2>
-                <p class="text-xl text-forest/70 max-w-3xl mx-auto">
-                    Start free and grow with your plant collection. Every plan includes our AI personalities and smart care reminders.
-                </p>
+    <section id="pricing" class="pricing">
+        <h2 class="section-title">Beta Pricing</h2>
+        <p class="section-subtitle">Join our beta and get full access at a special introductory price.</p>
+        
+        <div class="pricing-wrapper">
+            <div class="pricing-card featured" style="max-width: 350px; flex-shrink: 0;">
+                <div class="pricing-header">
+                    <div class="pricing-name">Beta Access</div>
+                    <div class="pricing-price">$2.99</div>
+                    <div class="pricing-badge">Per month</div>
+                </div>
+                <ul class="pricing-features">
+                    <li>✓ 5 Plants - Grow your collection</li>
+                    <li>✓ All Personalities - Sassy, Zen, ...</li>
+                    <li>✓ Weather Intelligence - Real-time</li>
+                    <li>✓ Seasonal Dormancy</li>
+                    <li>✓ Predictive Logic</li>
+                </ul>
+                <a href="#signup" class="pricing-cta">Join Beta</a>
             </div>
-            
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Sprout (Free) Plan -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-2 border-sage/20 relative">
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-gradient-to-br from-sage/20 to-mint/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <img src="assets/icons/sprout-plan.svg" alt="Sprout Plan" class="w-10 h-10">
-                        </div>
-                        <h3 class="text-2xl font-bold text-forest mb-2">Sprout</h3>
-                        <div class="text-4xl font-bold text-forest mb-1">Free</div>
-                        <p class="text-sm text-forest/60">Perfect for getting started</p>
-                    </div>
-                    
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-sage/20 rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-sage text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>1 Plant</strong> - Perfect for beginners</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-sage/20 rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-sage text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>1 Personality</strong> - Formal voice</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-sage/20 rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-sage text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>Basic Reminders</strong> - Fixed schedule</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-red-500 text-xs">✗</span>
-                            </div>
-                            <span class="text-forest/50">Weather intelligence</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-red-500 text-xs">✗</span>
-                            </div>
-                            <span class="text-forest/50">Seasonal adjustments</span>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full bg-sage/20 text-forest py-3 rounded-2xl font-semibold hover:bg-sage/30 transition-all duration-300 cursor-not-allowed">
-                        Coming Soon
-                    </button>
-                </div>
-                
-                <!-- Cultivate (Standard) Plan -->
-                <div class="bg-gradient-to-br from-sage to-forest p-8 rounded-3xl shadow-strong text-white relative transform scale-105 border-4 border-sage">
-                    <!-- Popular Badge -->
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <span class="bg-mint text-forest px-4 py-1 rounded-full text-sm font-bold">Most Popular</span>
-                    </div>
-                    
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl">🌿</span>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-2">Cultivate</h3>
-                        <div class="text-4xl font-bold mb-1">$3.99</div>
-                        <p class="text-mint/80 text-sm">per month</p>
-                    </div>
-                    
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-forest text-xs">✓</span>
-                            </div>
-                            <span><strong>5 Plants</strong> - Grow your collection</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-forest text-xs">✓</span>
-                            </div>
-                            <span><strong>All Personalities</strong> - Sassy, Zen, Anxious, Formal</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-forest text-xs">✓</span>
-                            </div>
-                            <span><strong>Weather Intelligence</strong> - Real-time adjustments</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-forest text-xs">✓</span>
-                            </div>
-                            <span><strong>Seasonal Dormancy</strong> - Smart winter care</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-forest text-xs">✓</span>
-                            </div>
-                            <span><strong>Predictive Logic</strong> - Full LingoLeaf engine</span>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full bg-white text-forest py-3 rounded-2xl font-bold hover:bg-mint transition-all duration-300 cursor-not-allowed">
-                        Coming Soon
-                    </button>
-                </div>
-                
-                <!-- Arboretum (Premium) Plan -->
-                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-2 border-forest/20 relative">
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-gradient-to-br from-forest/20 to-sage/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <img src="assets/icons/forest-plan.svg" alt="Forest Plan" class="w-10 h-10">
-                        </div>
-                        <h3 class="text-2xl font-bold text-forest mb-2">Arboretum</h3>
-                        <div class="text-4xl font-bold text-forest mb-1">$7.99</div>
-                        <p class="text-sm text-forest/60">per month</p>
-                    </div>
-                    
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-white text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>Unlimited Plants</strong> - No limits</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-white text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>All Cultivate Features</strong> - Everything included</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-white text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>Priority Support</strong> - Get help first</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-white text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>Early Access</strong> - New features first</span>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
-                                <span class="text-white text-xs">✓</span>
-                            </div>
-                            <span class="text-forest/80"><strong>Perfect for Pros</strong> - Large collections</span>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full bg-gradient-to-r from-forest to-sage text-white py-3 rounded-2xl font-semibold hover:shadow-glow transition-all duration-300 cursor-not-allowed">
-                        Coming Soon
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Pricing Footer -->
-            <div class="text-center mt-12">
-                <p class="text-forest/60 mb-4">
-                    All plans include SMS reminders, plant care guides, and our happiness guarantee.
-                </p>
-                <div class="flex justify-center items-center space-x-8 text-sm text-forest/50">
-                    <span>✓ Cancel anytime</span>
-                    <span>✓ 30-day money back</span>
-                    <span>✓ No setup fees</span>
-                </div>
-            </div>
+            <div class="pricing-decoration">LingoLeaf</div>
         </div>
+        
+        <p style="text-align: center; margin-top: 40px; color: #6F6F6F;">All plans include SMS reminders, plant care guides, and our happiness guarantee.</p>
     </section>
 
-    <!-- CTA Section -->
-    <section id="signup" class="py-20 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-forest via-sage to-moss"></div>
-        
-        <div class="max-w-4xl mx-auto px-6 relative z-10">
-            <div class="bg-white/95 backdrop-blur-sm rounded-[3rem] p-8 lg:p-16 shadow-strong">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
-                        Be First to Give Your Plants a Voice
-                    </h2>
-                    <p class="text-xl text-forest/70 max-w-2xl mx-auto mb-4">
-                        Join 100+ plant parents on our exclusive beta waitlist. Get early access when we launch on October 20th and help shape the future of plant care.
-                    </p>
-                    <div class="inline-flex items-center bg-orange-50 border border-orange-200 px-4 py-2 rounded-full">
-                        <span class="text-orange-600 font-semibold text-sm">🌱 Only 50 Beta Spots Remaining!</span>
+    <!-- Signup Section -->
+    <section id="signup" class="signup">
+        <div class="signup-container">
+            <h2 class="section-title">Be First to Give Your Plants a Voice</h2>
+            <p class="section-subtitle">Join 87 plant parents on our exclusive beta waitlist. Get early access and help shape the future of plant care.</p>
+            
+            <form name="lingoleaf-beta" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <input type="hidden" name="bot-field" />
+                <input type="hidden" name="form-name" value="lingoleaf-beta" />
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone Number (with country code)</label>
+                    <input type="tel" name="phone" class="form-input" placeholder="+1 -353-241-000" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Zip/Postal Code</label>
+                        <input type="text" name="zipcode" class="form-input" placeholder="M5V 3A8" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-input" placeholder="Toronto" required>
                     </div>
                 </div>
                 
-                <form name="beta-waitlist" method="POST" action="/.netlify/functions/onboard" netlify-honeypot="bot-field" data-netlify-recaptcha="true" class="space-y-6 max-w-2xl mx-auto">
-                    <!-- Hidden honeypot field for spam protection -->
-                    <input type="hidden" name="bot-field" />
-                    
-                    <div class="space-y-5 sm:space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Email Address</label>
-                            <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Phone Number (with country code)</label>
-                            <input type="tel" id="phone-input" name="phone" placeholder="+16475550123" required pattern="^\+[1-9]\d{7,14}$" class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                            <p class="text-xs text-forest/60 mt-1">Format: +1 for USA/Canada, +44 for UK, etc.</p>
-                            <p id="phone-error" class="text-xs text-red-600 mt-1 hidden"></p>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-forest mb-2">Zip/Postal Code</label>
-                                <input type="text" name="zipcode" placeholder="M5V 3A8" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-forest mb-2">City</label>
-                                <input type="text" name="city" placeholder="Toronto" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-forest mb-2">Country</label>
-                                <input type="text" name="country" placeholder="Canada" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Plant Species</label>
-                            <input type="text" name="species" placeholder="e.g. Monstera Deliciosa, Snake Plant" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Plant Nickname (Optional)</label>
-                            <input type="text" name="nickname" placeholder="e.g., Leafy, Spike, Fern" class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Preferred Plant Personality</label>
-                            <select name="personality" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                <option value="">Choose a personality...</option>
-                                <option value="sassy">😤 Sassy & Direct - "Water me NOW, human!"</option>
-                                <option value="zen">🧘 Zen & Peaceful - "When you have a moment..."</option>
-                                <option value="anxious">😬 Anxious & Worried - "I'm worried I'll wilt..."</option>
-                                <option value="formal">🎩 Formal & Proper - "A prompt watering would be appreciated"</option>
-                            </select>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-forest mb-2">Pot Size</label>
-                                <select name="pot_size" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                    <option value="">Choose...</option>
-                                    <option value="small">Small (4-6 inches / 10-15 cm)</option>
-                                    <option value="medium">Medium (6-10 inches / 15-25 cm)</option>
-                                    <option value="large">Large (10+ inches / 25+ cm)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-forest mb-2">Pot Material</label>
-                                <select name="pot_material" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                    <option value="">Choose...</option>
-                                    <option value="plastic">Plastic (retains moisture)</option>
-                                    <option value="terracotta">Terracotta/Clay (porous, dries faster)</option>
-                                    <option value="ceramic-drainage">Ceramic with drainage holes</option>
-                                    <option value="ceramic-no-drainage">Ceramic without drainage holes</option>
-                                    <option value="other">Other material</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Indoor or Outdoor? *</label>
-                            <select name="location" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                <option value="">Choose...</option>
-                                <option value="indoor">Indoor (inside home)</option>
-                                <option value="outdoor-covered">Outdoor (covered patio/balcony)</option>
-                                <option value="outdoor-exposed">Outdoor (fully exposed to elements)</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Light Exposure</label>
-                            <select id="light_exposure" name="light_exposure" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                <option value="">First select location above...</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Hidden indoor light options -->
-                        <div id="indoor_light_options" style="display: none;">
-                            <div class="mt-2 p-3 bg-forest/5 rounded-lg border border-sage/20">
-                                <p class="text-xs font-medium text-forest mb-2">� Indoor Light Options:</p>
-                                <div id="indoor_light_select" class="space-y-1"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Hidden outdoor light options -->
-                        <div id="outdoor_light_options" style="display: none;">
-                            <div class="mt-2 p-3 bg-sage/5 rounded-lg border border-forest/20">
-                                <p class="text-xs font-medium text-forest mb-2">🌻 Outdoor Light Options:</p>
-                                <div id="outdoor_light_select" class="space-y-1"></div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-forest mb-2">Current Soil Condition</label>
-                            <select name="initial_soil_status" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
-                                <option value="">Choose...</option>
-                                <option value="just_watered">Just Watered - Soil is wet</option>
-                                <option value="damp">Damp - Soil is moist but not wet</option>
-                                <option value="dry">Dry - Soil needs watering soon</option>
-                            </select>
-                            <p class="text-xs text-forest/60 mt-1">Check your soil now - this helps us time your first reminder perfectly!</p>
-                        </div>
+                <div class="form-group">
+                    <label class="form-label">Country</label>
+                    <input type="text" name="country" class="form-input" placeholder="Canada" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Plant Species</label>
+                    <input type="text" name="plant-species" class="form-input" placeholder="e.g Snake Plant" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Preferred Plant Personality</label>
+                    <select name="personality" class="form-select" required>
+                        <option value="">Choose personality...</option>
+                        <option value="sassy">Sassy - Playful & Fun</option>
+                        <option value="zen">Zen - Calm & Peaceful</option>
+                        <option value="formal">Formal - Professional</option>
+                        <option value="friendly">Friendly - Warm & Caring</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Pot Size</label>
+                        <select name="pot-size" class="form-select" required>
+                            <option value="">Choose...</option>
+                            <option value="small">Small (4-6")</option>
+                            <option value="medium">Medium (8-10")</option>
+                            <option value="large">Large (12"+)</option>
+                        </select>
                     </div>
-                    
-                    <div data-netlify-recaptcha="true"></div>
-                    
-                    <!-- SMS Consent Checkbox -->
-                    <div class="bg-sage/10 border border-sage/30 rounded-2xl p-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input 
-                                type="checkbox" 
-                                name="sms_consent" 
-                                required 
-                                class="mt-1 w-5 h-5 text-forest border-sage/30 rounded focus:ring-sage focus:ring-2 cursor-pointer flex-shrink-0"
-                            >
-                            <span class="text-sm text-forest/80 leading-relaxed">
-                                <span class="font-semibold text-forest">I consent to receive text messages</span> from LingoLeaf about my plant care reminders and updates. Reply STOP to opt out at any time.
-                            </span>
-                        </label>
-                        <p class="text-xs text-forest/60 mt-2 ml-8">
+                    <div class="form-group">
+                        <label class="form-label">Pot Material</label>
+                        <select name="pot-material" class="form-select" required>
+                            <option value="">Choose...</option>
+                            <option value="terracotta">Terracotta</option>
+                            <option value="plastic">Plastic</option>
+                            <option value="ceramic">Ceramic</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Indoor or Outdoor?</label>
+                    <select name="location" class="form-select" required>
+                        <option value="">Choose...</option>
+                        <option value="indoor">Indoor</option>
+                        <option value="outdoor">Outdoor</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Light Exposure</label>
+                    <select name="light-exposure" class="form-select" required>
+                        <option value="">Choose...</option>
+                        <option value="north">North Window</option>
+                        <option value="south">South Window</option>
+                        <option value="east">East Window</option>
+                        <option value="west">West Window</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Current Soil Condition</label>
+                    <select name="soil-condition" class="form-select" required>
+                        <option value="">Choose...</option>
+                        <option value="dry">Dry</option>
+                        <option value="moist">Moist</option>
+                        <option value="wet">Wet</option>
+                    </select>
+                </div>
+                
+                <p style="font-size: 12px; color: #215828; margin-bottom: 24px;">Check your soil now - this helps time your first reminder perfectly.</p>
+                
+                <div class="consent-box">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="consent" name="consent" required>
+                        <label for="consent" class="checkbox-label">
+                            <strong>I consent to receive text messages from LingoLeaf about my plant care reminders and updates. Reply STOP to opt out at any time.</strong>
+                            <br><br>
                             By checking this box, you agree to receive SMS notifications. We'll only text you about your plants - no spam, ever! 🌱
-                        </p>
+                        </label>
                     </div>
-                    
-                    <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-base sm:text-lg hover:shadow-glow transition-all duration-300 active:scale-95 min-h-[48px]">
-                        Give Your Plants a Voice! 🌱
-                    </button>
-                    
-                    <p class="text-center text-sm text-forest/60">
-                        Free early access • Be notified first • Help shape the product • Limited spots available
-                    </p>
-                </form>
-            </div>
+                </div>
+                
+                <button type="submit" class="submit-button">Give your plant a voice</button>
+            </form>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-forest text-white py-16">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center justify-between">
-                <div class="flex items-center space-x-3 mb-6 md:mb-0">
-                    <img src="/Logo2.jpeg" alt="LingoLeaf" class="h-12 w-auto object-contain">
-                    <div>
-                        <h3 class="text-xl font-bold">LingoLeaf</h3>
-                        <p class="text-sage text-sm">Your Plants, With a Voice</p>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-top">
+                <div>
+                    <div class="footer-brand">
+                        <div class="footer-logo-icon">🌱</div>
+                        <div class="footer-logo">LingoLeaf</div>
                     </div>
+                    <p class="footer-tagline">Your Plants, With a Voice</p>
                 </div>
-                <div class="flex space-x-8 text-sm">
-                    <a href="privacy-policy.html" class="text-sage hover:text-white transition-colors">Privacy</a>
-                    <a href="#" class="text-sage hover:text-white transition-colors">Terms</a>
-                    <a href="#" onclick="openContactModal(); return false;" class="text-sage hover:text-white transition-colors">Contact</a>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy</a>
+                    <a href="#terms">Terms</a>
+                    <a href="#contact">Contact</a>
                 </div>
             </div>
-            <div class="border-t border-sage/30 mt-8 pt-8 text-center text-sage text-sm">
+            <div class="footer-bottom">
                 © 2025 LingoLeaf.
             </div>
         </div>
+        <div class="footer-decoration">LingoLeaf</div>
     </footer>
 
-    <!-- Contact Form Modal -->
-    <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-forest">Contact LingoLeaf</h2>
-                    <button onclick="closeContactModal()" class="text-sage hover:text-forest transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+    <!-- Contact Modal -->
+    <div id="contactModal" class="contact-modal">
+        <div class="contact-modal-overlay" onclick="closeContactModal()"></div>
+        <div class="contact-modal-content">
+            <div class="contact-modal-header">
+                <h2>Contact LingoLeaf</h2>
+                <button class="contact-close-btn" onclick="closeContactModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="contactForm" name="contact" class="contact-form">
+                <input type="hidden" name="form-name" value="contact">
+                
+                <div class="contact-field">
+                    <label for="contact-name">Name *</label>
+                    <input type="text" id="contact-name" name="name" required placeholder="Your name">
                 </div>
                 
-                <form id="contactForm" name="contact" class="space-y-4">
-                    <input type="hidden" name="form-name" value="contact">
-                    
-                    <div>
-                        <label for="contact-name" class="block text-sm font-medium text-forest mb-2">Name *</label>
-                        <input type="text" id="contact-name" name="name" required 
-                               class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200"
-                               placeholder="Your name">
-                    </div>
-                    
-                    <div>
-                        <label for="contact-email" class="block text-sm font-medium text-forest mb-2">Email *</label>
-                        <input type="email" id="contact-email" name="email" required 
-                               class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200"
-                               placeholder="your@email.com">
-                    </div>
-                    
-                    <div>
-                        <label for="contact-subject" class="block text-sm font-medium text-forest mb-2">Category *</label>
-                        <select id="contact-subject" name="subject" required 
-                                class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
-                            <option value="">Choose a category...</option>
-                            <option value="enquiries">General Enquiries</option>
-                            <option value="feature-request">Feature Request</option>
-                            <option value="fixes-required">Fixes Required</option>
-                            <option value="feedback">Feedback</option>
-                            <option value="support">Technical Support</option>
-                            <option value="partnership">Partnership Inquiry</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="contact-message" class="block text-sm font-medium text-forest mb-2">Message *</label>
-                        <textarea id="contact-message" name="message" required rows="5"
-                                  class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 resize-none"
-                                  placeholder="Tell us what's on your mind..."></textarea>
-                    </div>
-                    
-                    <div class="flex space-x-3">
-                        <button type="submit" 
-                                class="flex-1 bg-gradient-to-r from-forest to-green-600 text-white py-3 px-6 rounded-2xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl">
-                            Send Message
-                        </button>
-                        <button type="button" onclick="closeContactModal()" 
-                                class="flex-1 bg-sage/10 text-forest py-3 px-6 rounded-2xl font-semibold hover:bg-sage/20 transition-all duration-200">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="contact-field">
+                    <label for="contact-email">Email *</label>
+                    <input type="email" id="contact-email" name="email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="contact-field">
+                    <label for="contact-subject">Category *</label>
+                    <select id="contact-subject" name="subject" required>
+                        <option value="">Choose a category...</option>
+                        <option value="enquiries">General Enquiries</option>
+                        <option value="feature-request">Feature Request</option>
+                        <option value="fixes-required">Fixes Required</option>
+                        <option value="feedback">Feedback</option>
+                        <option value="support">Technical Support</option>
+                        <option value="partnership">Partnership Inquiry</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="contact-field">
+                    <label for="contact-message">Message *</label>
+                    <textarea id="contact-message" name="message" required rows="5" placeholder="Tell us what's on your mind..."></textarea>
+                </div>
+                
+                <div class="contact-buttons">
+                    <button type="submit" class="contact-submit-btn">Send Message</button>
+                    <button type="button" class="contact-cancel-btn" onclick="closeContactModal()">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        // Phone number validation
-        function validatePhoneNumber(phone) {
-            // Remove all spaces and dashes for validation
-            const cleaned = phone.replace(/[\s-]/g, '');
-            
-            // Must start with + and have country code
-            if (!cleaned.startsWith('+')) {
-                return { valid: false, error: 'Phone number must start with + and country code (e.g., +1, +234)' };
-            }
-            
-            // Extract country code and number
-            const match = cleaned.match(/^\+(\d{1,3})(\d+)$/);
-            if (!match) {
-                return { valid: false, error: 'Invalid phone number format. Use: +[country code][number]' };
-            }
-            
-            const countryCode = match[1];
-            const number = match[2];
-            
-            // Country-specific validation
-            const validations = {
-                '1': { min: 10, max: 10, name: 'USA/Canada' },      // +1 XXX XXX XXXX
-                '44': { min: 10, max: 10, name: 'UK' },             // +44 XXXX XXXXXX
-                '234': { min: 10, max: 10, name: 'Nigeria' },       // +234 XXX XXX XXXX
-                '91': { min: 10, max: 10, name: 'India' },          // +91 XXXXX XXXXX
-                '86': { min: 11, max: 11, name: 'China' },          // +86 XXX XXXX XXXX
-            };
-            
-            const validation = validations[countryCode];
-            if (validation) {
-                if (number.length < validation.min || number.length > validation.max) {
-                    return { 
-                        valid: false, 
-                        error: `${validation.name} numbers should have ${validation.min} digits after +${countryCode}. You entered ${number.length} digits.` 
-                    };
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                
+                // Handle contact link specially
+                if (href === '#contact') {
+                    e.preventDefault();
+                    openContactModal();
+                    return;
                 }
-            } else {
-                // Generic validation for other countries (7-14 digits)
-                if (number.length < 7 || number.length > 14) {
-                    return { 
-                        valid: false, 
-                        error: `Phone number should have 7-14 digits after the country code. You entered ${number.length} digits.` 
-                    };
+                
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
-            }
-            
-            return { valid: true, cleaned: cleaned };
+            });
+        });
+
+        // Contact Modal Functions
+        function openContactModal() {
+            document.getElementById('contactModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
-        // Form submission handler
-        function handleSubmit(event) {
-            const submitBtn = document.getElementById('submit-btn');
-            const thankYouMessage = document.getElementById('thank-you-message');
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeContactModal();
+            }
+        });
+
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            // Change button text to show loading
-            submitBtn.innerHTML = 'Joining Waitlist... 🌱';
+            const form = e.target;
+            const submitBtn = form.querySelector('.contact-submit-btn');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
             
-            // Show thank you message after a short delay
-            setTimeout(() => {
-                thankYouMessage.classList.remove('hidden');
-                thankYouMessage.scrollIntoView({ behavior: 'smooth' });
-                
-                // Reset form after showing message
-                setTimeout(() => {
-                    event.target.reset();
-                    submitBtn.innerHTML = 'Join Beta Waitlist';
-                    submitBtn.disabled = false;
-                }, 2000);
-            }, 1000);
-            
-            // Allow form to submit normally to Netlify
-            return true;
-        }
-
-        // Simple form validation and smooth scrolling
-        document.addEventListener('DOMContentLoaded', function() {
-            // Phone number validation on input
-            const phoneInput = document.getElementById('phone-input');
-            const phoneError = document.getElementById('phone-error');
-            const form = document.querySelector('form[name="beta-waitlist"]');
-            
-            if (phoneInput) {
-                phoneInput.addEventListener('blur', function() {
-                    const result = validatePhoneNumber(this.value);
-                    if (!result.valid && this.value) {
-                        phoneError.textContent = result.error;
-                        phoneError.classList.remove('hidden');
-                        phoneInput.classList.add('border-red-500');
-                        phoneInput.classList.remove('border-sage/30');
-                    } else {
-                        phoneError.classList.add('hidden');
-                        phoneInput.classList.remove('border-red-500');
-                        phoneInput.classList.add('border-sage/30');
-                    }
+            try {
+                const formData = new FormData(form);
+                const response = await fetch('/.netlify/functions/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
                 });
                 
-                // Clear error on input
-                phoneInput.addEventListener('input', function() {
-                    if (phoneError && !phoneError.classList.contains('hidden')) {
-                        phoneError.classList.add('hidden');
-                        phoneInput.classList.remove('border-red-500');
-                        phoneInput.classList.add('border-sage/30');
-                    }
-                });
-            }
-            
-            // Validate phone on form submit
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const phoneValue = phoneInput.value;
-                    const result = validatePhoneNumber(phoneValue);
-                    
-                    if (!result.valid) {
-                        e.preventDefault();
-                        phoneError.textContent = result.error;
-                        phoneError.classList.remove('hidden');
-                        phoneInput.classList.add('border-red-500');
-                        phoneInput.focus();
-                        return false;
-                    }
-                    
-                    // Update the input with cleaned phone number
-                    phoneInput.value = result.cleaned;
-                });
-            }
-
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-            // Handle "Add Another Plant" flow
-            if (localStorage.getItem('lingoleaf_addingAnother') === 'true') {
-                // User is adding another plant - pre-fill contact info
-                const lastEmail = localStorage.getItem('lingoleaf_email');
-                const lastPhone = localStorage.getItem('lingoleaf_phone');
-                const lastZipcode = localStorage.getItem('lingoleaf_zipcode');
-                const lastCity = localStorage.getItem('lingoleaf_city');
-                const lastCountry = localStorage.getItem('lingoleaf_country');
-
-                if (lastEmail) document.querySelector('input[name="email"]').value = lastEmail;
-                if (lastPhone) document.querySelector('input[name="phone"]').value = lastPhone;
-                if (lastZipcode) document.querySelector('input[name="zipcode"]').value = lastZipcode;
-                if (lastCity) document.querySelector('input[name="city"]').value = lastCity;
-                if (lastCountry) document.querySelector('input[name="country"]').value = lastCountry;
-
-                // Clear the flag
-                localStorage.removeItem('lingoleaf_addingAnother');
-
-                // Scroll to form
-                document.querySelector('#signup').scrollIntoView({ behavior: 'smooth' });
-
-                // Update heading to show "Add Another Plant"
-                const heading = document.querySelector('#signup h2');
-                if (heading) {
-                    heading.textContent = 'Add Another Plant 🌿';
-                }
-            }
-
-            // Save contact info to localStorage on form submit
-            const signupForm = document.querySelector('form[name="beta-waitlist"]');
-            if (signupForm) {
-                signupForm.addEventListener('submit', function() {
-                    localStorage.setItem('lingoleaf_email', document.querySelector('input[name="email"]').value);
-                    localStorage.setItem('lingoleaf_phone', document.querySelector('input[name="phone"]').value);
-                    localStorage.setItem('lingoleaf_zipcode', document.querySelector('input[name="zipcode"]').value);
-                    localStorage.setItem('lingoleaf_city', document.querySelector('input[name="city"]').value);
-                    localStorage.setItem('lingoleaf_country', document.querySelector('input[name="country"]').value);
-                });
-            }
-
-            // Populate light exposure options based on Indoor / Outdoor selection
-            const locationSelect = document.querySelector('select[name="location"]');
-            const lightExposureSelect = document.querySelector('#light_exposure');
-            const indoorLightOptions = document.querySelector('#indoor_light_options');
-            const outdoorLightOptions = document.querySelector('#outdoor_light_options');
-
-            if (locationSelect && lightExposureSelect && indoorLightOptions && outdoorLightOptions) {
-                locationSelect.addEventListener('change', function () {
-                    const location = this.value;
-
-                    // reset base options
-                    lightExposureSelect.innerHTML = '<option value="">Choose...</option>';
-                    indoorLightOptions.style.display = 'none';
-                    outdoorLightOptions.style.display = 'none';
-
-                    let options = [];
-
-                    if (location === 'indoor') {
-                        options = [
-                            { value: 'indoor-north', label: 'North-facing window (lowest light)' },
-                            { value: 'indoor-east', label: 'East-facing window (gentle morning sun)' },
-                            { value: 'indoor-west', label: 'West-facing window (afternoon sun)' },
-                            { value: 'indoor-south', label: 'South-facing window (bright direct sun)' },
-                            { value: 'indoor-away', label: 'Away from windows (very low light)' }
-                        ];
-                        indoorLightOptions.style.display = 'block';
-                    } else if (location === 'outdoor-covered') {
-                        options = [
-                            { value: 'covered-north', label: 'North-facing covered (most protected)' },
-                            { value: 'covered-east', label: 'East-facing covered (morning sun)' },
-                            { value: 'covered-west', label: 'West-facing covered (afternoon sun)' },
-                            { value: 'covered-south', label: 'South-facing covered (brightest covered)' }
-                        ];
-                        outdoorLightOptions.style.display = 'block';
-                    } else if (location === 'outdoor-exposed') {
-                        options = [
-                            { value: 'exposed-north', label: 'North-facing open (gentle indirect light)' },
-                            { value: 'exposed-east', label: 'East-facing open (morning direct sun)' },
-                            { value: 'exposed-west', label: 'West-facing open (hot afternoon sun)' },
-                            { value: 'exposed-south', label: 'South-facing open (intense all-day sun)' }
-                        ];
-                        outdoorLightOptions.style.display = 'block';
-                    }
-
-                    options.forEach(opt => {
-                        const o = document.createElement('option');
-                        o.value = opt.value;
-                        o.textContent = opt.label;
-                        lightExposureSelect.appendChild(o);
-                    });
-                });
-            }
-
-            // Contact modal functions - make them global so onclick can access them
-            window.openContactModal = function() {
-                document.getElementById('contactModal').classList.remove('hidden');
-                document.getElementById('contactModal').classList.add('flex');
-                document.body.style.overflow = 'hidden'; // Prevent background scroll
-            };
-
-            window.closeContactModal = function() {
-                document.getElementById('contactModal').classList.add('hidden');
-                document.getElementById('contactModal').classList.remove('flex');
-                document.body.style.overflow = 'auto'; // Restore background scroll
-            };
-
-            // Close modal when clicking outside
-            document.getElementById('contactModal').addEventListener('click', function(e) {
-                if (e.target === this) {
+                if (response.ok) {
+                    alert('Message sent successfully! We\'ll get back to you soon. 🌱');
+                    form.reset();
                     closeContactModal();
+                } else {
+                    throw new Error('Failed to send message');
                 }
-            });
-
-            // Handle contact form submission
-            document.getElementById('contactForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const submitButton = this.querySelector('button[type="submit"]');
-                const originalButtonText = submitButton.textContent;
-                submitButton.disabled = true;
-                submitButton.textContent = 'Sending...';
-                
-                try {
-                    const formData = new FormData(this);
-                    const data = {
-                        name: formData.get('name'),
-                        email: formData.get('email'),
-                        subject: formData.get('subject'),
-                        message: formData.get('message')
-                    };
-                    
-                    const response = await fetch('/.netlify/functions/contact', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        // Success
-                        submitButton.textContent = '✅ Sent!';
-                        submitButton.classList.remove('from-forest', 'to-green-600');
-                        submitButton.classList.add('from-green-600', 'to-green-700');
-                        
-                        // Reset form and close modal after delay
-                        setTimeout(() => {
-                            this.reset();
-                            closeContactModal();
-                            submitButton.textContent = originalButtonText;
-                            submitButton.classList.remove('from-green-600', 'to-green-700');
-                            submitButton.classList.add('from-forest', 'to-green-600');
-                            submitButton.disabled = false;
-                        }, 2000);
-                    } else {
-                        throw new Error(result.error || 'Failed to send message');
-                    }
-                } catch (error) {
-                    console.error('Contact form error:', error);
-                    submitButton.textContent = '❌ Failed. Try again?';
-                    submitButton.classList.remove('from-forest', 'to-green-600');
-                    submitButton.classList.add('from-red-600', 'to-red-700');
-                    
-                    setTimeout(() => {
-                        submitButton.textContent = originalButtonText;
-                        submitButton.classList.remove('from-red-600', 'to-red-700');
-                        submitButton.classList.add('from-forest', 'to-green-600');
-                        submitButton.disabled = false;
-                    }, 3000);
-                }
-            });
+            } catch (error) {
+                alert('Sorry, there was an error sending your message. Please try again or email us at info@lingoleaf.ai');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
         });
     </script>
 </body>

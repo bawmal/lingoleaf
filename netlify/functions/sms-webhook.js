@@ -33,16 +33,25 @@ exports.handler = async (event) => {
   console.log(`✅ Found plant: ${plant.nickname || plant.species} (${plant.id})`);
 
 
+  // Get user's language preference
+  const userLanguage = plant.language || 'en';
+
   // NEW FLOW: Handle soil check responses first
-  if (body === 'DRY') {
+  // Support both English and French commands
+  const isDry = body === 'DRY' || body === 'SEC';
+  const isDamp = body === 'DAMP' || body === 'HUMIDE';
+  const isDone = body === 'DONE' || body === 'FAIT';
+
+  if (isDry) {
     // Soil is dry - tell user to water now
     twiml.message(waterNowMessage({ 
       personality: plant.personality, 
       nickname: plant.nickname, 
-      species: plant.species 
+      species: plant.species,
+      language: userLanguage
     }));
     // No database update - wait for DONE reply
-  } else if (body === 'DAMP') {
+  } else if (isDamp) {
     // Soil is still moist - calculate smart next check time
     const now = Date.now();
     const { adjusted } = computeAdjustedHours({
@@ -79,9 +88,10 @@ exports.handler = async (event) => {
     twiml.message(waitLongerMessage({ 
       personality: plant.personality, 
       nickname: plant.nickname, 
-      species: plant.species 
+      species: plant.species,
+      language: userLanguage
     }));
-  } else if (body === 'DONE') {
+  } else if (isDone) {
     // User finished watering - reset timer
     const now = Date.now();
     const { adjusted } = computeAdjustedHours({
@@ -103,10 +113,16 @@ exports.handler = async (event) => {
     twiml.message(confirmMessage({ 
       personality: plant.personality, 
       nickname: plant.nickname, 
-      species: plant.species 
+      species: plant.species,
+      language: userLanguage
     }));
   } else {
-    twiml.message('Reply DRY if soil is dry, DAMP if still moist, or DONE after watering.');
+    // Help message in user's language
+    if (userLanguage === 'fr') {
+      twiml.message('Répondez SEC si le sol est sec, HUMIDE si encore humide, ou FAIT après arrosage.');
+    } else {
+      twiml.message('Reply DRY if soil is dry, DAMP if still moist, or DONE after watering.');
+    }
   }
 
   return { statusCode: 200, headers: { 'Content-Type': 'text/xml' }, body: twiml.toString() };

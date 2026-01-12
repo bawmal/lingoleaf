@@ -3,331 +3,741 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantSona - Give Your Plant a Personality | LingoLeaf</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>PlantSona - AI Plant Identification | LingoLeaf</title>
+    <meta name="description" content="Upload a photo and let your plant introduce itself with AI-powered identification and personalized care tips.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green-primary: #02B91A;
+            --green-dark: #028E01;
+            --green-light: #18DA63;
+            --green-bg: #0BBA68;
+            --text-dark: #1C1C1C;
+            --text-gray: #555555;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'DM Sans', sans-serif;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            line-height: 1.6;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
-        
-        .plant-gradient {
-            background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 50%, #7cb342 100%);
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
         }
-        
-        .image-preview {
-            max-height: 300px;
-            object-fit: contain;
-        }
-        
-        .personality-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .personality-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .personality-card.selected {
-            border: 3px solid #667eea;
-            background: #f0f4ff;
-        }
-        
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
+
+        .logo-icon {
             width: 40px;
             height: 40px;
-            animation: spin 1s linear infinite;
+            background: var(--green-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
-        
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-dark);
+        }
+
+        .logo-text span {
+            color: var(--green-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--green-primary);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green-primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 24px;
+            text-align: center;
+            background: linear-gradient(180deg, #FFFFFF 0%, #E7F1E9 100%);
+        }
+
+        .hero h1 {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 56px;
+            line-height: 1.2;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: #FFFFFF;
+            border-radius: 39px;
+            padding: 40px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .upload-title {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+        }
+
+        .upload-area {
+            border: 2px dashed #C1DCC7;
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #F9FBF9;
+        }
+
+        .upload-area:hover {
+            border-color: var(--green-primary);
+            background: #F0F7F1;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--green-primary);
+            background: #E7F1E9;
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green-primary);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .image-preview {
+            margin-top: 24px;
+            border-radius: 16px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            background: #F9FBF9;
+        }
+
+        .image-preview.show {
+            display: block;
+        }
+
+        /* Personality Selection */
+        .personality-section {
+            margin-top: 32px;
+        }
+
+        .personality-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .personality-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .personality-option {
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .personality-option:hover {
+            border-color: var(--green-light);
+        }
+
+        .personality-option.selected {
+            border-color: var(--green-primary);
+            background: rgba(2, 185, 26, 0.05);
+        }
+
+        .personality-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .personality-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            width: 100%;
+            background: var(--green-primary);
+            color: white;
+            padding: 18px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            margin-top: 32px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+
+        .generate-btn:disabled {
+            background: #C1DCC7;
+            cursor: not-allowed;
+        }
+
+        /* Result Section */
+        .result-section {
+            background: #FFFFFF;
+            border-radius: 39px;
+            padding: 40px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .result-title {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+        }
+
+        .result-placeholder {
+            text-align: center;
+            padding: 60px 40px;
+            background: #F9FBF9;
+            border-radius: 24px;
+        }
+
+        .result-placeholder-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .result-placeholder-text {
+            font-size: 16px;
+            color: var(--text-gray);
+        }
+
+        .plant-result {
+            display: none;
+        }
+
+        .plant-result.show {
+            display: block;
+        }
+
+        .plant-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #E7F1E9;
+        }
+
+        .plant-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-light) 0%, var(--green-primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .plant-info h3 {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--text-dark);
+        }
+
+        .plant-info p {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .plant-message {
+            background: #F0F7F1;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .plant-message-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green-primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .plant-message-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            font-style: italic;
+        }
+
+        .care-tips {
+            margin-top: 24px;
+        }
+
+        .care-tips-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .care-tip {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #E7F1E9;
+        }
+
+        .care-tip:last-child {
+            border-bottom: none;
+        }
+
+        .care-tip-icon {
+            font-size: 24px;
+        }
+
+        .care-tip-content h4 {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .care-tip-content p {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #E7F1E9;
+            border-top: 4px solid var(--green-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--text-gray);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .personality-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .personality-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="plant-gradient text-white py-6">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center">
-                        <img src="/Logo.jpeg" alt="LingoLeaf" class="w-full h-full object-contain">
-                    </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-bold">LingoLeaf PlantSona</h1>
-                        <p class="text-xs text-green-200 hidden sm:block">AI Plant Personality Generator</p>
-                    </div>
-                </div>
-                <a href="/" class="text-white hover:text-green-200 transition font-medium">← Back to Home</a>
-            </div>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">Lingo<span>Leaf</span></div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="index.html#personalities">Personalities</a>
+            <a href="index.html" class="back-btn">← Back to Home</a>
         </div>
-    </header>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Meet PlantSona 🌱</h1>
+        <p>Upload a photo and your plant introduces itself! It'll tell you its name, where it's from, and exactly how to care for it—all in its own unique voice.</p>
+    </section>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-12">
-        <!-- Hero Section -->
-        <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">Let Your Plant Introduce Itself! 🎭</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Upload a photo and your plant will tell you its name, where it's from, and exactly how to care for it—all in its own unique voice!
-            </p>
-        </div>
+    <div class="main-content">
+        <div class="app-container">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h2 class="upload-title">Upload Your Plant Photo</h2>
+                
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📸</div>
+                    <p class="upload-text">Drag & drop your plant photo here</p>
+                    <p class="upload-hint">or click to browse files</p>
+                    <input type="file" id="file-input" accept="image/*">
+                </div>
 
-        <!-- Upload Form -->
-        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8">
-            <form id="plantsonaForm" class="space-y-8">
-                <!-- Step 1: Upload Photo -->
-                <div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">📸 Step 1: Upload Your Plant Photo</h3>
-                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-green-500 transition">
-                        <input type="file" id="plantImage" accept="image/*" class="hidden" required>
-                        <label for="plantImage" class="cursor-pointer">
-                            <div id="uploadPrompt">
-                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <p class="mt-2 text-sm text-gray-600">Click to upload or drag and drop</p>
-                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                <div class="image-preview" id="image-preview">
+                    <img id="preview-img" src="" alt="Plant preview">
+                </div>
+
+                <div class="personality-section">
+                    <h3 class="personality-title">Choose a Personality</h3>
+                    <div class="personality-grid">
+                        <div class="personality-option selected" data-personality="sassy">
+                            <div class="personality-emoji">😤</div>
+                            <div class="personality-name">Sassy</div>
+                        </div>
+                        <div class="personality-option" data-personality="zen">
+                            <div class="personality-emoji">😌</div>
+                            <div class="personality-name">Zen</div>
+                        </div>
+                        <div class="personality-option" data-personality="anxious">
+                            <div class="personality-emoji">😰</div>
+                            <div class="personality-name">Anxious</div>
+                        </div>
+                        <div class="personality-option" data-personality="formal">
+                            <div class="personality-emoji">🎩</div>
+                            <div class="personality-name">Formal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generate-btn" disabled>
+                    🌿 Generate PlantSona
+                </button>
+            </div>
+
+            <!-- Result Section -->
+            <div class="result-section">
+                <h2 class="result-title">Your Plant Says...</h2>
+                
+                <div class="result-placeholder" id="result-placeholder">
+                    <div class="result-placeholder-icon">🌿</div>
+                    <p class="result-placeholder-text">Upload a photo and select a personality to hear from your plant!</p>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Analyzing your plant...</p>
+                </div>
+
+                <div class="plant-result" id="plant-result">
+                    <div class="plant-header">
+                        <div class="plant-avatar">🌱</div>
+                        <div class="plant-info">
+                            <h3 id="plant-name">Aloe Vera</h3>
+                            <p id="plant-origin">From the Arabian Peninsula</p>
+                        </div>
+                    </div>
+
+                    <div class="plant-message">
+                        <div class="plant-message-label">Your Plant Says:</div>
+                        <p class="plant-message-text" id="plant-message">
+                            "Hey there! I'm Aloe Vera from the Arabian Peninsula. I don't like wet feet, so let my soil dry out between waterings. Give me bright light and I'll be your best friend! 🌱"
+                        </p>
+                    </div>
+
+                    <div class="care-tips">
+                        <h3 class="care-tips-title">Care Tips</h3>
+                        <div id="care-tips-list">
+                            <div class="care-tip">
+                                <div class="care-tip-icon">💧</div>
+                                <div class="care-tip-content">
+                                    <h4>Watering</h4>
+                                    <p>Let soil dry completely between waterings</p>
+                                </div>
                             </div>
-                            <div id="imagePreviewContainer" class="hidden">
-                                <img id="imagePreview" class="image-preview mx-auto rounded-lg" alt="Plant preview">
-                                <p class="mt-2 text-sm text-green-600">✓ Photo uploaded! Click to change</p>
+                            <div class="care-tip">
+                                <div class="care-tip-icon">☀️</div>
+                                <div class="care-tip-content">
+                                    <h4>Light</h4>
+                                    <p>Bright, indirect sunlight</p>
+                                </div>
                             </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Step 2: Choose Personality -->
-                <div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">🎭 Step 2: Choose a Personality</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="personality-card border-2 border-gray-200 rounded-xl p-4 text-center" data-personality="sassy">
-                            <div class="text-4xl mb-2">😤</div>
-                            <h4 class="font-semibold text-gray-800">Sassy</h4>
-                            <p class="text-sm text-gray-600 mt-1">Direct & demanding</p>
-                        </div>
-                        <div class="personality-card border-2 border-gray-200 rounded-xl p-4 text-center" data-personality="zen">
-                            <div class="text-4xl mb-2">🧘</div>
-                            <h4 class="font-semibold text-gray-800">Zen</h4>
-                            <p class="text-sm text-gray-600 mt-1">Peaceful & calm</p>
-                        </div>
-                        <div class="personality-card border-2 border-gray-200 rounded-xl p-4 text-center" data-personality="anxious">
-                            <div class="text-4xl mb-2">😰</div>
-                            <h4 class="font-semibold text-gray-800">Anxious</h4>
-                            <p class="text-sm text-gray-600 mt-1">Worried & nervous</p>
-                        </div>
-                        <div class="personality-card border-2 border-gray-200 rounded-xl p-4 text-center" data-personality="formal">
-                            <div class="text-4xl mb-2">🎩</div>
-                            <h4 class="font-semibold text-gray-800">Formal</h4>
-                            <p class="text-sm text-gray-600 mt-1">Proper & polite</p>
+                            <div class="care-tip">
+                                <div class="care-tip-icon">🌡️</div>
+                                <div class="care-tip-content">
+                                    <h4>Temperature</h4>
+                                    <p>65-80°F (18-27°C)</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <input type="hidden" id="selectedPersonality" name="personality" required>
-                </div>
-
-                <!-- Step 3: Add Nickname (Optional) -->
-                <div>
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">✨ Step 3: Add a Nickname (Optional)</h3>
-                    <input 
-                        type="text" 
-                        id="plantNickname" 
-                        name="nickname"
-                        placeholder="e.g., Leafy, Mr. Green, Plantina..."
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-green-500 focus:outline-none"
-                    >
-                </div>
-
-                <!-- Submit Button -->
-                <div class="text-center">
-                    <button 
-                        type="submit" 
-                        id="submitBtn"
-                        class="gradient-bg text-white px-8 py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        🌱 Generate PlantSona
-                    </button>
-                </div>
-            </form>
-
-            <!-- Loading State -->
-            <div id="loadingState" class="hidden text-center py-12">
-                <div class="loading-spinner mx-auto mb-4"></div>
-                <p class="text-gray-600">Analyzing your plant and creating its personality...</p>
-            </div>
-
-            <!-- Results -->
-            <div id="results" class="hidden mt-8 space-y-6">
-                <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
-                    <h3 class="text-2xl font-bold text-green-800 mb-4">Meet Your PlantSona! 🎉</h3>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <h4 class="font-semibold text-gray-700">Species Identified:</h4>
-                            <p id="resultSpecies" class="text-lg text-gray-800"></p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-semibold text-gray-700">Your Plant Says:</h4>
-                            <div id="resultVoiceMessage" class="bg-white p-4 rounded-lg text-gray-800 italic"></div>
-                        </div>
-
-                        <div>
-                            <h4 class="font-semibold text-gray-700">Care Instructions:</h4>
-                            <div id="resultCareInstructions" class="bg-white p-4 rounded-lg text-gray-800"></div>
-                        </div>
-
-                        <div>
-                            <h4 class="font-semibold text-gray-700">Fun Facts:</h4>
-                            <div id="resultFunFacts" class="bg-white p-4 rounded-lg text-gray-800"></div>
-                        </div>
-                    </div>
-
-                    <button 
-                        onclick="resetForm()" 
-                        class="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
-                    >
-                        Create Another PlantSona
-                    </button>
-                </div>
-            </div>
-
-            <!-- Error State -->
-            <div id="errorState" class="hidden mt-8">
-                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
-                    <h3 class="text-xl font-bold text-red-800 mb-2">Oops! Something went wrong</h3>
-                    <p id="errorMessage" class="text-red-600"></p>
-                    <button 
-                        onclick="resetForm()" 
-                        class="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
-                    >
-                        Try Again
-                    </button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Tips Section -->
-        <div class="max-w-4xl mx-auto mt-12 bg-blue-50 rounded-2xl p-8">
-            <h3 class="text-2xl font-bold text-blue-900 mb-4">💡 Tips for Best Results</h3>
-            <ul class="space-y-2 text-blue-800">
-                <li>✓ <strong>Clear Photos:</strong> Use well-lit photos that clearly show the leaves and overall plant structure</li>
-                <li>✓ <strong>Multiple Plants:</strong> If your photo contains multiple plants, our AI will identify the most prominent one</li>
-                <li>✓ <strong>Rare Species:</strong> While we can identify many common houseplants, very rare species may not be recognized correctly</li>
-                <li>✓ <strong>Care Adaptation:</strong> The personality-driven care instructions maintain scientific accuracy despite their stylistic differences</li>
-            </ul>
-        </div>
-    </main>
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 LingoLeaf. Your Plants, With a Voice.</p>
+    </footer>
 
     <script>
-        let selectedPersonality = null;
-        let imageBase64 = null;
+        // DOM Elements
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const generateBtn = document.getElementById('generate-btn');
+        const personalityOptions = document.querySelectorAll('.personality-option');
+        const resultPlaceholder = document.getElementById('result-placeholder');
+        const loading = document.getElementById('loading');
+        const plantResult = document.getElementById('plant-result');
 
-        // Handle image upload
-        document.getElementById('plantImage').addEventListener('change', function(e) {
+        let selectedFile = null;
+        let selectedPersonality = 'sassy';
+
+        // Upload Area Click
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // File Input Change
+        fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imageBase64 = e.target.result;
-                    document.getElementById('imagePreview').src = imageBase64;
-                    document.getElementById('uploadPrompt').classList.add('hidden');
-                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
+                handleFile(file);
             }
         });
 
-        // Handle personality selection
-        document.querySelectorAll('.personality-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.personality-card').forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedPersonality = this.dataset.personality;
-                document.getElementById('selectedPersonality').value = selectedPersonality;
+        // Drag and Drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFile(file);
+            }
+        });
+
+        // Handle File
+        function handleFile(file) {
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                imagePreview.classList.add('show');
+                generateBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Personality Selection
+        personalityOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                personalityOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedPersonality = option.dataset.personality;
             });
         });
 
-        // Handle form submission
-        document.getElementById('plantsonaForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Generate PlantSona
+        generateBtn.addEventListener('click', () => {
+            if (!selectedFile) return;
 
-            if (!imageBase64) {
-                alert('Please upload a plant photo');
-                return;
-            }
+            // Show loading
+            resultPlaceholder.style.display = 'none';
+            plantResult.classList.remove('show');
+            loading.classList.add('show');
 
-            if (!selectedPersonality) {
-                alert('Please select a personality');
-                return;
-            }
-
-            const nickname = document.getElementById('plantNickname').value;
-
-            // Show loading state
-            document.getElementById('plantsonaForm').classList.add('hidden');
-            document.getElementById('loadingState').classList.remove('hidden');
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('errorState').classList.add('hidden');
-
-            try {
-                const response = await fetch('/.netlify/functions/plantsona', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        image: imageBase64,
-                        personality: selectedPersonality,
-                        nickname: nickname
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to generate PlantSona');
-                }
-
-                // Show results
-                document.getElementById('resultSpecies').textContent = data.plantsona.species;
-                document.getElementById('resultVoiceMessage').textContent = data.plantsona.voiceMessage;
-                document.getElementById('resultCareInstructions').innerHTML = data.plantsona.careInstructions.replace(/\n/g, '<br>');
-                document.getElementById('resultFunFacts').innerHTML = data.plantsona.funFacts.replace(/\n/g, '<br>');
-
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('results').classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('errorMessage').textContent = error.message;
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('errorState').classList.remove('hidden');
-            }
+            // Simulate API call
+            setTimeout(() => {
+                loading.classList.remove('show');
+                plantResult.classList.add('show');
+                
+                // Update message based on personality
+                const messages = {
+                    sassy: "Listen up! I'm a gorgeous plant and I know it. Water me when I'm thirsty, not on YOUR schedule. And that corner you put me in? I need MORE light, honey! 💅",
+                    zen: "Greetings, peaceful friend. I am grateful for your care. When you feel moved to water me, I shall receive it with gratitude. Let us grow together in harmony. 🙏",
+                    anxious: "Oh no, oh no! Am I getting enough light?! Is that a brown spot?! Please don't forget about me! I promise I'll try my best to stay alive! 😰💦",
+                    formal: "Good day. I am pleased to make your acquaintance. I require watering approximately once per week, and I prefer indirect sunlight. Your attention to my care is most appreciated."
+                };
+                
+                document.getElementById('plant-message').textContent = `"${messages[selectedPersonality]}"`;
+            }, 2000);
         });
-
-        function resetForm() {
-            document.getElementById('plantsonaForm').reset();
-            document.getElementById('plantsonaForm').classList.remove('hidden');
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('errorState').classList.add('hidden');
-            document.getElementById('uploadPrompt').classList.remove('hidden');
-            document.getElementById('imagePreviewContainer').classList.add('hidden');
-            document.querySelectorAll('.personality-card').forEach(c => c.classList.remove('selected'));
-            selectedPersonality = null;
-            imageBase64 = null;
-        }
     </script>
 </body>
 </html>

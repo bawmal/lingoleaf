@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Weather-aware plant care assistant. Get SMS reminders when your plants need water. Works on any phone.">
+    <title>LingoLeaf - Your Plants, With a Voice</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest': '#0f4c3a',
+                        'sage': '#87a96b',
+                        'mint': '#a8d5ba',
+                        'cream': '#faf8f5',
+                        'earth': '#8b5a3c',
+                        'moss': '#6b8e5a',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'sway': 'sway 4s ease-in-out infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        sway: {
+                            '0%, 100%': { transform: 'rotate(-2deg)' },
+                            '50%': { transform: 'rotate(2deg)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(15, 76, 58, 0.1)',
+                        'medium': '0 8px 30px rgba(15, 76, 58, 0.15)',
+                        'strong': '0 15px 40px rgba(15, 76, 58, 0.2)',
+                        'glow': '0 0 30px rgba(135, 169, 107, 0.3)',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        .organic-shape {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+        
+        .message-bubble-plant {
+            background: linear-gradient(135deg, #87a96b, #6b8e5a);
+            border-radius: 20px 20px 20px 5px;
+        }
+        
+        .message-bubble-user {
+            background: linear-gradient(135deg, #a8d5ba, #87a96b);
+            border-radius: 20px 20px 5px 20px;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            h1 {
+                font-size: clamp(1.75rem, 8vw, 3rem);
+                line-height: 1.2;
+            }
+            
+            /* Ensure minimum tap target size */
+            a, button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        
+        /* Performance: Reduce animations on mobile */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Language switcher styles */
+        .language-dropdown {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <!-- Translation scripts -->
+    <script src="/js/translations.js?v=4"></script>
+    <script src="/js/language-switcher.js?v=4"></script>
+</head>
+<body class="bg-cream font-sans overflow-x-hidden">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-sage/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center">
+                        <img src="/Logo.jpeg" alt="LingoLeaf" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-forest">LingoLeaf</h1>
+                        <p class="text-xs text-sage hidden sm:block">Your Plants, With a Voice</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-forest hover:text-sage transition-colors font-medium min-h-[44px] flex items-center">Features</a>
+                    <a href="/plantsona.html" class="text-purple-600 hover:text-purple-700 transition-colors font-medium flex items-center space-x-1 min-h-[44px]">
+                        <span>🎭</span>
+                        <span>PlantSona</span>
+                    </a>
+                    <a href="#personalities" class="text-forest hover:text-sage transition-colors font-medium min-h-[44px] flex items-center">Personalities</a>
+                    <a href="#signup" class="bg-gradient-to-r from-sage to-forest text-white px-6 py-2 rounded-full hover:shadow-glow transition-all duration-300 min-h-[44px] flex items-center">Get Started</a>
+                </div>
+                <a href="#signup" class="md:hidden bg-gradient-to-r from-sage to-forest text-white px-4 py-2 rounded-full text-sm font-semibold min-h-[44px] flex items-center">Join Beta</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-24 relative overflow-hidden bg-gradient-to-b from-mint/10 to-cream">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Column: Content -->
+                <div class="space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center bg-white/80 backdrop-blur-sm border border-sage/20 px-6 py-2.5 rounded-full shadow-sm">
+                        <span class="text-forest font-semibold text-sm" data-translate="hero.free_beta">✨ 90-DAY FREE BETA</span>
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-forest leading-tight" data-translate="hero.title">
+                        Plant Care That <span class="text-sage">Knows</span> Your Weather
+                    </h1>
+                    
+                    <p class="text-lg sm:text-xl text-forest/80 max-w-xl mx-auto lg:mx-0" data-translate="hero.subtitle">
+                        Smart reminders that adapt to rain, heat, cold, and seasons
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#signup" class="inline-flex items-center justify-center bg-forest hover:bg-forest/90 text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-300 hover:shadow-lg min-h-[52px] w-full sm:w-auto" data-translate="hero.join_beta_list">
+                            Join Beta List
+                        </a>
+                        <a href="#how-it-works" class="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-forest border border-forest/20 px-8 py-4 rounded-xl font-medium text-base transition-all duration-300 min-h-[52px] w-full sm:w-auto">
+                            How It Works →
+                        </a>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2 pt-2 text-sm text-forest/70">
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 text-sage mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span data-translate="hero.no_credit_card">No credit card required</span>
+                        </span>
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 text-sage mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span data-translate="hero.works_any_phone">Works on any phone</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Hero Image -->
+                <div class="relative">
+                    <div class="relative z-10 bg-white p  -4 rounded-3xl shadow-2xl">
+                        <div class="relative overflow-hidden rounded-2xl">
+                            <!-- Placeholder for hero image -->
+                            <div class="aspect-[9/16] bg-gradient-to-br from-sage/20 to-forest/20 rounded-xl flex items-center justify-center">
+                                <span class="text-forest/40 text-lg">App Screenshot</span>
+                            </div>
+                        </div>
+                        
+                        <!-- App Store Badges -->
+                        <div class="flex justify-center gap-4 mt-6">
+                            <div class="bg-black/90 hover:bg-black transition-colors duration-300 rounded-xl px-4 py-2.5 flex items-center cursor-pointer">
+                                <div class="mr-2">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M16.318 17.714a5.25 5.25 0 01-1.22.138c-1.06 0-1.33-.506-2.474-.506-1.203 0-1.48.47-2.49.47-1.05 0-1.703-.53-2.39-1.156-.862-.79-1.52-2.005-1.52-3.31 0-1.7.97-2.95 2.22-2.95.64 0 1.18.4 1.58.76.4.36.54.5.8.5.23 0 .58-.18 1.07-.5.6-.38 1.35-.62 2.09-.62.74 0 1.49.24 2.09.62.49.32.84.5 1.07.5.3 0 .5-.2.8-.5.4-.36.94-.76 1.58-.76 1.25 0 2.22 1.25 2.22 2.95 0 1.3-.66 2.52-1.52 3.31-.68.63-1.34 1.16-2.39 1.16zM12 7.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-[10px] text-white/70">Download on the</div>
+                                    <div class="text-white font-semibold text-sm -mt-0.5">App Store</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-black/90 hover:bg-black transition-colors duration-300 rounded-xl px-4 py-2.5 flex items-center cursor-pointer">
+                                <div class="mr-2">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734c0-.39.23-.745.61-.92zm.92 17.32L11.5 12 4.53 4.866v14.268zM14.208 12l10.183 10.186a.996.996 0 00.61-.92V2.734a1 1 0 00-.61-.92L14.21 12z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-[10px] text-white/70">Get it on</div>
+                                    <div class="text-white font-semibold text-sm -mt-0.5">Google Play</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative Elements -->
+                    <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-sage/10 rounded-full -z-10"></div>
+                    <div class="absolute -top-6 -right-6 w-40 h-40 bg-mint/20 rounded-full -z-10"></div>
+                </div>
+            </div>
+            
+            <!-- Trust Badges -->
+            <div class="mt-16 pt-8 border-t border-sage/20">
+                <p class="text-center text-sm text-forest/60 mb-6" data-translate="hero.trusted_by">Trusted by plant parents worldwide</p>
+                <div class="flex flex-wrap justify-center items-center gap-8 opacity-70">
+                    <div class="text-2xl">🌱</div>
+                    <div class="text-2xl">🌿</div>
+                    <div class="text-2xl">🍃</div>
+                    <div class="text-2xl">🌵</div>
+                    <div class="text-2xl">🌴</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="py-4 sm:py-6 bg-white border-y border-sage/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-12 text-center">
+                <div class="flex items-center space-x-2 min-h-[44px]">
+                    <span class="text-xl sm:text-2xl">⭐⭐⭐⭐⭐</span>
+                    <span class="text-forest font-semibold text-sm sm:text-base">4.8/5 rating</span>
+                </div>
+                <div class="hidden md:block w-px h-8 bg-sage/30"></div>
+                <div class="flex items-center space-x-2 min-h-[44px]">
+                    <span class="text-xl sm:text-2xl">🌱</span>
+                    <span class="text-forest font-semibold text-sm sm:text-base">80%+ plant survival rate</span>
+                </div>
+                <div class="hidden md:block w-px h-8 bg-sage/30"></div>
+                <div class="flex items-center space-x-2 min-h-[44px]">
+                    <span class="text-xl sm:text-2xl">📱</span>
+                    <span class="text-forest font-semibold text-sm sm:text-base">Works on any phone</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold text-forest mb-4">
+                    Join 87 Plant Parents Testing LingoLeaf
+                </h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Testimonial 1 -->
+                <div class="bg-gradient-to-br from-sage/10 to-mint/10 p-8 rounded-3xl border border-sage/20 text-center">
+                    <div class="text-4xl mb-4">💬</div>
+                    <blockquote class="text-lg text-forest font-medium leading-relaxed mb-4">
+                        "This is exactly what I've been looking for!"
+                    </blockquote>
+                    <p class="text-sm text-forest/60">— Waitlist member</p>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-gradient-to-br from-sage/10 to-mint/10 p-8 rounded-3xl border border-sage/20 text-center">
+                    <div class="text-4xl mb-4">💬</div>
+                    <blockquote class="text-lg text-forest font-medium leading-relaxed mb-4">
+                        "Finally, a plant app that checks the weather!"
+                    </blockquote>
+                    <p class="text-sm text-forest/60">— Waitlist member</p>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-gradient-to-br from-sage/10 to-mint/10 p-8 rounded-3xl border border-sage/20 text-center">
+                    <div class="text-4xl mb-4">💬</div>
+                    <blockquote class="text-lg text-forest font-medium leading-relaxed mb-4">
+                        "I love that it works via text. So much simpler."
+                    </blockquote>
+                    <p class="text-sm text-forest/60">— Waitlist member</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Problem Section -->
+    <section class="py-20 bg-gradient-to-br from-cream to-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-6xl font-black text-forest mb-6">
+                    You're Not Bad at Plants.<br>
+                    <span class="text-forest/80">You're Just Getting Bad Advice.</span>
+                </h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Problem 1 -->
+                <div class="bg-white p-8 rounded-3xl shadow-soft border-l-4 border-red-400">
+                    <div class="text-4xl mb-4">😢</div>
+                    <h3 class="text-xl font-bold text-forest mb-3">"Water every 7 days"</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Doesn't account for weather, seasons, or your home.<br>
+                        Same schedule in July heat and January cold?<br>
+                        <strong class="text-red-600">That's why plants die.</strong>
+                    </p>
+                </div>
+                
+                <!-- Problem 2 -->
+                <div class="bg-white p-8 rounded-3xl shadow-soft border-l-4 border-orange-400">
+                    <div class="text-4xl mb-4">📱</div>
+                    <h3 class="text-xl font-bold text-forest mb-3">Downloaded 3 plant apps</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        They ignore that it's been raining all week.<br>
+                        Or that it's 95° and your plant is stressed.<br>
+                        <strong class="text-orange-600">Notifications become noise. You ignore them.</strong>
+                    </p>
+                </div>
+                
+                <!-- Problem 3 -->
+                <div class="bg-white p-8 rounded-3xl shadow-soft border-l-4 border-purple-400">
+                    <div class="text-4xl mb-4">💀</div>
+                    <h3 class="text-xl font-bold text-forest mb-3">Killed 5 plants this year</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Overwatered during that rainy April.<br>
+                        Underwatered during the July heatwave.<br>
+                        <strong class="text-purple-600">No idea what to do when fall hits.</strong>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center">
+                <div class="inline-block bg-gradient-to-r from-forest/10 to-mint/10 border border-forest/20 px-8 py-6 rounded-3xl">
+                    <p class="text-lg font-medium text-forest mb-4">
+                        The problem isn't YOU. It's that generic advice doesn't work for:
+                    </p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-medium text-forest/80">
+                        <div>• YOUR specific plant</div>
+                        <div>• In YOUR specific home</div>
+                        <div>• With YOUR specific weather</div>
+                        <div>• Through ALL the seasons</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
+                    Why LingoLeaf Works (When Apps Don't)
+                </h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/plant-intelligence.svg" alt="Plant Intelligence" class="w-10 h-10">
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Plant Intelligence</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Every species has unique needs. We know the difference between your thirsty basil and drought-loving succulent, setting perfect care schedules.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/weather-intelligence.svg" alt="Weather Intelligence" class="w-10 h-10">
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Real-Time Weather Intelligence</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        We check the actual weather at your location before every reminder. Hot and sunny? Urgent alert. Cool and rainy? We mention it. Plus seasonal adjustments for winter dormancy to prevent root rot.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/personalities.svg" alt="Unique Personalities" class="w-10 h-10">
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Unique Personalities</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Choose your plant's voice - sassy, zen, formal, or anxious. Each message feels personal and builds a real emotional connection.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/pot-size.svg" alt="Pot Size Matters" class="w-10 h-10">
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Pot Size Actually Matters</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Calculates how fast soil dries based on pot size and material (terracotta vs. plastic). Saves you from watering a huge plant like a small one.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/window-direction.svg" alt="Window Direction Tracking" class="w-10 h-10">
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Window Direction Tracking</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        Factors in light exposure from your window's direction (North, South, East, West) to create a precise evaporation model tailored to your home's natural light.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sage to-forest rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/texts-vs-apps.svg" alt="Texts > Apps" class="w-10 h-10">
+                    </div>
+                    <h3 class="text-2xl font-bold text-forest mb-4">Texts > Apps</h3>
+                    <p class="text-forest/70 leading-relaxed">
+                        98% of texts get read within 3 minutes. Only 20% of app notifications get opened. Works on flip phones. No download. No login. Just texts.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PlantSona Section -->
+    <section class="py-20 bg-gradient-to-br from-purple-50 via-white to-green-50 relative overflow-hidden">
+        <div class="absolute top-10 left-10 w-32 h-32 bg-purple-200/30 rounded-full animate-float"></div>
+        <div class="absolute bottom-10 right-10 w-40 h-40 bg-green-200/30 organic-shape animate-sway"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left: Content -->
+                <div class="space-y-6">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-forest">
+                        Meet PlantSona 🎭
+                    </h2>
+                    <p class="text-xl text-gray-600 leading-relaxed">
+                        Upload a photo and your plant introduces itself! It'll tell you its name, where it's from, and exactly how to care for it—all in its own unique voice.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-purple-600">📸</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-forest">AI Plant Identification</h3>
+                                <p class="text-gray-600">Upload a photo and our AI identifies your plant species instantly</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-green-600">🎭</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-forest">Choose a Personality</h3>
+                                <p class="text-gray-600">Sassy, Zen, Anxious, or Formal - pick the voice that fits your plant</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-blue-600">💬</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-forest">Personalized Care Instructions</h3>
+                                <p class="text-gray-600">Get scientifically accurate care tips in your plant's unique voice</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="/plantsona.html" class="inline-block bg-gradient-to-r from-purple-600 to-green-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            Try PlantSona Now →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Visual Demo -->
+                <div class="relative">
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 transform hover:scale-105 transition-transform duration-300">
+                        <div class="space-y-6">
+                            <!-- Mock Upload -->
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center bg-gray-50">
+                                <div class="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                                    <span class="text-3xl">🌿</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Upload your plant photo</p>
+                            </div>
+                            
+                            <!-- Mock Personality Selection -->
+                            <div class="grid grid-cols-4 gap-2">
+                                <div class="border-2 border-purple-500 bg-purple-50 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">😤</div>
+                                    <p class="text-xs font-semibold">Sassy</p>
+                                </div>
+                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">🧘</div>
+                                    <p class="text-xs">Zen</p>
+                                </div>
+                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">😰</div>
+                                    <p class="text-xs">Anxious</p>
+                                </div>
+                                <div class="border-2 border-gray-200 rounded-lg p-3 text-center">
+                                    <div class="text-2xl mb-1">🎩</div>
+                                    <p class="text-xs">Formal</p>
+                                </div>
+                            </div>
+
+                            <!-- Mock Result -->
+                            <div class="bg-gradient-to-br from-purple-50 to-green-50 rounded-xl p-4">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Your Plant Says:</p>
+                                <p class="text-gray-800 italic">"Hey there! I'm Aloe Vera from the Arabian Peninsula. I don't like wet feet, so let my soil dry out between waterings. Give me bright light and I'll be your best friend! 🌵"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-purple-300/40 rounded-full animate-float"></div>
+                    <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-green-300/40 rounded-full animate-sway"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Personalities Section -->
+    <section id="personalities" class="py-20 bg-gradient-to-br from-cream via-white to-mint/10 relative overflow-hidden">
+        <div class="absolute top-10 right-10 w-40 h-40 bg-sage/10 organic-shape animate-float"></div>
+        <div class="absolute bottom-10 left-10 w-32 h-32 bg-mint/10 rounded-full animate-sway"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
+                    Choose Your Plant's Personality
+                </h2>
+                <p class="text-xl text-forest/70 max-w-2xl mx-auto">
+                    Every plant deserves a voice that matches your vibe. Pick the personality that makes you smile.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Sassy -->
+                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-orange-400 group">
+                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/sassy-plant.svg" alt="Sassy Personality" class="w-16 h-16">
+                    </div>
+                    <h3 class="text-xl font-bold text-forest mb-3">Sassy & Direct</h3>
+                    <div class="bg-orange-50 p-4 rounded-2xl mb-4">
+                        <p class="text-sm italic text-orange-800 leading-relaxed">
+                            "Listen up! It's 95° out here and I'm wilting. Drop everything and water me NOW! 💧"
+                        </p>
+                    </div>
+                    <span class="inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium">Most Popular</span>
+                </div>
+                
+                <!-- Zen -->
+                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-green-400 group">
+                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/zen-plant.svg" alt="Zen Personality" class="w-16 h-16">
+                    </div>
+                    <h3 class="text-xl font-bold text-forest mb-3">Zen & Peaceful</h3>
+                    <div class="bg-green-50 p-4 rounded-2xl mb-4">
+                        <p class="text-sm italic text-green-800 leading-relaxed">
+                            "When you have a peaceful moment, dear friend, I could use some water. No rush. 🙏"
+                        </p>
+                    </div>
+                    <span class="inline-block bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">Calming</span>
+                </div>
+                
+                <!-- Anxious -->
+                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-pink-400 group">
+                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/anxious-plant.svg" alt="Anxious Personality" class="w-16 h-16">
+                    </div>
+                    <h3 class="text-xl font-bold text-forest mb-3">Anxious & Worried</h3>
+                    <div class="bg-pink-50 p-4 rounded-2xl mb-4">
+                        <p class="text-sm italic text-pink-800 leading-relaxed">
+                            "Oh no! I'm so dry and scared! What if I wilt?! Please help me! 😱💧"
+                        </p>
+                    </div>
+                    <span class="inline-block bg-pink-100 text-pink-800 text-xs px-3 py-1 rounded-full font-medium">Endearing</span>
+                </div>
+                
+                <!-- Formal -->
+                <div class="bg-white p-6 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-blue-400 group">
+                    <div class="mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <img src="assets/icons/formal-plant.svg" alt="Formal Personality" class="w-16 h-16">
+                    </div>
+                    <h3 class="text-xl font-bold text-forest mb-3">Formal & Proper</h3>
+                    <div class="bg-blue-50 p-4 rounded-2xl mb-4">
+                        <p class="text-sm italic text-blue-800 leading-relaxed">
+                            "Good day! I do believe a prompt watering would be most appreciated at your convenience."
+                        </p>
+                    </div>
+                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-medium">Professional</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-20 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6" data-translate="pricing.title">
+                    Choose Your Plant Care Plan
+                </h2>
+                <p class="text-xl text-forest/70 max-w-3xl mx-auto" data-translate="pricing.subtitle">
+                    Start free and grow with your plant collection. Every plan includes our AI personalities and smart care reminders.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Sprout (Free) Plan -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-2 border-sage/20 relative">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-sage/20 to-mint/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <img src="assets/icons/sprout-plan.svg" alt="Sprout Plan" class="w-10 h-10">
+                        </div>
+                        <h3 class="text-2xl font-bold text-forest mb-2" data-translate="pricing.sprout">Sprout</h3>
+                        <div class="text-4xl font-bold text-forest mb-1" data-translate="pricing.free">Free</div>
+                        <p class="text-sm text-forest/60" data-translate="pricing.perfect_start">Perfect for getting started</p>
+                    </div>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-sage/20 rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-sage text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>1 Plant</strong> - Perfect for beginners</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-sage/20 rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-sage text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>1 Personality</strong> - Formal voice</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-sage/20 rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-sage text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>Basic Reminders</strong> - Fixed schedule</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-red-500 text-xs">✗</span>
+                            </div>
+                            <span class="text-forest/50">Weather intelligence</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-red-500 text-xs">✗</span>
+                            </div>
+                            <span class="text-forest/50">Seasonal adjustments</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-sage/20 text-forest py-3 rounded-2xl font-semibold hover:bg-sage/30 transition-all duration-300 cursor-not-allowed" data-translate="pricing.coming_soon">
+                        Coming Soon
+                    </button>
+                </div>
+                
+                <!-- Cultivate (Standard) Plan -->
+                <div class="bg-gradient-to-br from-sage to-forest p-8 rounded-3xl shadow-strong text-white relative transform scale-105 border-4 border-sage">
+                    <!-- Popular Badge -->
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-mint text-forest px-4 py-1 rounded-full text-sm font-bold" data-translate="pricing.most_popular">Most Popular</span>
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl">🌿</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2" data-translate="pricing.cultivate">Cultivate</h3>
+                        <div class="text-4xl font-bold mb-1">$3.99</div>
+                        <p class="text-mint/80 text-sm" data-translate="pricing.per_month">per month</p>
+                    </div>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-forest text-xs">✓</span>
+                            </div>
+                            <span><strong>5 Plants</strong> - Grow your collection</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-forest text-xs">✓</span>
+                            </div>
+                            <span><strong>All Personalities</strong> - Sassy, Zen, Anxious, Formal</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-forest text-xs">✓</span>
+                            </div>
+                            <span><strong>Weather Intelligence</strong> - Real-time adjustments</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-forest text-xs">✓</span>
+                            </div>
+                            <span><strong>Seasonal Dormancy</strong> - Smart winter care</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-mint rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-forest text-xs">✓</span>
+                            </div>
+                            <span><strong>Predictive Logic</strong> - Full LingoLeaf engine</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-white text-forest py-3 rounded-2xl font-bold hover:bg-mint transition-all duration-300 cursor-not-allowed" data-translate="pricing.coming_soon">
+                        Coming Soon
+                    </button>
+                </div>
+                
+                <!-- Arboretum (Premium) Plan -->
+                <div class="bg-gradient-to-br from-cream to-white p-8 rounded-3xl shadow-soft hover:shadow-medium transition-all duration-300 border-2 border-forest/20 relative">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-forest/20 to-sage/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <img src="assets/icons/forest-plan.svg" alt="Forest Plan" class="w-10 h-10">
+                        </div>
+                        <h3 class="text-2xl font-bold text-forest mb-2" data-translate="pricing.arboretum">Arboretum</h3>
+                        <div class="text-4xl font-bold text-forest mb-1">$7.99</div>
+                        <p class="text-sm text-forest/60" data-translate="pricing.per_month">per month</p>
+                    </div>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>Unlimited Plants</strong> - No limits</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>All Cultivate Features</strong> - Everything included</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>Priority Support</strong> - Get help first</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>Early Access</strong> - New features first</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-5 h-5 bg-forest rounded-full flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs">✓</span>
+                            </div>
+                            <span class="text-forest/80"><strong>Perfect for Pros</strong> - Large collections</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-gradient-to-r from-forest to-sage text-white py-3 rounded-2xl font-semibold hover:shadow-glow transition-all duration-300 cursor-not-allowed" data-translate="pricing.coming_soon">
+                        Coming Soon
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Pricing Footer -->
+            <div class="text-center mt-12">
+                <p class="text-forest/60 mb-4">
+                    All plans include SMS reminders, plant care guides, and our happiness guarantee.
+                </p>
+                <div class="flex justify-center items-center space-x-8 text-sm text-forest/50">
+                    <span>✓ Cancel anytime</span>
+                    <span>✓ 30-day money back</span>
+                    <span>✓ No setup fees</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="signup" class="py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-forest via-sage to-moss"></div>
+        
+        <div class="max-w-4xl mx-auto px-6 relative z-10">
+            <div class="bg-white/95 backdrop-blur-sm rounded-[3rem] p-8 lg:p-16 shadow-strong">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-forest mb-6">
+                        Be First to Give Your Plants a Voice
+                    </h2>
+                    <p class="text-xl text-forest/70 max-w-2xl mx-auto mb-4">
+                        Join 100+ plant parents on our exclusive beta waitlist. Get early access when we launch on October 20th and help shape the future of plant care.
+                    </p>
+                    <div class="inline-flex items-center bg-orange-50 border border-orange-200 px-4 py-2 rounded-full">
+                        <span class="text-orange-600 font-semibold text-sm">🌱 Only 50 Beta Spots Remaining!</span>
+                    </div>
+                </div>
+                
+                <form name="beta-waitlist" method="POST" action="/.netlify/functions/onboard" netlify-honeypot="bot-field" data-netlify-recaptcha="true" class="space-y-6 max-w-2xl mx-auto">
+                    <!-- Hidden honeypot field for spam protection -->
+                    <input type="hidden" name="bot-field" />
+                    
+                    <div class="space-y-5 sm:space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Email Address</label>
+                            <input type="email" name="email" placeholder="your@email.com" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Phone Number (with country code)</label>
+                            <input type="tel" id="phone-input" name="phone" placeholder="+16475550123" required pattern="^\+[1-9]\d{7,14}$" class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                            <p class="text-xs text-forest/60 mt-1">Format: +1 for USA/Canada, +44 for UK, etc.</p>
+                            <p id="phone-error" class="text-xs text-red-600 mt-1 hidden"></p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-forest mb-2">Zip/Postal Code</label>
+                                <input type="text" name="zipcode" placeholder="M5V 3A8" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-forest mb-2">City</label>
+                                <input type="text" name="city" placeholder="Toronto" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-forest mb-2">Country</label>
+                                <input type="text" name="country" placeholder="Canada" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Plant Species</label>
+                            <input type="text" name="species" placeholder="e.g. Monstera Deliciosa, Snake Plant" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Plant Nickname (Optional)</label>
+                            <input type="text" name="nickname" placeholder="e.g., Leafy, Spike, Fern" class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Preferred Plant Personality</label>
+                            <select name="personality" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="">Choose a personality...</option>
+                                <option value="sassy">😤 Sassy & Direct - "Water me NOW, human!"</option>
+                                <option value="zen">🧘 Zen & Peaceful - "When you have a moment..."</option>
+                                <option value="anxious">😬 Anxious & Worried - "I'm worried I'll wilt..."</option>
+                                <option value="formal">🎩 Formal & Proper - "A prompt watering would be appreciated"</option>
+                            </select>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-forest mb-2">Pot Size</label>
+                                <select name="pot_size" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                    <option value="">Choose...</option>
+                                    <option value="small">Small (4-6 inches / 10-15 cm)</option>
+                                    <option value="medium">Medium (6-10 inches / 15-25 cm)</option>
+                                    <option value="large">Large (10+ inches / 25+ cm)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-forest mb-2">Pot Material</label>
+                                <select name="pot_material" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                    <option value="">Choose...</option>
+                                    <option value="plastic">Plastic (retains moisture)</option>
+                                    <option value="terracotta">Terracotta/Clay (porous, dries faster)</option>
+                                    <option value="ceramic-drainage">Ceramic with drainage holes</option>
+                                    <option value="ceramic-no-drainage">Ceramic without drainage holes</option>
+                                    <option value="other">Other material</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Indoor or Outdoor? *</label>
+                            <select name="location" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="">Choose...</option>
+                                <option value="indoor">Indoor (inside home)</option>
+                                <option value="outdoor-covered">Outdoor (covered patio/balcony)</option>
+                                <option value="outdoor-exposed">Outdoor (fully exposed to elements)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Light Exposure</label>
+                            <select id="light_exposure" name="light_exposure" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="">First select location above...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Hidden indoor light options -->
+                        <div id="indoor_light_options" style="display: none;">
+                            <div class="mt-2 p-3 bg-forest/5 rounded-lg border border-sage/20">
+                                <p class="text-xs font-medium text-forest mb-2">� Indoor Light Options:</p>
+                                <div id="indoor_light_select" class="space-y-1"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden outdoor light options -->
+                        <div id="outdoor_light_options" style="display: none;">
+                            <div class="mt-2 p-3 bg-sage/5 rounded-lg border border-forest/20">
+                                <p class="text-xs font-medium text-forest mb-2">🌻 Outdoor Light Options:</p>
+                                <div id="outdoor_light_select" class="space-y-1"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2">Current Soil Condition</label>
+                            <select name="initial_soil_status" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="">Choose...</option>
+                                <option value="just_watered">Just Watered - Soil is wet</option>
+                                <option value="damp">Damp - Soil is moist but not wet</option>
+                                <option value="dry">Dry - Soil needs watering soon</option>
+                            </select>
+                            <p class="text-xs text-forest/60 mt-1">Check your soil now - this helps us time your first reminder perfectly!</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-forest mb-2" data-translate="form.language">Preferred Language for Text Messages</label>
+                            <select name="language" id="language-select" required class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 min-h-[44px]">
+                                <option value="en">🇺🇸 English</option>
+                                <option value="fr">🇫🇷 Français (French)</option>
+                            </select>
+                            <p class="text-xs text-forest/60 mt-1" data-translate="form.language_hint">Your plant will text you in this language!</p>
+                        </div>
+                    </div>
+                    
+                    <div data-netlify-recaptcha="true"></div>
+                    
+                    <!-- SMS Consent Checkbox -->
+                    <div class="bg-sage/10 border border-sage/30 rounded-2xl p-4">
+                        <label class="flex items-start space-x-3 cursor-pointer group">
+                            <input 
+                                type="checkbox" 
+                                name="sms_consent" 
+                                required 
+                                class="mt-1 w-5 h-5 text-forest border-sage/30 rounded focus:ring-sage focus:ring-2 cursor-pointer flex-shrink-0"
+                            >
+                            <span class="text-sm text-forest/80 leading-relaxed">
+                                <span class="font-semibold text-forest">I consent to receive text messages</span> from LingoLeaf about my plant care reminders and updates. Reply STOP to opt out at any time.
+                            </span>
+                        </label>
+                        <p class="text-xs text-forest/60 mt-2 ml-8">
+                            By checking this box, you agree to receive SMS notifications. We'll only text you about your plants - no spam, ever! 🌱
+                        </p>
+                    </div>
+                    
+                    <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-forest to-sage text-white py-4 rounded-2xl font-bold text-base sm:text-lg hover:shadow-glow transition-all duration-300 active:scale-95 min-h-[48px]">
+                        Give Your Plants a Voice! 🌱
+                    </button>
+                    
+                    <p class="text-center text-sm text-forest/60">
+                        Free early access • Be notified first • Help shape the product • Limited spots available
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-forest text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-3 mb-6 md:mb-0">
+                    <img src="/Logo2.jpeg" alt="LingoLeaf" class="h-12 w-auto object-contain">
+                    <div>
+                        <h3 class="text-xl font-bold">LingoLeaf</h3>
+                        <p class="text-sage text-sm">Your Plants, With a Voice</p>
+                    </div>
+                </div>
+                <div class="flex space-x-8 text-sm">
+                    <a href="privacy-policy.html" class="text-sage hover:text-white transition-colors">Privacy</a>
+                    <a href="#" class="text-sage hover:text-white transition-colors">Terms</a>
+                    <a href="#" onclick="openContactModal(); return false;" class="text-sage hover:text-white transition-colors">Contact</a>
+                </div>
+            </div>
+            <div class="border-t border-sage/30 mt-8 pt-8 text-center text-sage text-sm">
+                © 2025 LingoLeaf.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Form Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-forest">Contact LingoLeaf</h2>
+                    <button onclick="closeContactModal()" class="text-sage hover:text-forest transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="contactForm" name="contact" class="space-y-4">
+                    <input type="hidden" name="form-name" value="contact">
+                    
+                    <div>
+                        <label for="contact-name" class="block text-sm font-medium text-forest mb-2">Name *</label>
+                        <input type="text" id="contact-name" name="name" required 
+                               class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200"
+                               placeholder="Your name">
+                    </div>
+                    
+                    <div>
+                        <label for="contact-email" class="block text-sm font-medium text-forest mb-2">Email *</label>
+                        <input type="email" id="contact-email" name="email" required 
+                               class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200"
+                               placeholder="your@email.com">
+                    </div>
+                    
+                    <div>
+                        <label for="contact-subject" class="block text-sm font-medium text-forest mb-2">Category *</label>
+                        <select id="contact-subject" name="subject" required 
+                                class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200">
+                            <option value="">Choose a category...</option>
+                            <option value="enquiries">General Enquiries</option>
+                            <option value="feature-request">Feature Request</option>
+                            <option value="fixes-required">Fixes Required</option>
+                            <option value="feedback">Feedback</option>
+                            <option value="support">Technical Support</option>
+                            <option value="partnership">Partnership Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="contact-message" class="block text-sm font-medium text-forest mb-2">Message *</label>
+                        <textarea id="contact-message" name="message" required rows="5"
+                                  class="w-full px-4 py-3 text-base rounded-2xl border border-sage/30 focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all duration-200 resize-none"
+                                  placeholder="Tell us what's on your mind..."></textarea>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button type="submit" 
+                                class="flex-1 bg-gradient-to-r from-forest to-green-600 text-white py-3 px-6 rounded-2xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            Send Message
+                        </button>
+                        <button type="button" onclick="closeContactModal()" 
+                                class="flex-1 bg-sage/10 text-forest py-3 px-6 rounded-2xl font-semibold hover:bg-sage/20 transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Phone number validation
+        function validatePhoneNumber(phone) {
+            // Remove all spaces and dashes for validation
+            const cleaned = phone.replace(/[\s-]/g, '');
+            
+            // Must start with + and have country code
+            if (!cleaned.startsWith('+')) {
+                return { valid: false, error: 'Phone number must start with + and country code (e.g., +1, +234)' };
+            }
+            
+            // Extract country code and number
+            const match = cleaned.match(/^\+(\d{1,3})(\d+)$/);
+            if (!match) {
+                return { valid: false, error: 'Invalid phone number format. Use: +[country code][number]' };
+            }
+            
+            const countryCode = match[1];
+            const number = match[2];
+            
+            // Country-specific validation
+            const validations = {
+                '1': { min: 10, max: 10, name: 'USA/Canada' },      // +1 XXX XXX XXXX
+                '44': { min: 10, max: 10, name: 'UK' },             // +44 XXXX XXXXXX
+                '234': { min: 10, max: 10, name: 'Nigeria' },       // +234 XXX XXX XXXX
+                '91': { min: 10, max: 10, name: 'India' },          // +91 XXXXX XXXXX
+                '86': { min: 11, max: 11, name: 'China' },          // +86 XXX XXXX XXXX
+            };
+            
+            const validation = validations[countryCode];
+            if (validation) {
+                if (number.length < validation.min || number.length > validation.max) {
+                    return { 
+                        valid: false, 
+                        error: `${validation.name} numbers should have ${validation.min} digits after +${countryCode}. You entered ${number.length} digits.` 
+                    };
+                }
+            } else {
+                // Generic validation for other countries (7-14 digits)
+                if (number.length < 7 || number.length > 14) {
+                    return { 
+                        valid: false, 
+                        error: `Phone number should have 7-14 digits after the country code. You entered ${number.length} digits.` 
+                    };
+                }
+            }
+            
+            return { valid: true, cleaned: cleaned };
+        }
+
+        // Form submission handler
+        function handleSubmit(event) {
+            const submitBtn = document.getElementById('submit-btn');
+            const thankYouMessage = document.getElementById('thank-you-message');
+            
+            // Change button text to show loading
+            submitBtn.innerHTML = 'Joining Waitlist... 🌱';
+            submitBtn.disabled = true;
+            
+            // Show thank you message after a short delay
+            setTimeout(() => {
+                thankYouMessage.classList.remove('hidden');
+                thankYouMessage.scrollIntoView({ behavior: 'smooth' });
+                
+                // Reset form after showing message
+                setTimeout(() => {
+                    event.target.reset();
+                    submitBtn.innerHTML = 'Join Beta Waitlist';
+                    submitBtn.disabled = false;
+                }, 2000);
+            }, 1000);
+            
+            // Allow form to submit normally to Netlify
+            return true;
+        }
+
+        // Simple form validation and smooth scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            // Phone number validation on input
+            const phoneInput = document.getElementById('phone-input');
+            const phoneError = document.getElementById('phone-error');
+            const form = document.querySelector('form[name="beta-waitlist"]');
+            
+            if (phoneInput) {
+                phoneInput.addEventListener('blur', function() {
+                    const result = validatePhoneNumber(this.value);
+                    if (!result.valid && this.value) {
+                        phoneError.textContent = result.error;
+                        phoneError.classList.remove('hidden');
+                        phoneInput.classList.add('border-red-500');
+                        phoneInput.classList.remove('border-sage/30');
+                    } else {
+                        phoneError.classList.add('hidden');
+                        phoneInput.classList.remove('border-red-500');
+                        phoneInput.classList.add('border-sage/30');
+                    }
+                });
+                
+                // Clear error on input
+                phoneInput.addEventListener('input', function() {
+                    if (phoneError && !phoneError.classList.contains('hidden')) {
+                        phoneError.classList.add('hidden');
+                        phoneInput.classList.remove('border-red-500');
+                        phoneInput.classList.add('border-sage/30');
+                    }
+                });
+            }
+            
+            // Validate phone on form submit
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const phoneValue = phoneInput.value;
+                    const result = validatePhoneNumber(phoneValue);
+                    
+                    if (!result.valid) {
+                        e.preventDefault();
+                        phoneError.textContent = result.error;
+                        phoneError.classList.remove('hidden');
+                        phoneInput.classList.add('border-red-500');
+                        phoneInput.focus();
+                        return false;
+                    }
+                    
+                    // Update the input with cleaned phone number
+                    phoneInput.value = result.cleaned;
+                });
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Handle "Add Another Plant" flow
+            if (localStorage.getItem('lingoleaf_addingAnother') === 'true') {
+                // User is adding another plant - pre-fill contact info
+                const lastEmail = localStorage.getItem('lingoleaf_email');
+                const lastPhone = localStorage.getItem('lingoleaf_phone');
+                const lastZipcode = localStorage.getItem('lingoleaf_zipcode');
+                const lastCity = localStorage.getItem('lingoleaf_city');
+                const lastCountry = localStorage.getItem('lingoleaf_country');
+
+                if (lastEmail) document.querySelector('input[name="email"]').value = lastEmail;
+                if (lastPhone) document.querySelector('input[name="phone"]').value = lastPhone;
+                if (lastZipcode) document.querySelector('input[name="zipcode"]').value = lastZipcode;
+                if (lastCity) document.querySelector('input[name="city"]').value = lastCity;
+                if (lastCountry) document.querySelector('input[name="country"]').value = lastCountry;
+
+                // Clear the flag
+                localStorage.removeItem('lingoleaf_addingAnother');
+
+                // Scroll to form
+                document.querySelector('#signup').scrollIntoView({ behavior: 'smooth' });
+
+                // Update heading to show "Add Another Plant"
+                const heading = document.querySelector('#signup h2');
+                if (heading) {
+                    heading.textContent = 'Add Another Plant 🌿';
+                }
+            }
+
+            // Save contact info to localStorage on form submit
+            const signupForm = document.querySelector('form[name="beta-waitlist"]');
+            if (signupForm) {
+                signupForm.addEventListener('submit', function() {
+                    localStorage.setItem('lingoleaf_email', document.querySelector('input[name="email"]').value);
+                    localStorage.setItem('lingoleaf_phone', document.querySelector('input[name="phone"]').value);
+                    localStorage.setItem('lingoleaf_zipcode', document.querySelector('input[name="zipcode"]').value);
+                    localStorage.setItem('lingoleaf_city', document.querySelector('input[name="city"]').value);
+                    localStorage.setItem('lingoleaf_country', document.querySelector('input[name="country"]').value);
+                });
+            }
+
+            // Populate light exposure options based on Indoor / Outdoor selection
+            const locationSelect = document.querySelector('select[name="location"]');
+            const lightExposureSelect = document.querySelector('#light_exposure');
+            const indoorLightOptions = document.querySelector('#indoor_light_options');
+            const outdoorLightOptions = document.querySelector('#outdoor_light_options');
+
+            if (locationSelect && lightExposureSelect && indoorLightOptions && outdoorLightOptions) {
+                locationSelect.addEventListener('change', function () {
+                    const location = this.value;
+
+                    // reset base options
+                    lightExposureSelect.innerHTML = '<option value="">Choose...</option>';
+                    indoorLightOptions.style.display = 'none';
+                    outdoorLightOptions.style.display = 'none';
+
+                    let options = [];
+
+                    if (location === 'indoor') {
+                        options = [
+                            { value: 'indoor-north', label: 'North-facing window (lowest light)' },
+                            { value: 'indoor-east', label: 'East-facing window (gentle morning sun)' },
+                            { value: 'indoor-west', label: 'West-facing window (afternoon sun)' },
+                            { value: 'indoor-south', label: 'South-facing window (bright direct sun)' },
+                            { value: 'indoor-away', label: 'Away from windows (very low light)' }
+                        ];
+                        indoorLightOptions.style.display = 'block';
+                    } else if (location === 'outdoor-covered') {
+                        options = [
+                            { value: 'covered-north', label: 'North-facing covered (most protected)' },
+                            { value: 'covered-east', label: 'East-facing covered (morning sun)' },
+                            { value: 'covered-west', label: 'West-facing covered (afternoon sun)' },
+                            { value: 'covered-south', label: 'South-facing covered (brightest covered)' }
+                        ];
+                        outdoorLightOptions.style.display = 'block';
+                    } else if (location === 'outdoor-exposed') {
+                        options = [
+                            { value: 'exposed-north', label: 'North-facing open (gentle indirect light)' },
+                            { value: 'exposed-east', label: 'East-facing open (morning direct sun)' },
+                            { value: 'exposed-west', label: 'West-facing open (hot afternoon sun)' },
+                            { value: 'exposed-south', label: 'South-facing open (intense all-day sun)' }
+                        ];
+                        outdoorLightOptions.style.display = 'block';
+                    }
+
+                    options.forEach(opt => {
+                        const o = document.createElement('option');
+                        o.value = opt.value;
+                        o.textContent = opt.label;
+                        lightExposureSelect.appendChild(o);
+                    });
+                });
+            }
+
+            // Contact modal functions - make them global so onclick can access them
+            window.openContactModal = function() {
+                document.getElementById('contactModal').classList.remove('hidden');
+                document.getElementById('contactModal').classList.add('flex');
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            };
+
+            window.closeContactModal = function() {
+                document.getElementById('contactModal').classList.add('hidden');
+                document.getElementById('contactModal').classList.remove('flex');
+                document.body.style.overflow = 'auto'; // Restore background scroll
+            };
+
+            // Close modal when clicking outside
+            document.getElementById('contactModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeContactModal();
+                }
+            });
+
+            // Handle contact form submission
+            document.getElementById('contactForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
+                
+                try {
+                    const formData = new FormData(this);
+                    const data = {
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        subject: formData.get('subject'),
+                        message: formData.get('message')
+                    };
+                    
+                    const response = await fetch('/.netlify/functions/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        // Success
+                        submitButton.textContent = '✅ Sent!';
+                        submitButton.classList.remove('from-forest', 'to-green-600');
+                        submitButton.classList.add('from-green-600', 'to-green-700');
+                        
+                        // Reset form and close modal after delay
+                        setTimeout(() => {
+                            this.reset();
+                            closeContactModal();
+                            submitButton.textContent = originalButtonText;
+                            submitButton.classList.remove('from-green-600', 'to-green-700');
+                            submitButton.classList.add('from-forest', 'to-green-600');
+                            submitButton.disabled = false;
+                        }, 2000);
+                    } else {
+                        throw new Error(result.error || 'Failed to send message');
+                    }
+                } catch (error) {
+                    console.error('Contact form error:', error);
+                    submitButton.textContent = '❌ Failed. Try again?';
+                    submitButton.classList.remove('from-forest', 'to-green-600');
+                    submitButton.classList.add('from-red-600', 'to-red-700');
+                    
+                    setTimeout(() => {
+                        submitButton.textContent = originalButtonText;
+                        submitButton.classList.remove('from-red-600', 'to-red-700');
+                        submitButton.classList.add('from-forest', 'to-green-600');
+                        submitButton.disabled = false;
+                    }, 3000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

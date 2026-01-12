@@ -1,5 +1,9 @@
 # Form submission redirect
 /success /success.html 200
 
+# Static pages
+/privacy-policy /privacy-policy.html 200
+/plantsona /plantsona.html 200
+
 # Fallback for any other routes
 /* /index.html 200
