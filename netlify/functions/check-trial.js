@@ -24,30 +24,28 @@ exports.handler = async (event) => {
     }
 
     try {
-        const { userId, email } = JSON.parse(event.body);
+        const { email } = JSON.parse(event.body);
 
-        if (!userId && !email) {
+        if (!email) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({ error: 'userId or email required' })
+                body: JSON.stringify({ error: 'email required' })
             };
         }
 
-        // Find user
-        let query = userId 
-            ? `users?id=eq.${userId}&select=*`
-            : `users?email=eq.${encodeURIComponent(email)}&select=*`;
+        // Find plant by email
+        let query = `plants?email=eq.${encodeURIComponent(email)}&select=*&limit=1`;
         
-        const users = await supabaseRequest(query);
+        const plants = await supabaseRequest(query);
         
-        if (!users || users.length === 0) {
+        if (!plants || plants.length === 0) {
             return {
                 statusCode: 404,
-                body: JSON.stringify({ error: 'User not found' })
+                body: JSON.stringify({ error: 'No plants found for this email' })
             };
         }
 
-        const user = users[0];
+        const user = plants[0];
         const now = new Date();
         const trialStart = new Date(user.trial_started_at || user.created_at);
         const trialEnd = new Date(trialStart);

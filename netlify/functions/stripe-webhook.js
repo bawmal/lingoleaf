@@ -59,28 +59,18 @@ exports.handler = async (event) => {
             
             // Update user's subscription status in database
             try {
-                // Find user by email
-                const users = await supabaseRequest(
-                    `users?email=eq.${encodeURIComponent(customerEmail)}&select=id`,
-                    'GET'
+                // Update all plants with this email to have active subscription
+                await supabaseRequest(
+                    `plants?email=eq.${encodeURIComponent(customerEmail)}`,
+                    'PATCH',
+                    {
+                        subscription_status: 'active',
+                        stripe_customer_id: customerId,
+                        stripe_subscription_id: subscriptionId,
+                        subscription_started_at: new Date().toISOString()
+                    }
                 );
-                
-                if (users && users.length > 0) {
-                    const userId = users[0].id;
-                    
-                    // Update user with subscription info
-                    await supabaseRequest(
-                        `users?id=eq.${userId}`,
-                        'PATCH',
-                        {
-                            subscription_status: 'active',
-                            stripe_customer_id: customerId,
-                            stripe_subscription_id: subscriptionId,
-                            subscription_started_at: new Date().toISOString()
-                        }
-                    );
-                    console.log(`Updated subscription for user ${userId}`);
-                }
+                console.log(`Updated subscription for email ${customerEmail}`);
             } catch (error) {
                 console.error('Error updating user subscription:', error);
             }
@@ -94,7 +84,7 @@ exports.handler = async (event) => {
             // Update subscription status
             try {
                 await supabaseRequest(
-                    `users?stripe_subscription_id=eq.${subscription.id}`,
+                    `plants?stripe_subscription_id=eq.${subscription.id}`,
                     'PATCH',
                     {
                         subscription_status: subscription.status
@@ -113,7 +103,7 @@ exports.handler = async (event) => {
             // Mark subscription as cancelled
             try {
                 await supabaseRequest(
-                    `users?stripe_subscription_id=eq.${subscription.id}`,
+                    `plants?stripe_subscription_id=eq.${subscription.id}`,
                     'PATCH',
                     {
                         subscription_status: 'cancelled',
@@ -133,7 +123,7 @@ exports.handler = async (event) => {
             // Mark subscription as past_due
             try {
                 await supabaseRequest(
-                    `users?stripe_customer_id=eq.${invoice.customer}`,
+                    `plants?stripe_customer_id=eq.${invoice.customer}`,
                     'PATCH',
                     {
                         subscription_status: 'past_due'

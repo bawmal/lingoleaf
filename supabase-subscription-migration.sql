@@ -1,19 +1,19 @@
--- Add subscription fields to users table
+-- Add subscription fields to plants table
 -- Run this in your Supabase SQL Editor
 
-ALTER TABLE users ADD COLUMN IF NOT EXISTS trial_started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'trial';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_started_at TIMESTAMP WITH TIME ZONE;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_ended_at TIMESTAMP WITH TIME ZONE;
+-- Add subscription tracking columns
+ALTER TABLE plants ADD COLUMN IF NOT EXISTS trial_started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+ALTER TABLE plants ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'trial';
+ALTER TABLE plants ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
+ALTER TABLE plants ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
+ALTER TABLE plants ADD COLUMN IF NOT EXISTS subscription_started_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE plants ADD COLUMN IF NOT EXISTS subscription_ended_at TIMESTAMP WITH TIME ZONE;
 
--- Create index for faster lookups
-CREATE INDEX IF NOT EXISTS idx_users_stripe_customer_id ON users(stripe_customer_id);
-CREATE INDEX IF NOT EXISTS idx_users_stripe_subscription_id ON users(stripe_subscription_id);
-CREATE INDEX IF NOT EXISTS idx_users_subscription_status ON users(subscription_status);
+-- Create indexes for faster lookups
+CREATE INDEX IF NOT EXISTS idx_plants_stripe_customer_id ON plants(stripe_customer_id);
+CREATE INDEX IF NOT EXISTS idx_plants_stripe_subscription_id ON plants(stripe_subscription_id);
+CREATE INDEX IF NOT EXISTS idx_plants_subscription_status ON plants(subscription_status);
+CREATE INDEX IF NOT EXISTS idx_plants_email ON plants(email);
 
--- Update existing users to have trial_started_at set to their created_at date
-UPDATE users SET trial_started_at = created_at WHERE trial_started_at IS NULL;
-
-COMMENT ON COLUMN users.subscription_status IS 'Values: trial, active, past_due, cancelled, expired';
+-- Update existing plants to have trial_started_at set to their created_at date
+UPDATE plants SET trial_started_at = created_at WHERE trial_started_at IS NULL;
