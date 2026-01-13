@@ -61,7 +61,7 @@ async function sendTrialExpiryEmail(email, plantName) {
                     <tr>
                         <td style="padding: 40px 40px 24px 40px;">
                             <p style="font-size: 18px; line-height: 1.6; color: #1C1C1C; margin: 0; font-weight: 500;">
-                                We hope you enjoyed getting to know ${plantName ? `<strong style="color: #02B91A;">${plantName}</strong>'s` : 'your plant\\'s'} personality over the past 30 days!
+                                We hope you enjoyed getting to know ${plantName ? '<strong style="color: #02B91A;">' + plantName + "</strong>'s" : "your plant's"} personality over the past 30 days!
                             </p>
                         </td>
                     </tr>
