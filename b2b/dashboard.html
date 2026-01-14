@@ -468,14 +468,14 @@
         // Initialize Supabase
         const SUPABASE_URL = 'https://qrmexlkpspnqxddlxsxz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybWV4bGtwc3BucXhkZGx4c3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTcyNjUsImV4cCI6MjA1MjI5MzI2NX0.CnI8X6E1lMnVKGaXVpRpxAWmCA1kXvVmBn1OvhMFRGg';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let currentUser = null;
         let currentShop = null;
         
         // Check auth on page load
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = '/b2b/login.html';
                 return;
@@ -483,7 +483,7 @@
             currentUser = session.user;
             
             // Get or create shop record
-            const { data: shop, error } = await supabase
+            const { data: shop, error } = await supabaseClient
                 .from('shops')
                 .select('*')
                 .eq('id', currentUser.id)
@@ -493,7 +493,7 @@
                 currentShop = shop;
             } else {
                 // Create shop if doesn't exist (for Google sign-ups)
-                const { data: newShop } = await supabase
+                const { data: newShop } = await supabaseClient
                     .from('shops')
                     .insert({
                         id: currentUser.id,
@@ -521,7 +521,7 @@
             try {
                 if (!currentShop) return;
                 
-                const { data: customers, error } = await supabase
+                const { data: customers, error } = await supabaseClient
                     .from('b2b_customers')
                     .select('*')
                     .eq('shop_id', currentShop.id)
@@ -594,7 +594,7 @@
             btn.disabled = true;
             
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('b2b_customers')
                     .insert({
                         shop_id: currentShop.id,
@@ -651,7 +651,7 @@
             if (!confirm('Are you sure you want to delete this customer?')) return;
             
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('b2b_customers')
                     .delete()
                     .eq('id', customerId)
@@ -675,7 +675,7 @@
         
         // Logout
         async function logout() {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             window.location.href = '/b2b/login.html';
         }
         
