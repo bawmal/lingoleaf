@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - LingoLeaf for Business</title>
+    
+    <!-- Amplitude Analytics -->
+    <script src="https://cdn.amplitude.com/libs/analytics-browser-2.3.3-min.js.gz"></script>
+    <script>
+        window.amplitude.init('b9405679c32380d513ae4af253c2d6df');
+        window.amplitude.track('Page View', { page: 'b2b_dashboard' });
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -466,8 +474,8 @@
 
     <script>
         // Initialize Supabase
-        const SUPABASE_URL = 'https://qrmexlkpspnqxddlxsxz.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybWV4bGtwc3BucXhkZGx4c3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTcyNjUsImV4cCI6MjA1MjI5MzI2NX0.CnI8X6E1lMnVKGaXVpRpxAWmCA1kXvVmBn1OvhMFRGg';
+        const SUPABASE_URL = 'https://lchgddyawflncuialrcj.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjaGdkZHlhd2ZsbmN1aWFscmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjI1OTcsImV4cCI6MjA3NTMzODU5N30.o4evq08e2a-atTm5T4CMb2dWdnDY48QV54uCqM2X4H0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let currentUser = null;

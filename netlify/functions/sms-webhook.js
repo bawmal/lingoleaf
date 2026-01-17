@@ -3,6 +3,28 @@ const { getPlantByUserAndSlot, updatePlant } = require('./lib/db');
 const { confirmMessage, waterNowMessage, waitLongerMessage } = require('./lib/messaging');
 const { computeAdjustedHours, nextDueFrom } = require('./lib/schedule');
 const twilio = require('twilio');
+const fetch = require('node-fetch');
+
+// Amplitude tracking helper
+const AMPLITUDE_API_KEY = 'b9405679c32380d513ae4af253c2d6df';
+async function trackAmplitudeEvent(eventName, userId, eventProperties = {}) {
+  try {
+    await fetch('https://api2.amplitude.com/2/httpapi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: AMPLITUDE_API_KEY,
+        events: [{
+          user_id: userId,
+          event_type: eventName,
+          event_properties: eventProperties
+        }]
+      })
+    });
+  } catch (err) {
+    console.log('Amplitude tracking error:', err.message);
+  }
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
@@ -50,11 +72,17 @@ exports.handler = async (event) => {
       species: plant.species,
       language: userLanguage
     }));
+    
+    // Track DRY reply in Amplitude
+    await trackAmplitudeEvent('SMS Reply - Dry', plant.email, {
+      species: plant.species, nickname: plant.nickname,
+      city: plant.city, country: plant.country
+    });
     // No database update - wait for DONE reply
   } else if (isDamp) {
     // Soil is still moist - calculate smart next check time
     const now = Date.now();
-    const { adjusted } = computeAdjustedHours({
+    const { effective } = computeAdjustedHours({
       species: plant.species,
       pot_size: plant.pot_size,
       pot_material: plant.pot_material,
@@ -65,7 +93,7 @@ exports.handler = async (event) => {
     });
     
     // Calculate remaining time in schedule
-    const totalInterval = adjusted * 3600000; // hours to milliseconds
+    const totalInterval = effective * 3600000; // hours to milliseconds
     const timeElapsed = now - plant.last_watered_ts;
     const remainingTime = totalInterval - timeElapsed;
     
@@ -85,6 +113,13 @@ exports.handler = async (event) => {
     
     console.log(`DAMP reply: Next check in ${Math.round(waitTime / 3600000)} hours (weather-aware)`);
     
+    // Track DAMP reply in Amplitude
+    await trackAmplitudeEvent('SMS Reply - Damp', plant.email, {
+      species: plant.species, nickname: plant.nickname,
+      city: plant.city, country: plant.country,
+      next_check_hours: Math.round(waitTime / 3600000)
+    });
+    
     twiml.message(waitLongerMessage({ 
       personality: plant.personality, 
       nickname: plant.nickname, 
@@ -94,20 +129,28 @@ exports.handler = async (event) => {
   } else if (isDone) {
     // User finished watering - reset timer
     const now = Date.now();
-    const { adjusted } = computeAdjustedHours({
+    const { effective } = computeAdjustedHours({
       species: plant.species,
       pot_size: plant.pot_size,
       pot_material: plant.pot_material,
       light_exposure: plant.light_exposure,
+      location: plant.location,
       now: new Date()
     });
-    const next_due_ts = nextDueFrom(now, adjusted);
+    const next_due_ts = nextDueFrom(now, effective);
     
     // Reset timer and clear skip flag
     await updatePlant(plant.id, { 
       last_watered_ts: now, 
       next_due_ts,
       skip_soil_check: false  // Clear flag - next time do soil check
+    });
+    
+    // Track DONE (watering completed) in Amplitude
+    await trackAmplitudeEvent('SMS Reply - Watered', plant.email, {
+      species: plant.species, nickname: plant.nickname,
+      city: plant.city, country: plant.country,
+      next_watering_hours: effective
     });
     
     twiml.message(confirmMessage({ 

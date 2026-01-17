@@ -6,6 +6,27 @@ const twilio = require('twilio');
 
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
+// Amplitude tracking helper
+const AMPLITUDE_API_KEY = 'b9405679c32380d513ae4af253c2d6df';
+async function trackAmplitudeEvent(eventName, userId, eventProperties = {}) {
+  try {
+    await fetch('https://api2.amplitude.com/2/httpapi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: AMPLITUDE_API_KEY,
+        events: [{
+          user_id: userId,
+          event_type: eventName,
+          event_properties: eventProperties
+        }]
+      })
+    });
+  } catch (err) {
+    console.log('Amplitude tracking error:', err.message);
+  }
+}
+
 // Helper: Determine temperature units based on country
 // US, US territories, Liberia, Myanmar use Fahrenheit; rest of world uses Celsius
 function getUnitsForCountry(country) {
@@ -77,6 +98,16 @@ exports.handler = async (event) => {
         body 
       });
       console.log(`   ✅ SMS sent successfully from slot ${p.slot_index + 1}! SID: ${msg.sid}`);
+      
+      // Track SMS sent in Amplitude
+      await trackAmplitudeEvent('SMS Reminder Sent', p.email, {
+        species: p.species,
+        nickname: p.nickname,
+        personality: p.personality,
+        city: p.city,
+        country: p.country,
+        message_type: p.skip_soil_check ? 'water_now' : 'soil_check'
+      });
     } catch (err) {
       console.error(`   ❌ SMS failed:`, err.message);
     }

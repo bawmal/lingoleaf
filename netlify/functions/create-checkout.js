@@ -1,6 +1,28 @@
 const Stripe = require('stripe');
+const fetch = require('node-fetch');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Amplitude tracking helper
+const AMPLITUDE_API_KEY = 'b9405679c32380d513ae4af253c2d6df';
+async function trackAmplitudeEvent(eventName, userId, eventProperties = {}) {
+  try {
+    await fetch('https://api2.amplitude.com/2/httpapi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: AMPLITUDE_API_KEY,
+        events: [{
+          user_id: userId,
+          event_type: eventName,
+          event_properties: eventProperties
+        }]
+      })
+    });
+  } catch (err) {
+    console.log('Amplitude tracking error:', err.message);
+  }
+}
 
 exports.handler = async (event) => {
     // Handle CORS preflight
@@ -59,6 +81,12 @@ exports.handler = async (event) => {
                     plantId: plantId || '',
                 },
             },
+        });
+
+        // Track checkout started in Amplitude
+        await trackAmplitudeEvent('Checkout Started', email, {
+          session_id: session.id,
+          plant_id: plantId || null
         });
 
         return {

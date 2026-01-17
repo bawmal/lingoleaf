@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - LingoLeaf for Business</title>
+    
+    <!-- Amplitude Analytics -->
+    <script src="https://cdn.amplitude.com/libs/analytics-browser-2.3.3-min.js.gz"></script>
+    <script>
+        window.amplitude.init('b9405679c32380d513ae4af253c2d6df');
+        window.amplitude.track('Page View', { page: 'b2b_signup' });
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -227,8 +235,8 @@
 
     <script>
         // Initialize Supabase
-        const SUPABASE_URL = 'https://qrmexlkpspnqxddlxsxz.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybWV4bGtwc3BucXhkZGx4c3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTcyNjUsImV4cCI6MjA1MjI5MzI2NX0.CnI8X6E1lMnVKGaXVpRpxAWmCA1kXvVmBn1OvhMFRGg';
+        const SUPABASE_URL = 'https://lchgddyawflncuialrcj.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjaGdkZHlhd2ZsbmN1aWFscmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjI1OTcsImV4cCI6MjA3NTMzODU5N30.o4evq08e2a-atTm5T4CMb2dWdnDY48QV54uCqM2X4H0';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // Check if already logged in
@@ -284,19 +292,27 @@
                 if (error) throw error;
                 
                 if (data.user) {
-                    // Create shop record in database
-                    const { error: shopError } = await supabaseClient
-                        .from('shops')
-                        .insert({
-                            id: data.user.id,
-                            email: email,
-                            business_name: businessName,
-                            plan: 'trial'
+                    // Create shop record via Netlify function (bypasses RLS)
+                    try {
+                        const shopResponse = await fetch('/.netlify/functions/create-shop', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userId: data.user.id,
+                                email: email,
+                                businessName: businessName
+                            })
                         });
-                    
-                    if (shopError && !shopError.message.includes('duplicate')) {
-                        console.error('Shop creation error:', shopError);
+                        const shopResult = await shopResponse.json();
+                        if (!shopResponse.ok) {
+                            console.error('Shop creation error:', shopResult.error);
+                        }
+                    } catch (shopErr) {
+                        console.error('Shop creation error:', shopErr);
                     }
+                    
+                    // Track successful signup
+                    window.amplitude.track('B2B Signup', { email: email, business_name: businessName });
                     
                     // Check if email confirmation is required
                     if (data.session) {
@@ -308,8 +324,39 @@
                     }
                 }
             } catch (error) {
-                errorDiv.textContent = error.message;
-                errorDiv.style.display = 'block';
+                // Handle duplicate email error
+                if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+                    errorDiv.innerHTML = `
+                        This email is already registered. 
+                        <a href="#" id="forgotPasswordLink" style="color: #02B91A; font-weight: 500;">Forgot your password?</a>
+                    `;
+                    errorDiv.style.display = 'block';
+                    
+                    // Add forgot password handler
+                    document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const email = document.getElementById('email').value;
+                        if (!email) {
+                            errorDiv.textContent = 'Please enter your email address first.';
+                            return;
+                        }
+                        
+                        const { error: resetError } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                            redirectTo: window.location.origin + '/b2b/reset-password.html'
+                        });
+                        
+                        if (resetError) {
+                            errorDiv.textContent = resetError.message;
+                        } else {
+                            errorDiv.style.display = 'none';
+                            successDiv.textContent = 'Password reset link sent! Check your email.';
+                            successDiv.style.display = 'block';
+                        }
+                    });
+                } else {
+                    errorDiv.textContent = error.message;
+                    errorDiv.style.display = 'block';
+                }
                 submitBtn.textContent = 'Create Account';
                 submitBtn.disabled = false;
             }
