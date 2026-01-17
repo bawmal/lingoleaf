@@ -531,8 +531,13 @@
             document.getElementById('shopName').textContent = currentShop?.business_name || 'Your Shop';
             document.getElementById('planName').textContent = (currentShop?.plan || 'trial').charAt(0).toUpperCase() + (currentShop?.plan || 'trial').slice(1);
             
-            // Load customers
-            loadCustomers();
+            // Check if Twilio number is assigned
+            if (!currentShop?.twilio_number) {
+                showPendingSetup();
+            } else {
+                // Load customers
+                loadCustomers();
+            }
         }
         
         checkAuth();
@@ -692,6 +697,30 @@
         
         function closeAddModal() {
             document.getElementById('addModal').classList.remove('show');
+        }
+        
+        // Show pending setup message when no Twilio number assigned
+        function showPendingSetup() {
+            document.getElementById('customersContainer').innerHTML = `
+                <div class="empty-state" style="padding: 80px 24px;">
+                    <h3 style="color: #D97706; margin-bottom: 16px;">⚠️ Setup Pending</h3>
+                    <p style="margin-bottom: 8px;">Your account is awaiting SMS number assignment.</p>
+                    <p style="color: #888;">Please contact support to complete your setup.</p>
+                    <p style="margin-top: 16px; font-size: 12px; color: #666;">support@lingoleaf.com</p>
+                </div>
+            `;
+            // Disable Add Customer button
+            const addBtn = document.querySelector('.btn-primary');
+            if (addBtn) {
+                addBtn.disabled = true;
+                addBtn.style.opacity = '0.5';
+                addBtn.style.cursor = 'not-allowed';
+                addBtn.onclick = () => alert('Your account is pending SMS number assignment. Please contact support.');
+            }
+            // Update stats to show 0
+            document.getElementById('totalCustomers').textContent = '0';
+            document.getElementById('activeSequences').textContent = '0';
+            document.getElementById('messagesSent').textContent = '0';
         }
         
         // Logout

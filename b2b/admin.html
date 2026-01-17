@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - LingoLeaf for Business</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --green-primary: #02B91A;
+            --green-light: #18DA63;
+            --bg-light: #F5FFF7;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        /* Header */
+        header {
+            background: #16213e;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            color: #e94560;
+        }
+        
+        .logo span {
+            color: #999;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        .page-header {
+            margin-bottom: 32px;
+        }
+        
+        .page-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            color: #888;
+        }
+        
+        /* Auth Section */
+        .auth-section {
+            background: #16213e;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            margin: 100px auto;
+        }
+        
+        .auth-section h2 {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            background: #1a1a2e;
+            color: white;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: #e94560;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #ff6b6b;
+        }
+        
+        .btn-success {
+            background: var(--green-primary);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: var(--green-light);
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            width: auto;
+        }
+        
+        /* Shops Table */
+        .shops-card {
+            background: #16213e;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 16px 24px;
+            text-align: left;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        th {
+            background: #0f3460;
+            font-weight: 600;
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            font-size: 14px;
+        }
+        
+        .shop-name {
+            font-weight: 600;
+            color: white;
+        }
+        
+        .shop-email {
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active { background: #064e3b; color: #34d399; }
+        .status-pending { background: #78350f; color: #fbbf24; }
+        
+        .number-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .number-input input {
+            width: 160px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .current-number {
+            color: var(--green-light);
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            padding: 60px 24px;
+            text-align: center;
+            color: #888;
+        }
+        
+        .error {
+            color: #e94560;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        
+        .success {
+            color: var(--green-light);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: #16213e;
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .stat-label {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-family: 'DM Serif Display', serif;
+            font-size: 36px;
+            color: #e94560;
+        }
+        
+        /* Hidden by default */
+        .admin-content {
+            display: none;
+        }
+        
+        .admin-content.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">LingoLeaf <span>Admin Panel</span></div>
+    </header>
+
+    <!-- Auth Section -->
+    <div id="authSection" class="auth-section">
+        <h2>🔐 Admin Login</h2>
+        <form id="authForm">
+            <div class="form-group">
+                <label for="adminPassword">Admin Password</label>
+                <input type="password" id="adminPassword" required placeholder="Enter admin password">
+            </div>
+            <div id="authError" class="error" style="display: none;"></div>
+            <button type="submit" class="btn btn-primary">Access Admin Panel</button>
+        </form>
+    </div>
+
+    <!-- Admin Content -->
+    <main id="adminContent" class="admin-content">
+        <div class="page-header">
+            <h1 class="page-title">Shop Management</h1>
+            <p class="page-subtitle">Assign Twilio numbers to B2B shops</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Shops</div>
+                <div class="stat-value" id="totalShops">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Numbers Assigned</div>
+                <div class="stat-value" id="assignedCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Setup</div>
+                <div class="stat-value" id="pendingCount">0</div>
+            </div>
+        </div>
+
+        <div class="shops-card">
+            <div class="card-header">
+                <h2 class="card-title">All Shops</h2>
+            </div>
+            <div id="shopsContainer">
+                <div class="empty-state">Loading shops...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://lchgddyawflncuialrcj.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjaGdkZHlhd2ZsbmN1aWFscmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjI1OTcsImV4cCI6MjA3NTMzODU5N30.o4evq08e2a-atTm5T4CMb2dWdnDY48QV54uCqM2X4H0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Simple admin password (in production, use proper auth)
+        const ADMIN_PASSWORD = 'lingoleaf-admin-2026';
+        
+        // Auth form
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('adminContent').classList.add('show');
+                loadShops();
+            } else {
+                document.getElementById('authError').textContent = 'Invalid password';
+                document.getElementById('authError').style.display = 'block';
+            }
+        });
+        
+        // Load all shops
+        async function loadShops() {
+            try {
+                const { data: shops, error } = await supabaseClient
+                    .from('shops')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                // Update stats
+                const assigned = shops.filter(s => s.twilio_number).length;
+                document.getElementById('totalShops').textContent = shops.length;
+                document.getElementById('assignedCount').textContent = assigned;
+                document.getElementById('pendingCount').textContent = shops.length - assigned;
+                
+                // Render table
+                if (shops.length === 0) {
+                    document.getElementById('shopsContainer').innerHTML = `
+                        <div class="empty-state">
+                            <h3>No shops registered yet</h3>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('shopsContainer').innerHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Shop</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Twilio Number</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${shops.map(shop => `
+                                    <tr>
+                                        <td>
+                                            <div class="shop-name">${shop.business_name || 'Unnamed'}</div>
+                                            <div class="shop-email">${shop.email}</div>
+                                        </td>
+                                        <td>${(shop.plan || 'trial').toUpperCase()}</td>
+                                        <td>
+                                            ${shop.twilio_number 
+                                                ? '<span class="status-badge status-active">Active</span>'
+                                                : '<span class="status-badge status-pending">Pending</span>'
+                                            }
+                                        </td>
+                                        <td>
+                                            ${shop.twilio_number 
+                                                ? `<span class="current-number">${shop.twilio_number}</span>
+                                                   <button class="btn btn-small btn-primary" onclick="editNumber('${shop.id}', '${shop.twilio_number}')">Edit</button>`
+                                                : `<div class="number-input">
+                                                       <input type="tel" id="number-${shop.id}" placeholder="+1234567890">
+                                                       <button class="btn btn-small btn-success" onclick="assignNumber('${shop.id}')">Assign</button>
+                                                   </div>`
+                                            }
+                                            <div id="msg-${shop.id}"></div>
+                                        </td>
+                                        <td>${new Date(shop.created_at).toLocaleDateString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading shops:', error);
+                document.getElementById('shopsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error loading shops</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Assign number to shop
+        async function assignNumber(shopId) {
+            const input = document.getElementById(`number-${shopId}`);
+            const msgDiv = document.getElementById(`msg-${shopId}`);
+            const number = input.value.trim();
+            
+            if (!number) {
+                msgDiv.innerHTML = '<span class="error">Please enter a number</span>';
+                return;
+            }
+            
+            // Basic validation
+            if (!number.startsWith('+') || number.length < 10) {
+                msgDiv.innerHTML = '<span class="error">Use format: +1234567890</span>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/.netlify/functions/assign-twilio-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shopId, twilioNumber: number })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    msgDiv.innerHTML = '<span class="success">✓ Assigned!</span>';
+                    setTimeout(() => loadShops(), 1000);
+                } else {
+                    msgDiv.innerHTML = `<span class="error">${result.error}</span>`;
+                }
+            } catch (error) {
+                msgDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+            }
+        }
+        
+        // Edit existing number
+        function editNumber(shopId, currentNumber) {
+            const newNumber = prompt('Enter new Twilio number:', currentNumber);
+            if (newNumber && newNumber !== currentNumber) {
+                assignNumberDirect(shopId, newNumber);
+            }
+        }
+        
+        async function assignNumberDirect(shopId, number) {
+            try {
+                const response = await fetch('/.netlify/functions/assign-twilio-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shopId, twilioNumber: number })
+                });
+                
+                if (response.ok) {
+                    alert('Number updated!');
+                    loadShops();
+                } else {
+                    const result = await response.json();
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
