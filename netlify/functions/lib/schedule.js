@@ -176,19 +176,27 @@ function computeAdjustedHours({ species, pot_size, pot_material, light_exposure,
               (LOCATION_MULT[location] || 1);
   
   const adjusted = Math.round(entry.base * env);
-  const effective = isDormant(now.getMonth()) ? Math.round(adjusted * entry.winter) : adjusted;
+  
+  // Only apply winter multiplier to OUTDOOR plants
+  // Indoor plants are climate-controlled and don't go dormant
+  // Underwatering kills faster than overwatering - safer to check more often
+  const isIndoor = !light_exposure || light_exposure.startsWith('indoor');
+  const applyWinter = !isIndoor && isDormant(now.getMonth());
+  const effective = applyWinter ? Math.round(adjusted * entry.winter) : adjusted;
   
   return { 
     base: entry.base, 
     winter: entry.winter, 
     adjusted, 
     effective,
+    isIndoor,
     debug: {
       pot: POT_MULT[pot_size] || 1,
       material: MAT_MULT[pot_material] || 1,
       light: LIGHT_MULT[light_exposure] || 1,
       location: LOCATION_MULT[location] || 1,
-      env
+      env,
+      winterApplied: applyWinter
     }
   };
 }
