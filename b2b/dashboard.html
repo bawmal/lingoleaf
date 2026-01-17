@@ -500,18 +500,31 @@
             if (shop) {
                 currentShop = shop;
             } else {
-                // Create shop if doesn't exist (for Google sign-ups)
-                const { data: newShop } = await supabaseClient
-                    .from('shops')
-                    .insert({
-                        id: currentUser.id,
-                        email: currentUser.email,
-                        business_name: currentUser.user_metadata?.business_name || currentUser.email.split('@')[0],
-                        plan: 'trial'
-                    })
-                    .select()
-                    .single();
-                currentShop = newShop;
+                // Create shop via Netlify function (bypasses RLS)
+                try {
+                    const response = await fetch('/.netlify/functions/create-shop', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: currentUser.id,
+                            email: currentUser.email,
+                            business_name: currentUser.user_metadata?.business_name || currentUser.email.split('@')[0]
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (response.ok && result.shop) {
+                        currentShop = result.shop;
+                    } else {
+                        console.error('Failed to create shop:', result.error);
+                        alert('Failed to create shop record. Please try logging in again.');
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Error creating shop:', err);
+                    alert('Error creating shop. Please try again.');
+                    return;
+                }
             }
             
             // Set shop name
