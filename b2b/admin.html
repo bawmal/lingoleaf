@@ -342,7 +342,12 @@
                     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                 }
             });
-            return response.json();
+            const data = await response.json();
+            console.log('Supabase response:', data);
+            if (data.message || data.error) {
+                throw new Error(data.message || data.error);
+            }
+            return Array.isArray(data) ? data : [];
         }
         
         // Simple admin password (in production, use proper auth)
