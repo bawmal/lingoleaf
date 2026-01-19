@@ -315,6 +315,22 @@
                     // Track successful signup
                     window.amplitude.track('B2B Signup', { email: email, business_name: businessName });
                     
+                    // Send confirmation email via Resend (bypasses Supabase email limits)
+                    try {
+                        const confirmationUrl = window.location.origin + '/b2b/login.html?confirmed=true';
+                        await fetch('/.netlify/functions/send-b2b-confirmation', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                email: email,
+                                businessName: businessName,
+                                confirmationUrl: confirmationUrl
+                            })
+                        });
+                    } catch (emailErr) {
+                        console.error('Confirmation email error:', emailErr);
+                    }
+                    
                     // Check if email confirmation is required
                     if (data.session) {
                         window.location.href = '/b2b/dashboard.html';
