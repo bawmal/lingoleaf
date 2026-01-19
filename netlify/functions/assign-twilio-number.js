@@ -1,22 +1,31 @@
 // netlify/functions/assign-twilio-number.js
 // Admin function to assign Twilio numbers to B2B shops
 
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.DB_URL;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.DB_API_KEY;
+function getSupabaseConfig() {
+    const url = process.env.SUPABASE_URL || process.env.DB_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.DB_API_KEY;
+    
+    if (!url || !key) {
+        throw new Error(`Missing env vars: URL=${!!url}, KEY=${!!key}`);
+    }
+    return { url, key };
+}
 
 async function supabaseRequest(endpoint, method = 'GET', body = null) {
+    const { url, key } = getSupabaseConfig();
+    
     const options = {
         method,
         headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
             'Content-Type': 'application/json',
             'Prefer': 'return=representation'
         }
     };
     if (body) options.body = JSON.stringify(body);
     
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
+    const response = await fetch(`${url}/rest/v1/${endpoint}`, options);
     return { ok: response.ok, data: await response.json() };
 }
 
