@@ -317,7 +317,7 @@
                     
                     // Send confirmation email via Resend (bypasses Supabase email limits)
                     try {
-                        const confirmationUrl = window.location.origin + '/b2b/login.html?confirmed=true';
+                        const confirmationUrl = 'https://lingoleaf.ai/b2b/login.html?confirmed=true';
                         await fetch('/.netlify/functions/send-b2b-confirmation', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
