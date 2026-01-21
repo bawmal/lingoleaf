@@ -236,8 +236,8 @@
         .pricing-cards {
             display: flex;
             justify-content: center;
-            gap: 32px;
-            max-width: 900px;
+            gap: 24px;
+            max-width: 1100px;
             margin: 0 auto;
         }
         
@@ -245,14 +245,16 @@
             background: white;
             border: 2px solid #E5E5E5;
             border-radius: 24px;
-            padding: 40px;
+            padding: 32px;
             flex: 1;
-            max-width: 400px;
+            max-width: 340px;
         }
         
         .pricing-card.featured {
             border-color: var(--green-primary);
             position: relative;
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(2, 185, 26, 0.15);
         }
         
         .pricing-card.featured::before {
@@ -270,35 +272,60 @@
         }
         
         .pricing-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             margin-bottom: 8px;
         }
         
+        .pricing-intro {
+            font-size: 14px;
+            color: #888;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
         .pricing-price {
             font-family: 'DM Serif Display', serif;
-            font-size: 48px;
+            font-size: 42px;
             color: var(--green-primary);
         }
         
         .pricing-price span {
-            font-size: 18px;
+            font-size: 16px;
             color: #555;
+        }
+        
+        .pricing-trial {
+            font-size: 14px;
+            color: var(--green-dark);
+            font-weight: 600;
+            margin-top: 4px;
+            margin-bottom: 16px;
         }
         
         .pricing-features {
             list-style: none;
-            margin: 32px 0;
+            margin: 24px 0;
         }
         
         .pricing-features li {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #EEE;
             color: #555;
+            font-size: 14px;
         }
         
         .pricing-features li:last-child {
             border-bottom: none;
+        }
+        
+        .pricing-note {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 32px;
+            font-style: italic;
         }
         
         /* CTA Section */
@@ -471,34 +498,54 @@
     </section>
 
     <section id="pricing" class="pricing">
-        <h2 class="section-title">Simple Pricing</h2>
-        <p class="section-subtitle">Start free, upgrade when you're ready</p>
+        <h2 class="section-title">🌿 LingoLeaf B2B Pricing</h2>
+        <p class="section-subtitle">Introductory pricing for early partner shops</p>
         
         <div class="pricing-cards">
             <div class="pricing-card">
-                <div class="pricing-name">Starter</div>
-                <div class="pricing-price">Free</div>
+                <div class="pricing-name">🌱 Seedling</div>
+                <div class="pricing-intro">Intro:</div>
+                <div class="pricing-price">$79<span>/month</span></div>
+                <div class="pricing-trial">14-day free trial</div>
                 <ul class="pricing-features">
-                    <li>✓ Up to 25 customers</li>
-                    <li>✓ All personality types</li>
-                    <li>✓ Basic dashboard</li>
+                    <li>✓ Up to 50 active plants</li>
+                    <li>✓ Branded SMS care messages</li>
+                    <li>✓ Seasonal & weather-aware tips</li>
+                    <li>✓ Simple customer dashboard</li>
                     <li>✓ Email support</li>
                 </ul>
-                <a href="/b2b/signup.html" class="btn btn-secondary" style="width: 100%; text-align: center;">Get Started</a>
+                <a href="/b2b/signup.html" class="btn btn-secondary" style="width: 100%; text-align: center;">Start Free Trial</a>
             </div>
             <div class="pricing-card featured">
-                <div class="pricing-name">Pro</div>
-                <div class="pricing-price">$29<span>/month</span></div>
+                <div class="pricing-name">🌿 Growth</div>
+                <div class="pricing-intro">Intro:</div>
+                <div class="pricing-price">$249<span>/month</span></div>
+                <div class="pricing-trial">14-day free trial</div>
                 <ul class="pricing-features">
-                    <li>✓ Unlimited customers</li>
-                    <li>✓ Custom message templates</li>
-                    <li>✓ Analytics dashboard</li>
-                    <li>✓ Priority support</li>
-                    <li>✓ Your branding on messages</li>
+                    <li>✓ Up to 200 active plants</li>
+                    <li>✓ Custom message tone & branding</li>
+                    <li>✓ Engagement + care insights</li>
+                    <li>✓ Seasonal campaign tools</li>
+                    <li>✓ Priority email support</li>
                 </ul>
                 <a href="/b2b/signup.html" class="btn btn-primary" style="width: 100%; text-align: center;">Start Free Trial</a>
             </div>
+            <div class="pricing-card">
+                <div class="pricing-name">🌳 Forest</div>
+                <div class="pricing-intro">Intro:</div>
+                <div class="pricing-price">$599<span>/month</span></div>
+                <div class="pricing-trial">14-day free trial</div>
+                <ul class="pricing-features">
+                    <li>✓ Unlimited active plants</li>
+                    <li>✓ Advanced branding & templates</li>
+                    <li>✓ Upsell timing suggestions</li>
+                    <li>✓ SMS concierge (reply via dashboard)</li>
+                    <li>✓ Priority support</li>
+                </ul>
+                <a href="/b2b/signup.html" class="btn btn-secondary" style="width: 100%; text-align: center;">Start Free Trial</a>
+            </div>
         </div>
+        <p class="pricing-note">Introductory pricing available for early partner shops. Lock in your rate when you start your trial.</p>
     </section>
 
     <section class="cta">
@@ -508,7 +555,7 @@
     </section>
 
     <footer>
-        <p>© 2025 LingoLeaf for Business. <a href="https://lingoleaf.ai">Consumer App</a> | <a href="mailto:info@lingoleaf.ai">Contact</a></p>
+        <p>© 2026 LingoLeaf for Business. <a href="https://lingoleaf.ai">Consumer App</a> | <a href="mailto:info@lingoleaf.ai">Contact</a></p>
     </footer>
 </body>
 </html>
