@@ -128,10 +128,14 @@ exports.handler = async (event) => {
 
     } catch (error) {
         console.error('Start sequence error:', error);
+        console.error('Error stack:', error.stack);
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: error.message })
+            body: JSON.stringify({ 
+                error: error.message,
+                details: error.code || error.status || 'unknown'
+            })
         };
     }
 };

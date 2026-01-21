@@ -660,6 +660,7 @@
                 });
                 
                 const data = await response.json();
+                console.log('Start sequence response:', response.status, data);
                 
                 if (response.ok) {
                     alert('Welcome message sent!');
@@ -669,7 +670,7 @@
                 }
             } catch (error) {
                 console.error('Start sequence error:', error);
-                alert('Error starting sequence: ' + error.message);
+                alert('Error: ' + (error.message || 'Network error'));
             }
         }
         
