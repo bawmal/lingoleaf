@@ -1,33 +1,7 @@
 // netlify/functions/assign-twilio-number.js
 // Admin function to assign Twilio numbers to B2B shops
 
-function getSupabaseConfig() {
-    const url = process.env.SUPABASE_URL || process.env.DB_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.DB_API_KEY;
-    
-    if (!url || !key) {
-        throw new Error(`Missing env vars: URL=${!!url}, KEY=${!!key}`);
-    }
-    return { url, key };
-}
-
-async function supabaseRequest(endpoint, method = 'GET', body = null) {
-    const { url, key } = getSupabaseConfig();
-    
-    const options = {
-        method,
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-        }
-    };
-    if (body) options.body = JSON.stringify(body);
-    
-    const response = await fetch(`${url}/rest/v1/${endpoint}`, options);
-    return { ok: response.ok, data: await response.json() };
-}
+const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async (event) => {
     // CORS headers
@@ -51,6 +25,19 @@ exports.handler = async (event) => {
     }
 
     try {
+        // Check env vars
+        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            console.error('Missing env vars:', {
+                url: !!process.env.SUPABASE_URL,
+                key: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+            });
+            return {
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({ error: 'Server configuration error - missing environment variables' })
+            };
+        }
+
         const { shopId, twilioNumber } = JSON.parse(event.body);
 
         if (!shopId || !twilioNumber) {
@@ -70,38 +57,54 @@ exports.handler = async (event) => {
             };
         }
 
-        // Check if number is already assigned to another shop (using raw REST API)
-        const checkResult = await supabaseRequest(
-            `shops?twilio_number=eq.${encodeURIComponent(twilioNumber)}&id=neq.${shopId}&select=id,business_name`
+        // Use service role to bypass RLS
+        const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
         );
 
-        if (checkResult.data && checkResult.data.length > 0) {
+        // Check if number is already assigned to another shop
+        const { data: existingShops, error: checkError } = await supabase
+            .from('shops')
+            .select('id, business_name')
+            .eq('twilio_number', twilioNumber)
+            .neq('id', shopId);
+
+        if (checkError) {
+            console.error('Check error:', checkError);
+            return {
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({ error: checkError.message })
+            };
+        }
+
+        if (existingShops && existingShops.length > 0) {
             return {
                 statusCode: 400,
                 headers,
                 body: JSON.stringify({ 
-                    error: `Number already assigned to ${checkResult.data[0].business_name}` 
+                    error: `Number already assigned to ${existingShops[0].business_name}` 
                 })
             };
         }
 
-        // Update shop with Twilio number using raw REST API (bypasses schema cache)
-        const updateResult = await supabaseRequest(
-            `shops?id=eq.${shopId}`,
-            'PATCH',
-            { twilio_number: twilioNumber }
-        );
+        // Update shop with Twilio number
+        const { data: shop, error: updateError } = await supabase
+            .from('shops')
+            .update({ twilio_number: twilioNumber })
+            .eq('id', shopId)
+            .select()
+            .single();
 
-        if (!updateResult.ok) {
-            console.error('Supabase error:', updateResult.data);
+        if (updateError) {
+            console.error('Update error:', updateError);
             return {
                 statusCode: 500,
                 headers,
-                body: JSON.stringify({ error: updateResult.data.message || 'Update failed' })
+                body: JSON.stringify({ error: updateError.message })
             };
         }
-
-        const shop = updateResult.data[0];
 
         return {
             statusCode: 200,
