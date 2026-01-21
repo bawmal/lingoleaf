@@ -96,6 +96,38 @@
             align-items: center;
             padding: 120px 60px 80px;
             background: linear-gradient(180deg, #D4ECD9 0%, #FFFFFF 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-leaves-right {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 424px;
+            height: 586px;
+            background: url('/images/leaves-decoration.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .hero-leaves-left {
+            position: absolute;
+            top: 100px;
+            left: -100px;
+            width: 300px;
+            height: 400px;
+            background: url('/images/leaves-decoration.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+            transform: scaleX(-1) rotate(30deg);
+            opacity: 0.7;
+            z-index: 1;
         }
         
         .hero-content {
@@ -497,6 +529,18 @@
                 flex-direction: column;
             }
             
+            .hero-leaves-right {
+                width: 150px;
+                height: 200px;
+                top: 0;
+                right: -30px;
+                opacity: 0.5;
+            }
+            
+            .hero-leaves-left {
+                display: none;
+            }
+            
             .features, .how-it-works, .pricing, .cta {
                 padding: 60px 24px;
             }
@@ -558,6 +602,8 @@
     </nav>
 
     <section class="hero">
+        <div class="hero-leaves-right"></div>
+        <div class="hero-leaves-left"></div>
         <div class="hero-content">
             <div class="hero-badge">🌱 For Plant Nurseries & Garden Centers</div>
             <h1><span class="green">Delight</span> Your Customers After They Leave</h1>
