@@ -156,33 +156,54 @@
             margin-bottom: 60px;
         }
         
-        .features-grid {
+        .benefits-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
+            gap: 32px;
             max-width: 1200px;
             margin: 0 auto;
         }
         
-        .feature-card {
-            background: var(--bg-light);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
+        .benefit-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
         }
         
-        .feature-card h3 {
-            font-size: 22px;
+        .benefit-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .benefit-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .benefit-content {
+            padding: 24px;
+        }
+        
+        .benefit-content h3 {
+            font-size: 18px;
             margin-bottom: 12px;
+            color: #1C1C1C;
+            line-height: 1.3;
         }
         
-        .feature-card p {
+        .benefit-content p {
             color: #555;
+            font-size: 15px;
+            line-height: 1.5;
         }
         
         /* How It Works */
@@ -392,7 +413,7 @@
                 padding: 60px 24px;
             }
             
-            .features-grid {
+            .benefits-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -440,36 +461,60 @@
         <h2 class="section-title">Why Nurseries Love LingoLeaf</h2>
         <p class="section-subtitle">Turn one-time buyers into lifelong plant parents</p>
         
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Automated SMS Care</h3>
-                <p>Customers get timely watering reminders and care tips via text. No app download needed.</p>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-image">
+                    <img src="/b2b/images/benefit-1-checkout.png" alt="Keep Plants Alive After Checkout">
+                </div>
+                <div class="benefit-content">
+                    <h3>Keep Plants Alive After Checkout</h3>
+                    <p>Customers leave with real support, so their plants — and trust — last longer.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎭</div>
-                <h3>Fun Personalities</h3>
-                <p>Messages come from the plant itself! Choose sassy, zen, anxious, or formal tones.</p>
+            <div class="benefit-card">
+                <div class="benefit-image">
+                    <img src="/b2b/images/benefit-2-top-of-mind.png" alt="Stay Top-of-Mind">
+                </div>
+                <div class="benefit-content">
+                    <h3>Stay Top-of-Mind (Without Being Pushy)</h3>
+                    <p>Helpful, branded messages keep your shop present, not promotional.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔄</div>
-                <h3>Drive Repeat Visits</h3>
-                <p>Happy plants = happy customers who come back for more. Reduce plant deaths, increase loyalty.</p>
+            <div class="benefit-card">
+                <div class="benefit-image">
+                    <img src="/b2b/images/benefit-3-repeat.png" alt="Turn One-Time Buyers into Repeat Customers">
+                </div>
+                <div class="benefit-content">
+                    <h3>Turn One-Time Buyers into Repeat Customers</h3>
+                    <p>Healthier plants lead to happier customers who come back.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Quick Setup</h3>
-                <p>Add customers in seconds. Just name, phone, and plant type. We handle the rest.</p>
+            <div class="benefit-card">
+                <div class="benefit-image">
+                    <img src="/b2b/images/benefit-4-upsell.png" alt="Unlock Smarter Upsell Moments">
+                </div>
+                <div class="benefit-content">
+                    <h3>Unlock Smarter Upsell Moments</h3>
+                    <p>Suggest soil, fertilizer, or pots when customers actually need them.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Simple Dashboard</h3>
-                <p>See all your customers, their plants, and message history in one clean view.</p>
+            <div class="benefit-card">
+                <div class="benefit-image">
+                    <img src="/b2b/images/benefit-5-reduce-effort.png" alt="Reduce Staff Follow-Up Effort">
+                </div>
+                <div class="benefit-content">
+                    <h3>Reduce Staff Follow-Up Effort</h3>
+                    <p>Automated care replaces constant questions and manual reminders.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌦️</div>
-                <h3>Weather-Smart</h3>
-                <p>Reminders adapt to local weather. No watering tips when it's raining!</p>
+            <div class="benefit-card">
+                <div class="benefit-image">
+                    <img src="/b2b/images/benefit-6-insights.png" alt="Gain Insight Into Customer Needs">
+                </div>
+                <div class="benefit-content">
+                    <h3>Gain Insight Into Customer Needs</h3>
+                    <p>See which plants struggle, what customers ask, and where support matters most.</p>
+                </div>
             </div>
         </div>
     </section>
