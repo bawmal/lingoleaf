@@ -29,7 +29,7 @@ exports.handler = async (event) => {
         const token = authHeader.replace('Bearer ', '');
 
         // Check env vars
-        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.SUPABASE_ANON_KEY) {
             console.error('Missing Supabase env vars');
             return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server configuration error' }) };
         }
@@ -45,17 +45,24 @@ exports.handler = async (event) => {
             return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing customerId' }) };
         }
 
-        // Create Supabase client with service role
+        // Use anon key client to verify user token
+        const supabaseAuth = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_ANON_KEY
+        );
+
+        // Verify the token and get user
+        const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
+        if (authError || !user) {
+            console.error('Auth error:', authError);
+            return { statusCode: 401, headers, body: JSON.stringify({ error: authError?.message || 'Invalid token' }) };
+        }
+        
+        // Use service role client for data operations
         const supabase = createClient(
             process.env.SUPABASE_URL,
             process.env.SUPABASE_SERVICE_ROLE_KEY
         );
-
-        // Verify the token and get user
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-        if (authError || !user) {
-            return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid token' }) };
-        }
 
         // Get the shop for this user
         const { data: shop, error: shopError } = await supabase
