@@ -668,7 +668,8 @@
                     alert(data.error || 'Failed to start sequence');
                 }
             } catch (error) {
-                alert('Error starting sequence');
+                console.error('Start sequence error:', error);
+                alert('Error starting sequence: ' + error.message);
             }
         }
         
