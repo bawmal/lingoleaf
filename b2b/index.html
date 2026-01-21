@@ -352,7 +352,7 @@
         /* CTA Section */
         .cta {
             padding: 100px 60px;
-            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            background: #1C1C1C;
             text-align: center;
         }
         
@@ -364,14 +364,19 @@
         }
         
         .cta p {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255,255,255,0.7);
             font-size: 18px;
             margin-bottom: 32px;
         }
         
         .cta .btn {
-            background: white;
-            color: var(--green-primary);
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            color: white;
+        }
+        
+        .cta .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
         }
         
         /* Footer */
@@ -711,7 +716,7 @@
             <div class="footer-top">
                 <div>
                     <div class="footer-brand">
-                        <div class="footer-logo-icon">🌱</div>
+                        <div class="footer-logo-icon"><span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;">🌱</span></div>
                         <div class="footer-logo">LingoLeaf</div>
                     </div>
                     <p class="footer-tagline">Your Plants, With a Voice</p>
