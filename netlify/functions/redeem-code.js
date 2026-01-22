@@ -92,7 +92,7 @@ exports.handler = async (event) => {
             .upsert({
                 phone_e164: phone,
                 email: email,
-                max_plants: 10,
+                max_plants: 5,
                 code_id: codeRecord.id,
                 created_at: new Date().toISOString()
             }, {
@@ -112,7 +112,7 @@ exports.handler = async (event) => {
             body: JSON.stringify({
                 success: true,
                 message: 'Lifetime deal activated!',
-                maxPlants: 10
+                maxPlants: 5
             })
         };
 
