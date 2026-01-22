@@ -2,9 +2,10 @@
 const { randomUUID } = require('crypto');
 const { createPlant, getPlantsByPhone } = require('./lib/db');
 const { computeAdjustedHours, nextDueFrom } = require('./lib/schedule');
-const { getSlotNumber, MAX_PLANTS_PER_USER } = require('./lib/twilio-pool');
+const { getSlotNumber, MAX_PLANTS_PER_USER, MAX_PLANTS_LIFETIME } = require('./lib/twilio-pool');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
+const { createClient } = require('@supabase/supabase-js');
 
 // Amplitude tracking helper
 const AMPLITUDE_API_KEY = 'b9405679c32380d513ae4af253c2d6df';
@@ -381,19 +382,44 @@ exports.handler = async (event) => {
   const existingPlants = await getPlantsByPhone(phone);
   const slotIndex = existingPlants.length;
   
+  // Check if user has lifetime deal
+  let isLifetimeUser = false;
+  let maxPlants = MAX_PLANTS_PER_USER;
+  
+  try {
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+    
+    const { data: lifetimeUser } = await supabase
+      .from('lifetime_users')
+      .select('max_plants')
+      .eq('phone_e164', phone)
+      .single();
+    
+    if (lifetimeUser) {
+      isLifetimeUser = true;
+      maxPlants = lifetimeUser.max_plants || MAX_PLANTS_LIFETIME;
+      console.log(`✅ Lifetime user detected: ${phone} (max ${maxPlants} plants)`);
+    }
+  } catch (err) {
+    console.log('Lifetime check skipped:', err.message);
+  }
+  
   // Check if user has reached the limit
-  if (slotIndex >= MAX_PLANTS_PER_USER) {
+  if (slotIndex >= maxPlants) {
     return {
       statusCode: 400,
       body: JSON.stringify({ 
-        error: `Maximum ${MAX_PLANTS_PER_USER} plants per user. You already have ${existingPlants.length} plants registered.` 
+        error: `Maximum ${maxPlants} plants per user. You already have ${existingPlants.length} plants registered.` 
       })
     };
   }
   
   // Assign Twilio number from pool
-  const twilioNumber = getSlotNumber(slotIndex);
-  console.log(`Assigning plant to slot ${slotIndex + 1}: ${twilioNumber}`);
+  const twilioNumber = getSlotNumber(slotIndex, isLifetimeUser);
+  console.log(`Assigning plant to slot ${slotIndex + 1}: ${twilioNumber} (lifetime: ${isLifetimeUser})`);
 
   // Geocode via OWM - try zipcode first for precision, fallback to city
   const owmKey = process.env.OWM_API_KEY;
