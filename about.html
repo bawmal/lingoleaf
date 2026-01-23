@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story - LingoLeaf</title>
+    <meta name="description" content="Learn how LingoLeaf started from a simple problem: forgetting to water plants. Our mission is to help every plant thrive.">
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    
+    <!-- Amplitude Analytics -->
+    <script src="https://cdn.amplitude.com/libs/analytics-browser-2.3.3-min.js.gz"></script>
+    <script>
+        window.amplitude.init('b9405679c32380d513ae4af253c2d6df');
+        window.amplitude.track('Page View', { page: 'about' });
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#0f4c3a',
+                        sage: '#7ba05b',
+                        mint: '#18DA63',
+                        cream: '#faf8f5'
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        serif: ['DM Serif Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cream">
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2">
+                    <span class="text-2xl">🌱</span>
+                    <span class="font-serif text-2xl text-forest">LingoLeaf</span>
+                </a>
+                <div class="flex items-center gap-8">
+                    <a href="/#how-it-works" class="text-forest hover:text-sage transition-colors">How It Works</a>
+                    <a href="/about.html" class="text-sage font-semibold">About</a>
+                    <a href="/#signup" class="bg-mint text-white px-6 py-2 rounded-full hover:bg-forest transition-all">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="font-serif text-5xl md:text-6xl text-forest mb-6">
+                Our Story
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                LingoLeaf started with a simple problem: we kept killing our plants.
+            </p>
+        </div>
+    </section>
+
+    <!-- Story Content -->
+    <section class="py-12 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white rounded-3xl p-12 shadow-lg mb-12">
+                <h2 class="font-serif text-3xl text-forest mb-6">The Problem</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    Like millions of plant parents, we'd buy a beautiful plant, bring it home with the best intentions, and then... forget about it. Not because we didn't care, but because life got busy.
+                </p>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    We tried everything: calendar reminders (too rigid), care cards (too generic), plant apps (another thing to check). Nothing worked because they all ignored one simple truth: <strong>every plant is different, and every environment is unique.</strong>
+                </p>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    A snake plant in a sunny Toronto apartment needs different care than the same plant in a shaded Vancouver home. Weather changes. Seasons shift. But traditional reminders stay the same.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-12 shadow-lg mb-12">
+                <h2 class="font-serif text-3xl text-forest mb-6">The Solution</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    We built LingoLeaf to solve this exact problem. Not another app to check, not another generic schedule to follow. Instead, your plant texts <em>you</em> when it actually needs water.
+                </p>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    LingoLeaf considers your plant's species, pot size, light exposure, and most importantly—your local weather. When it's hot and sunny, your plant needs more water. When it's cold and rainy, it needs less. LingoLeaf adjusts automatically.
+                </p>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    The result? Plants that actually thrive. And plant parents who finally stop feeling guilty.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-forest to-sage text-white rounded-3xl p-12 shadow-lg mb-12">
+                <h2 class="font-serif text-3xl mb-6">Our Mission</h2>
+                <p class="text-lg leading-relaxed mb-6">
+                    We believe every plant deserves to thrive, and every plant parent deserves to succeed—without the stress, guilt, or guesswork.
+                </p>
+                <p class="text-lg leading-relaxed">
+                    LingoLeaf isn't just about reminders. It's about creating a relationship between you and your plants. One where your plant communicates its needs, and you respond with confidence.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-12 shadow-lg">
+                <h2 class="font-serif text-3xl text-forest mb-6">Why It Works</h2>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <span class="text-3xl">🌡️</span>
+                        <div>
+                            <h3 class="font-bold text-xl text-forest mb-2">Weather-Aware</h3>
+                            <p class="text-gray-700">Adjusts to rain, heat, cold, and humidity in real-time</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-3xl">🌱</span>
+                        <div>
+                            <h3 class="font-bold text-xl text-forest mb-2">Plant-Specific</h3>
+                            <p class="text-gray-700">50+ species with unique care requirements built in</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-3xl">💬</span>
+                        <div>
+                            <h3 class="font-bold text-xl text-forest mb-2">Two-Way Communication</h3>
+                            <p class="text-gray-700">Reply DRY, DAMP, or DONE—your plant learns from your feedback</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-3xl">📱</span>
+                        <div>
+                            <h3 class="font-bold text-xl text-forest mb-2">SMS-Based</h3>
+                            <p class="text-gray-700">No app to download. Works on any phone, anywhere</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="font-serif text-4xl text-forest mb-6">
+                Ready to keep your plants alive?
+            </h2>
+            <p class="text-xl text-gray-600 mb-8">
+                Join thousands of plant parents who never forget to water.
+            </p>
+            <a href="/#signup" class="inline-block bg-mint text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-forest transition-all shadow-lg">
+                Register Your First Plant Free
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-forest text-white py-12 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-2xl">🌱</span>
+                        <span class="font-serif text-xl">LingoLeaf</span>
+                    </div>
+                    <p class="text-mint/80">Plant care that adapts to your weather</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Product</h3>
+                    <ul class="space-y-2 text-mint/80">
+                        <li><a href="/#how-it-works" class="hover:text-mint">How It Works</a></li>
+                        <li><a href="/#pricing" class="hover:text-mint">Pricing</a></li>
+                        <li><a href="/#signup" class="hover:text-mint">Get Started</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Company</h3>
+                    <ul class="space-y-2 text-mint/80">
+                        <li><a href="/about.html" class="hover:text-mint">Our Story</a></li>
+                        <li><a href="/why.html" class="hover:text-mint">Why LingoLeaf</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Legal</h3>
+                    <ul class="space-y-2 text-mint/80">
+                        <li><a href="/privacy.html" class="hover:text-mint">Privacy Policy</a></li>
+                        <li><a href="/terms.html" class="hover:text-mint">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-mint/20 pt-8 text-center text-mint/60">
+                <p>&copy; 2026 LingoLeaf. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <script src="/js/translations.js"></script>
+    <script src="/js/language-switcher.js"></script>
+</body>
+</html>
