@@ -106,19 +106,19 @@ function createWelcomeEmailHtml(species, nickname, effectiveHours, isDryStatus =
                     
                     <!-- Header -->
                     <tr>
-                        <td align="center" style="background: linear-gradient(180deg, #18DA63 0%, #0BBA68 100%); padding: 50px 40px;">
+                        <td align="center" style="background: #E7F5EC; padding: 50px 40px;">
                             <table cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td style="background: #ffffff; width: 50px; height: 50px; border-radius: 14px; text-align: center; vertical-align: middle;">
                                         <span style="font-size: 28px;">🌱</span>
                                     </td>
                                     <td style="padding-left: 12px;">
-                                        <span style="font-family: 'DM Serif Display', Georgia, serif; font-size: 28px; color: #ffffff;">LingoLeaf</span>
+                                        <span style="font-family: 'DM Serif Display', Georgia, serif; font-size: 28px; color: #0f4c3a;">LingoLeaf</span>
                                     </td>
                                 </tr>
                             </table>
-                            <h1 style="margin: 30px 0 10px 0; color: #ffffff; font-size: 32px; font-weight: 700;">Welcome to LingoLeaf! 🎉</h1>
-                            <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 16px;">Your plant now has a voice</p>
+                            <h1 style="margin: 30px 0 10px 0; color: #0f4c3a; font-size: 32px; font-weight: 700;">Welcome to LingoLeaf! 🎉</h1>
+                            <p style="margin: 0; color: #2d5016; font-size: 16px;">Your plant now has a voice</p>
                         </td>
                     </tr>
                     
