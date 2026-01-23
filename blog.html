@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - LingoLeaf</title>
+    <meta name="description" content="Plant care tips, advice, and insights from LingoLeaf. Learn how to keep your plants thriving.">
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    
+    <!-- Amplitude Analytics -->
+    <script src="https://cdn.amplitude.com/libs/analytics-browser-2.3.3-min.js.gz"></script>
+    <script>
+        window.amplitude.init('b9405679c32380d513ae4af253c2d6df');
+        window.amplitude.track('Page View', { page: 'blog' });
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#0f4c3a',
+                        sage: '#7ba05b',
+                        mint: '#18DA63',
+                        cream: '#faf8f5'
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        serif: ['DM Serif Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cream">
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2">
+                    <span class="text-2xl">🌱</span>
+                    <span class="font-serif text-2xl text-forest">LingoLeaf</span>
+                </a>
+                <div class="flex items-center gap-8">
+                    <a href="/index.html#how-it-works" class="text-forest hover:text-sage transition-colors">How It Works</a>
+                    <a href="/about.html" class="text-forest hover:text-sage transition-colors">About</a>
+                    <a href="/blog.html" class="text-sage font-semibold">Blog</a>
+                    <a href="/index.html#signup" class="bg-mint text-white px-6 py-2 rounded-full hover:bg-forest transition-all">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="font-serif text-5xl md:text-6xl text-forest mb-6">
+                LingoLeaf Blog
+            </h1>
+            <p class="text-xl text-gray-600">
+                Plant care tips, insights, and real talk about keeping plants alive.
+            </p>
+        </div>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="py-12 px-6">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Blog Post Card -->
+            <article class="bg-white rounded-3xl p-8 md:p-12 shadow-lg mb-8 hover:shadow-xl transition-shadow">
+                <div class="mb-4">
+                    <span class="text-sm text-sage font-semibold">PLANT CARE BASICS</span>
+                    <span class="text-gray-400 mx-2">•</span>
+                    <span class="text-sm text-gray-500">January 23, 2026</span>
+                </div>
+                <h2 class="font-serif text-3xl md:text-4xl text-forest mb-4 hover:text-sage transition-colors">
+                    <a href="/blog/why-houseplants-die-after-purchase.html">
+                        Why Houseplants Die After You Bring Them Home (And How to Prevent It)
+                    </a>
+                </h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    You bought a beautiful plant. You put it by a sunny window. You watered it carefully. Two weeks later… it's drooping, yellowing, or shedding leaves. Sound familiar?
+                </p>
+                <a href="/blog/why-houseplants-die-after-purchase.html" class="inline-flex items-center text-mint font-semibold hover:text-forest transition-colors">
+                    Read More
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+            </article>
+
+            <!-- More posts will appear here -->
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-forest text-white py-12 px-6 mt-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-2xl">🌱</span>
+                        <span class="font-serif text-xl">LingoLeaf</span>
+                    </div>
+                    <p class="text-mint/80">Plant care that adapts to your weather</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Product</h3>
+                    <ul class="space-y-2 text-mint/80">
+                        <li><a href="/index.html#how-it-works" class="hover:text-mint">How It Works</a></li>
+                        <li><a href="/index.html#pricing" class="hover:text-mint">Pricing</a></li>
+                        <li><a href="/index.html#signup" class="hover:text-mint">Get Started</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Company</h3>
+                    <ul class="space-y-2 text-mint/80">
+                        <li><a href="/about.html" class="hover:text-mint">Our Story</a></li>
+                        <li><a href="/why.html" class="hover:text-mint">Why LingoLeaf</a></li>
+                        <li><a href="/blog.html" class="hover:text-mint">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Legal</h3>
+                    <ul class="space-y-2 text-mint/80">
+                        <li><a href="/privacy.html" class="hover:text-mint">Privacy Policy</a></li>
+                        <li><a href="/terms.html" class="hover:text-mint">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-mint/20 pt-8 text-center text-mint/60">
+                <p>&copy; 2026 LingoLeaf. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
