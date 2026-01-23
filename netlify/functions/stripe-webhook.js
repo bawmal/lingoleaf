@@ -43,9 +43,9 @@ async function sendLifetimeCodeEmail(email, code) {
             <td align="center" style="padding: 40px 20px;">
                 <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                     <tr>
-                        <td align="center" style="background: linear-gradient(180deg, #18DA63 0%, #0BBA68 100%); padding: 50px 40px;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700;">🎉 Welcome to LingoLeaf!</h1>
-                            <p style="margin: 16px 0 0 0; color: rgba(255,255,255,0.9); font-size: 18px;">Your Lifetime Deal is Ready</p>
+                        <td align="center" style="background: #F0FDF4; padding: 50px 40px; border-bottom: 4px solid #02B91A;">
+                            <h1 style="margin: 0; color: #1C1C1C; font-size: 32px; font-weight: 700;">🎉 Welcome to LingoLeaf!</h1>
+                            <p style="margin: 16px 0 0 0; color: #555555; font-size: 18px;">Your Lifetime Deal is Ready</p>
                         </td>
                     </tr>
                     <tr>
@@ -64,8 +64,12 @@ async function sendLifetimeCodeEmail(email, code) {
                             </p>
                             
                             <div style="text-align: center; margin-bottom: 24px;">
-                                <a href="https://lingoleaf.ai/redeem" style="display: inline-block; background: linear-gradient(135deg, #18DA63, #02B91A); color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px;">Redeem Your Code →</a>
+                                <a href="https://lingoleaf.ai/redeem" style="display: inline-block; background: #02B91A; color: #ffffff; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px;">Redeem Your Code →</a>
                             </div>
+                            
+                            <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 0 0 12px 0; text-align: center;">
+                                Or copy this link: <a href="https://lingoleaf.ai/redeem" style="color: #02B91A; text-decoration: underline;">https://lingoleaf.ai/redeem</a>
+                            </p>
                             
                             <p style="font-size: 14px; color: #666; margin: 0;">
                                 Keep this email safe - your code can only be used once.
@@ -73,8 +77,8 @@ async function sendLifetimeCodeEmail(email, code) {
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="background-color: #0BBA68; padding: 30px;">
-                            <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 14px;">© 2025 LingoLeaf. Your Plants, With a Voice.</p>
+                        <td align="center" style="background-color: #F0FDF4; padding: 30px; border-top: 1px solid #E5E5E5;">
+                            <p style="margin: 0; color: #666666; font-size: 14px;">© 2025 LingoLeaf. Your Plants, With a Voice.</p>
                         </td>
                     </tr>
                 </table>
@@ -96,7 +100,23 @@ async function sendLifetimeCodeEmail(email, code) {
                 from: 'LingoLeaf <noreply@lingoleaf.ai>',
                 to: [email],
                 subject: '🎉 Your LingoLeaf Lifetime Code is Ready!',
-                html
+                html,
+                text: `🎉 Welcome to LingoLeaf!
+
+Your Lifetime Deal is Ready
+
+Thank you for purchasing LingoLeaf Lifetime! Here's your unique redemption code:
+
+YOUR LIFETIME CODE
+${code}
+
+Next step: Visit the link below to redeem your code and activate your lifetime access:
+
+👉 https://lingoleaf.ai/redeem
+
+Keep this email safe - your code can only be used once.
+
+© 2025 LingoLeaf. Your Plants, With a Voice.`
             })
         });
         

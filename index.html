@@ -2360,9 +2360,8 @@
             <h2 class="section-title">Be First to Give Your Plants a Voice</h2>
             <p class="section-subtitle">Join 87 plant parents on our exclusive beta waitlist. Get early access and help shape the future of plant care.</p>
             
-            <form name="lingoleaf-beta" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <form id="signupForm" method="POST" action="/.netlify/functions/onboard">
                 <input type="hidden" name="bot-field" />
-                <input type="hidden" name="form-name" value="lingoleaf-beta" />
                 
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
