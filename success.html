@@ -152,6 +152,55 @@
     </div>
     
     <script>
+        // Update plant count on page load
+        async function updatePlantCount() {
+            try {
+                // Get user info from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                let userPhone = urlParams.get('phone');
+                let userEmail = urlParams.get('email');
+                
+                // Store in localStorage for future use
+                if (userPhone) localStorage.setItem('lingoleaf_phone', userPhone);
+                if (userEmail) localStorage.setItem('lingoleaf_email', userEmail);
+                
+                // Fallback to localStorage if not in URL
+                if (!userPhone) userPhone = localStorage.getItem('lingoleaf_phone');
+                if (!userEmail) userEmail = localStorage.getItem('lingoleaf_email');
+                
+                if (!userPhone && !userEmail) {
+                    console.log('No user info found, showing default message');
+                    return;
+                }
+                
+                // Fetch user's plant count from database
+                const response = await fetch(`/.netlify/functions/get-plant-count?phone=${encodeURIComponent(userPhone)}&email=${encodeURIComponent(userEmail)}`);
+                
+                if (!response.ok) {
+                    console.error('Failed to fetch plant count');
+                    return;
+                }
+                
+                const data = await response.json();
+                const plantCount = data.count || 0;
+                const maxPlants = data.max_plants || 5;
+                const remaining = maxPlants - plantCount;
+                
+                // Update the message
+                const morePlantsText = document.getElementById('morePlantsText');
+                if (morePlantsText && remaining > 0) {
+                    morePlantsText.innerHTML = `You have <strong>${plantCount} plant${plantCount !== 1 ? 's' : ''}</strong>. You can register up to <strong>${remaining} more</strong>!<br>Each plant gets its own phone number and personality!`;
+                } else if (morePlantsText && remaining === 0) {
+                    morePlantsText.innerHTML = `You've registered all <strong>${maxPlants} plants</strong>!<br>You're at your maximum plant limit.`;
+                    // Hide the "Add Another Plant" button
+                    const addButton = document.querySelector('button[onclick="addAnotherPlant()"]');
+                    if (addButton) addButton.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error updating plant count:', error);
+            }
+        }
+        
         function addAnotherPlant() {
             // Store that user is adding another plant
             localStorage.setItem('lingoleaf_addingAnother', 'true');
@@ -174,6 +223,9 @@
                 alert('Link copied to clipboard! 🌱');
             });
         }
+        
+        // Update plant count when page loads
+        document.addEventListener('DOMContentLoaded', updatePlantCount);
     </script>
 </body>
 </html>

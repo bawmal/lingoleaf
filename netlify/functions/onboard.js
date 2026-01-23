@@ -653,7 +653,7 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 302,
-    headers: { Location: '/success.html' },
+    headers: { Location: `/success.html?phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}` },
     body: ''
   };
 };
