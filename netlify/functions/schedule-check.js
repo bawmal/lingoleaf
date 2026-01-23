@@ -1,6 +1,7 @@
 // netlify/functions/schedule-check.js
 const { listDuePlants, updatePlant } = require('./lib/db');
 const { personaMessage, waterNowMessage } = require('./lib/messaging');
+const { nextDueFrom } = require('./lib/schedule');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
 
@@ -112,9 +113,11 @@ exports.handler = async (event) => {
       console.error(`   ❌ SMS failed:`, err.message);
     }
 
-    // Avoid spamming: push next_due_ts ahead 1 hour after alert
-    await updatePlant(p.id, { next_due_ts: nowTs + 60*60*1000 });
-    console.log(`   ⏰ Updated next_due_ts to +1 hour`);
+    // Schedule next watering based on plant's adjusted hours
+    const next_due_ts = nextDueFrom(nowTs, p.adjusted_hours);
+    await updatePlant(p.id, { next_due_ts });
+    const daysUntilNext = (p.adjusted_hours / 24).toFixed(1);
+    console.log(`   ⏰ Next watering scheduled in ${p.adjusted_hours} hours (~${daysUntilNext} days)`);
   }
 
   console.log(`✅ Schedule check complete. Processed ${due.length} plants.`);
