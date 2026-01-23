@@ -14,6 +14,11 @@
   [headers.values]
   Cache-Control = "no-store"
 
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+  Cache-Control = "public, max-age=0, must-revalidate"
+
 # Scheduled job: every hour
 [[scheduled.functions]]
   name = "schedule-check"
