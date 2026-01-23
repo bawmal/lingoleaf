@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - LingoLeaf</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-primary: #02B91A;
+            --green-light: #18DA63;
+            --green-dark: #0BBA68;
+            --text-dark: #1C1C1C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(180deg, #D4ECD9 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--green-light), var(--green-primary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .logo-text {
+            font-family: 'DM Serif Display', serif;
+            font-size: 28px;
+            color: var(--text-dark);
+        }
+        
+        .success-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+            animation: bounce 0.6s ease-out;
+        }
+        
+        @keyframes bounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #F0FDF4, #D4ECD9);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: var(--green-dark);
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--green-light), var(--green-primary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 185, 26, 0.3);
+        }
+        
+        .secondary-link {
+            display: block;
+            margin-top: 16px;
+            color: var(--green-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .secondary-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 32px 24px;
+            }
+            
+            h1 {
+                font-size: 26px;
+            }
+            
+            .success-icon {
+                font-size: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">LingoLeaf</div>
+        </div>
+        
+        <div class="success-icon">🎉</div>
+        <h1>Payment Successful!</h1>
+        <p class="subtitle">Thank you for purchasing LingoLeaf Lifetime! Your code is on its way.</p>
+        
+        <div class="info-box">
+            <h3>📧 Check Your Email</h3>
+            <p>We've sent your unique lifetime code to your email address. It should arrive within a few minutes.</p>
+        </div>
+        
+        <div class="info-box">
+            <h3>🔑 Next Steps</h3>
+            <p>1. Open the email from LingoLeaf<br>
+            2. Copy your lifetime code<br>
+            3. Visit the redemption page to activate your access</p>
+        </div>
+        
+        <a href="/redeem" class="btn">Go to Redemption Page →</a>
+        
+        <a href="/" class="secondary-link">← Back to Home</a>
+    </div>
+</body>
+</html>
