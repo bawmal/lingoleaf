@@ -52,7 +52,8 @@ exports.handler = async (event) => {
     }
 
     // Check if lifetime user
-    let maxPlants = 1; // Default for regular users
+    let maxPlants = 5; // Default: 5 plants for all users
+    let isLifetime = false;
     
     if (phone) {
       const { data: lifetimeUser } = await supabase
@@ -62,6 +63,7 @@ exports.handler = async (event) => {
         .single();
 
       if (lifetimeUser) {
+        isLifetime = true;
         maxPlants = lifetimeUser.max_plants || 5;
       }
     }
@@ -72,7 +74,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         count: plants.length,
         max_plants: maxPlants,
-        is_lifetime: maxPlants > 1
+        is_lifetime: isLifetime
       })
     };
 
