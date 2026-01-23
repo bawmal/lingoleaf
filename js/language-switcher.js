@@ -266,7 +266,7 @@ class LanguageSwitcher {
         this.updateText('h3.font-semibold', texts.check_email, 1);
         this.updateText('p.text-forest\\/70', texts.check_email_text, 1);
         this.updateText('h2.text-2xl', texts.have_more_plants);
-        this.updateHTML('p.text-mint\\/90', texts.more_plants_text);
+        this.updateHTML('#morePlantsText', texts.more_plants_text);
         this.updateText('button', texts.add_another, 0);
         this.updateText('button', texts.done, 1);
     }
