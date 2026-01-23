@@ -2424,30 +2424,31 @@
                         <label class="form-label">Pot Material</label>
                         <select name="pot_material" class="form-select" required>
                             <option value="">Choose...</option>
-                            <option value="terracotta">Terracotta</option>
-                            <option value="plastic">Plastic</option>
-                            <option value="ceramic">Ceramic</option>
+                            <option value="plastic">Plastic (retains moisture)</option>
+                            <option value="terracotta">Terracotta/Clay (porous, dries faster)</option>
+                            <option value="ceramic-drainage">Ceramic with drainage holes</option>
+                            <option value="ceramic-no-drainage">Ceramic without drainage holes</option>
+                            <option value="other">Other material</option>
                         </select>
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Indoor or Outdoor?</label>
-                    <select name="location" class="form-select" required>
-                        <option value="">Choose...</option>
-                        <option value="indoor">Indoor</option>
-                        <option value="outdoor">Outdoor</option>
-                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Light Exposure</label>
                     <select name="light_exposure" class="form-select" required>
                         <option value="">Choose...</option>
-                        <option value="north">North Window</option>
-                        <option value="south">South Window</option>
-                        <option value="east">East Window</option>
-                        <option value="west">West Window</option>
+                        <optgroup label="Indoor">
+                            <option value="indoor-north">North-facing window (lowest light)</option>
+                            <option value="indoor-east">East-facing window (gentle morning sun)</option>
+                            <option value="indoor-west">West-facing window (afternoon sun)</option>
+                            <option value="indoor-south">South-facing window (bright direct sun)</option>
+                            <option value="indoor-away">Away from windows (very low light)</option>
+                        </optgroup>
+                        <optgroup label="Outdoor">
+                            <option value="outdoor-full-sun">Full sun (6+ hours direct)</option>
+                            <option value="outdoor-partial-sun">Partial sun (3-6 hours)</option>
+                            <option value="outdoor-shade">Shade (less than 3 hours)</option>
+                        </optgroup>
                     </select>
                 </div>
                 
