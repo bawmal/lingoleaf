@@ -262,11 +262,11 @@ class LanguageSwitcher {
         this.updateText('span.text-forest', texts.registration_complete);
         this.updateText('h3.font-semibold', texts.check_phone, 0);
         this.updateText('p.text-forest\\/70', texts.check_phone_text, 0);
-        this.updateText('p.text-sm', texts.tip, 0);
+        this.updateHTML('p.text-sm', texts.tip, 0);
         this.updateText('h3.font-semibold', texts.check_email, 1);
         this.updateText('p.text-forest\\/70', texts.check_email_text, 1);
         this.updateText('h2.text-2xl', texts.have_more_plants);
-        this.updateText('p.text-mint\\/90', texts.more_plants_text);
+        this.updateHTML('p.text-mint\\/90', texts.more_plants_text);
         this.updateText('button', texts.add_another, 0);
         this.updateText('button', texts.done, 1);
     }
