@@ -2313,6 +2313,28 @@
         <p class="section-subtitle">Join our beta and get full access at a special introductory price.</p>
         
         <div class="pricing-wrapper">
+            <!-- Lifetime Deal Card - Hidden after 35 days -->
+            <div id="lifetime-deal-card" class="pricing-card" style="max-width: 350px; flex-shrink: 0; background: linear-gradient(326.83deg, #FFA200 51.48%, #FFB800 90.89%); color: white; border: none;">
+                <div class="pricing-header">
+                    <div class="pricing-name">🔥 Lifetime Deal</div>
+                    <div class="pricing-price" style="color: white; background: none; -webkit-text-fill-color: white;">$49</div>
+                    <div class="pricing-badge" style="background: #FF6B00;">One-time payment</div>
+                    <div style="margin-top: 16px; padding: 12px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; font-size: 14px; font-weight: 600;">
+                        ⏰ Offer ends in: <span id="lifetime-countdown" style="display: block; font-size: 18px; margin-top: 8px;">Loading...</span>
+                    </div>
+                </div>
+                <ul class="pricing-features" style="color: white;">
+                    <li>✓ Unlimited Plants Forever</li>
+                    <li>✓ All Personalities - Sassy, Zen, ...</li>
+                    <li>✓ Weather Intelligence - Real-time</li>
+                    <li>✓ Seasonal Dormancy</li>
+                    <li>✓ Predictive Logic</li>
+                    <li>✓ All Future Updates</li>
+                </ul>
+                <a href="/lifetime.html" class="pricing-cta" style="background: white; color: #FF6B00;">Get Lifetime Access</a>
+            </div>
+
+            <!-- Regular Beta Access Card -->
             <div class="pricing-card featured" style="max-width: 350px; flex-shrink: 0;">
                 <div class="pricing-header">
                     <div class="pricing-name">Beta Access</div>
@@ -2690,6 +2712,43 @@
                 submitBtn.disabled = false;
             }
         });
+
+        // Lifetime Deal Countdown Timer (35 days from Jan 27, 2026)
+        (function() {
+            const lifetimeDealCard = document.getElementById('lifetime-deal-card');
+            const countdownElement = document.getElementById('lifetime-countdown');
+            
+            // Set end date: Jan 27, 2026 + 35 days = March 3, 2026 at 11:59 PM EST
+            const endDate = new Date('2026-03-03T23:59:59-05:00').getTime();
+            
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const timeLeft = endDate - now;
+                
+                // If expired, hide the card
+                if (timeLeft <= 0) {
+                    if (lifetimeDealCard) {
+                        lifetimeDealCard.style.display = 'none';
+                    }
+                    return;
+                }
+                
+                // Calculate days, hours, minutes, seconds
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                // Update countdown display
+                if (countdownElement) {
+                    countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }
+            }
+            
+            // Update immediately and then every second
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        })();
     </script>
 </body>
 </html>
