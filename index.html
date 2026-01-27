@@ -2312,7 +2312,7 @@
         <h2 class="section-title">Beta Pricing</h2>
         <p class="section-subtitle">Join our beta and get full access at a special introductory price.</p>
         
-        <div class="pricing-wrapper">
+        <div class="pricing-wrapper" id="pricing-wrapper">
             <!-- Lifetime Deal Card - Hidden after 35 days -->
             <div id="lifetime-deal-card" class="pricing-card" style="max-width: 350px; flex-shrink: 0; background: linear-gradient(326.83deg, #FFA200 51.48%, #FFB800 90.89%); color: white; border: none;">
                 <div class="pricing-header">
@@ -2351,7 +2351,7 @@
                 <a href="#signup" class="pricing-cta">Start Free Trial</a>
                 <button onclick="openSubscribeModal()" class="pricing-cta-secondary" style="margin-top: 12px; background: white; border: 2px solid #02B91A; color: #02B91A; cursor: pointer; width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 16px;">Already a user? Subscribe</button>
             </div>
-            <div class="pricing-decoration">LingoLeaf</div>
+            <div class="pricing-decoration" id="pricing-decoration">LingoLeaf</div>
         </div>
         
         <p style="text-align: center; margin-top: 40px; color: #6F6F6F;">🎉 Free for 30 days. No credit card required. Cancel anytime.</p>
@@ -2748,6 +2748,37 @@
             // Update immediately and then every second
             updateCountdown();
             setInterval(updateCountdown, 1000);
+            
+            // Manage layout based on lifetime deal visibility
+            const pricingWrapper = document.getElementById('pricing-wrapper');
+            const pricingDecoration = document.getElementById('pricing-decoration');
+            
+            function updatePricingLayout() {
+                const now = new Date().getTime();
+                const timeLeft = endDate - now;
+                
+                if (timeLeft <= 0) {
+                    // Lifetime deal expired - restore original layout
+                    if (pricingWrapper) {
+                        pricingWrapper.style.justifyContent = '';
+                    }
+                    if (pricingDecoration) {
+                        pricingDecoration.style.display = '';
+                    }
+                } else {
+                    // Lifetime deal active - center cards and hide decoration
+                    if (pricingWrapper) {
+                        pricingWrapper.style.justifyContent = 'center';
+                        pricingWrapper.style.gap = '32px';
+                    }
+                    if (pricingDecoration) {
+                        pricingDecoration.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Update layout immediately
+            updatePricingLayout();
         })();
     </script>
 </body>
