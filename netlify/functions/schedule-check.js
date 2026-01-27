@@ -1,6 +1,6 @@
 // netlify/functions/schedule-check.js
-const { listDuePlants, updatePlant } = require('./lib/db');
-const { personaMessage, waterNowMessage } = require('./lib/messaging');
+const { listDuePlants, updatePlant, getPlantsByPhone } = require('./lib/db');
+const { generateMessage, getSeason } = require('./lib/generateMessage');
 const { nextDueFrom } = require('./lib/schedule');
 const fetch = require('node-fetch');
 const twilio = require('twilio');
@@ -57,37 +57,51 @@ exports.handler = async (event) => {
     const units = getUnitsForCountry(p.country);
     console.log(`   Units: ${units === 'imperial' ? 'Fahrenheit' : 'Celsius'}`);
     
-    let body;
+    // Get user context for AI message generation
+    const allUserPlants = await getPlantsByPhone(p.phone_e164);
+    const daysSinceSignup = Math.floor((Date.now() - new Date(p.created_at).getTime()) / 86400000);
+    const lastMessages = allUserPlants
+      .filter(plant => plant.last_message_sent)
+      .map(plant => plant.last_message_sent)
+      .slice(-3); // Last 3 messages for context
     
-    // Check if we should skip soil check (after DAMP reply)
-    if (p.skip_soil_check) {
-      // Skip soil check - just tell user to water
-      console.log(`   🚰 Skipping soil check - sending direct water message`);
-      body = waterNowMessage({ 
-        personality: p.personality, 
-        nickname: p.nickname, 
+    // Determine message type based on skip_soil_check flag
+    const messageType = p.skip_soil_check ? 'watering_dry' : 'soil_check';
+    
+    // Build context for AI message generation
+    const context = {
+      plant: {
         species: p.species,
+        nickname: p.nickname,
+        personality: p.personality || 'formal',
+        messages_sent: p.messages_sent || 0,
+        last_message_at: p.last_message_at
+      },
+      user: {
+        daysSinceSignup,
+        messagesSent: p.messages_sent || 0,
+        lastMessages
+      },
+      environment: {
+        season: getSeason(p.lat || 0),
+        hemisphere: (p.lat || 0) >= 0 ? 'Northern' : 'Southern',
+        isIndoor: p.location !== 'outdoor'
+      },
+      request: {
+        messageType,
         language: p.language || 'en'
-      });
-      
-      // Clear the skip flag after using it
-      await updatePlant(p.id, { skip_soil_check: false });
-    } else {
-      // Normal flow - ask user to check soil first
-      let temp = null, condition = 'Fair';
-      if (p.lat && p.lon) {
-        try {
-          const url = `https://api.openweathermap.org/data/2.5/weather?lat=${p.lat}&lon=${p.lon}&appid=${process.env.OWM_API_KEY}&units=${units}`;
-          const w = await (await fetch(url)).json();
-          temp = w?.main?.temp ?? temp;
-          condition = w?.weather?.[0]?.main ?? condition;
-          console.log(`   Weather: ${temp}°${units === 'metric' ? 'C' : 'F'}, ${condition}`);
-        } catch (err) {
-          console.log(`   ⚠️ Weather fetch failed:`, err.message);
-        }
       }
-      
-      body = await personaMessage({ personality: p.personality, nickname: p.nickname, species: p.species, temp, condition, units, language: p.language || 'en' });
+    };
+    
+    console.log(`   🤖 Generating ${messageType} message with AI...`);
+    const result = await generateMessage(context);
+    const body = result.message;
+    
+    console.log(`   ${result.success ? '✨ AI-generated' : '📋 Fallback template'} message`);
+    
+    // Clear the skip flag if it was set
+    if (p.skip_soil_check) {
+      await updatePlant(p.id, { skip_soil_check: false });
     }
     
     console.log(`   📱 Sending SMS: "${body.substring(0, 50)}..."`);
@@ -97,6 +111,12 @@ exports.handler = async (event) => {
         to: p.phone_e164, 
         from: p.twilio_number || process.env.TWILIO_FROM_NUMBER,  // Use plant's slot number
         body 
+      });
+      
+      // Store the sent message for context in future messages
+      await updatePlant(p.id, { 
+        last_message_sent: body,
+        messages_sent: (p.messages_sent || 0) + 1
       });
       console.log(`   ✅ SMS sent successfully from slot ${p.slot_index + 1}! SID: ${msg.sid}`);
       
