@@ -714,7 +714,7 @@
         });
 
         // Generate PlantSona
-        generateBtn.addEventListener('click', () => {
+        generateBtn.addEventListener('click', async () => {
             if (!selectedFile) return;
 
             // Show loading
@@ -722,21 +722,66 @@
             plantResult.classList.remove('show');
             loading.classList.add('show');
 
-            // Simulate API call
-            setTimeout(() => {
-                loading.classList.remove('show');
-                plantResult.classList.add('show');
-                
-                // Update message based on personality
-                const messages = {
-                    sassy: "Listen up! I'm a gorgeous plant and I know it. Water me when I'm thirsty, not on YOUR schedule. And that corner you put me in? I need MORE light, honey! 💅",
-                    zen: "Greetings, peaceful friend. I am grateful for your care. When you feel moved to water me, I shall receive it with gratitude. Let us grow together in harmony. 🙏",
-                    anxious: "Oh no, oh no! Am I getting enough light?! Is that a brown spot?! Please don't forget about me! I promise I'll try my best to stay alive! 😰💦",
-                    formal: "Good day. I am pleased to make your acquaintance. I require watering approximately once per week, and I prefer indirect sunlight. Your attention to my care is most appreciated."
+            try {
+                // Convert image to base64
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const base64Image = e.target.result;
+
+                    // Call PlantSona API
+                    const response = await fetch('/.netlify/functions/plantsona', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            image: base64Image,
+                            personality: selectedPersonality,
+                            nickname: null // Can add nickname input later
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to generate PlantSona');
+                    }
+
+                    const data = await response.json();
+                    const plantsona = data.plantsona;
+
+                    // Update UI with real data
+                    document.getElementById('plant-name').textContent = plantsona.species;
+                    document.getElementById('plant-origin').textContent = `${plantsona.personality.charAt(0).toUpperCase() + plantsona.personality.slice(1)} Personality`;
+                    document.getElementById('plant-message').textContent = `"${plantsona.voiceMessage}"`;
+
+                    // Parse care instructions and update care tips
+                    const careTipsContainer = document.getElementById('care-tips-list');
+                    careTipsContainer.innerHTML = `
+                        <div class="care-tip">
+                            <div class="care-tip-icon">🌱</div>
+                            <div class="care-tip-content">
+                                <h4>Care Instructions</h4>
+                                <p>${plantsona.careInstructions}</p>
+                            </div>
+                        </div>
+                        <div class="care-tip">
+                            <div class="care-tip-icon">💡</div>
+                            <div class="care-tip-content">
+                                <h4>Fun Fact</h4>
+                                <p>${plantsona.funFacts}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    loading.classList.remove('show');
+                    plantResult.classList.add('show');
                 };
-                
-                document.getElementById('plant-message').textContent = `"${messages[selectedPersonality]}"`;
-            }, 2000);
+                reader.readAsDataURL(selectedFile);
+
+            } catch (error) {
+                console.error('PlantSona error:', error);
+                loading.classList.remove('show');
+                alert('Failed to generate PlantSona. Please try again.');
+            }
         });
     </script>
 </body>
