@@ -1,0 +1,10 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Block function endpoints from being indexed
+Disallow: /.netlify/functions/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://lingoleaf.ai/sitemap.xml
