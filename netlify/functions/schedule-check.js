@@ -65,6 +65,20 @@ exports.handler = async (event) => {
       .map(plant => plant.last_message_sent)
       .slice(-3); // Last 3 messages for context
     
+    // Fetch weather data for context
+    let temp = null, condition = null;
+    if (p.lat && p.lon) {
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${p.lat}&lon=${p.lon}&appid=${process.env.OWM_API_KEY}&units=${units}`;
+        const w = await (await fetch(url)).json();
+        temp = w?.main?.temp ?? null;
+        condition = w?.weather?.[0]?.main ?? null;
+        console.log(`   Weather: ${temp}°${units === 'metric' ? 'C' : 'F'}, ${condition}`);
+      } catch (err) {
+        console.log(`   ⚠️ Weather fetch failed:`, err.message);
+      }
+    }
+    
     // Determine message type based on skip_soil_check flag
     const messageType = p.skip_soil_check ? 'watering_dry' : 'soil_check';
     
@@ -85,7 +99,10 @@ exports.handler = async (event) => {
       environment: {
         season: getSeason(p.lat || 0),
         hemisphere: (p.lat || 0) >= 0 ? 'Northern' : 'Southern',
-        isIndoor: p.location !== 'outdoor'
+        isIndoor: p.location !== 'outdoor',
+        temperature: temp,
+        condition: condition,
+        units: units
       },
       request: {
         messageType,

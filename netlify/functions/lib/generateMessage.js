@@ -124,6 +124,12 @@ RULES:
 8. Always end with clear action if needed (DRY/DAMP/DONE)
 9. Use ${request.language === 'fr' ? 'French' : 'English'} language`;
 
+  // Randomly decide whether to include weather (50% chance for variety)
+  const includeWeather = Math.random() < 0.5;
+  const weatherContext = (includeWeather && environment.temperature != null && environment.condition) 
+    ? `Current weather: ${Math.round(environment.temperature)}°${environment.units === 'imperial' ? 'F' : 'C'}, ${environment.condition}. You can mention this naturally if it's relevant to your needs.`
+    : '';
+
   const userPrompt = `Generate a ${request.messageType} message AS THE PLANT speaking to your owner.
 
 You are: ${plant.species} named "${plant.nickname}"
@@ -131,6 +137,7 @@ Season: ${environment.season} (${environment.hemisphere} hemisphere) — how doe
 Indoor/Outdoor: ${environment.isIndoor ? 'Indoor' : 'Outdoor'}
 Days since your owner got you: ${user.daysSinceSignup} days
 Total messages you've sent: ${user.messagesSent}
+${weatherContext}
 
 ${includeName ? '✅ Include your name in this message (e.g., "Hey, it\'s [name]..." or "It\'s [name] here...")' : '❌ Do NOT include your name — you are already familiar to your owner.'}
 
