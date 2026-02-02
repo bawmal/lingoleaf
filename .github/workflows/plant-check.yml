@@ -11,5 +11,24 @@ jobs:
     steps:
       - name: Trigger plant watering check
         run: |
-          curl -f https://lingoleaf.ai/.netlify/functions/schedule-check
-          echo "Plant check completed at $(date)"
+          echo "🚀 Starting plant check at $(date)"
+          
+          # Call Netlify function with proper error handling
+          response=$(curl -s -w "\n%{http_code}" \
+            --max-time 300 \
+            -X POST \
+            https://lingoleaf.ai/.netlify/functions/schedule-check)
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          echo "📊 HTTP Status: $http_code"
+          echo "📝 Response: $body"
+          
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Plant check completed successfully at $(date)"
+            exit 0
+          else
+            echo "❌ Plant check failed with status $http_code"
+            exit 1
+          fi
