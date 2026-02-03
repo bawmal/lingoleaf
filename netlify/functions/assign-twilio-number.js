@@ -70,8 +70,6 @@ exports.handler = async (event) => {
             };
         }
 
-        const { shopId, twilioNumber } = JSON.parse(event.body);
-
         if (!shopId || !twilioNumber) {
             return {
                 statusCode: 400,
