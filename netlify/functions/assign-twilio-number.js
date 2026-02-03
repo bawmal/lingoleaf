@@ -24,7 +24,39 @@ exports.handler = async (event) => {
         };
     }
 
+    // Check request size
+    if (event.body && event.body.length > 10000) {
+        return { statusCode: 413, headers, body: JSON.stringify({ error: 'Request too large' }) };
+    }
+
     try {
+        // Parse JSON with error handling
+        let requestData;
+        try {
+            requestData = JSON.parse(event.body || '{}');
+        } catch (parseError) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON in request body' }) };
+        }
+
+        const { shopId, twilioNumber } = requestData;
+
+        if (!shopId || !twilioNumber) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'Missing shopId or twilioNumber' })
+            };
+        }
+
+        // Validate phone number format
+        if (!twilioNumber.startsWith('+') || twilioNumber.length < 10) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'Invalid phone number format. Use +1234567890' })
+            };
+        }
+
         // Check env vars
         if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
             console.error('Missing env vars:', {

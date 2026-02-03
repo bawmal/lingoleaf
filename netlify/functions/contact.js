@@ -3,6 +3,18 @@
 
 const fetch = require('node-fetch');
 
+// HTML escape helper to prevent XSS
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 exports.handler = async (event) => {
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
@@ -12,14 +24,53 @@ exports.handler = async (event) => {
     };
   }
 
+  // Check request size (prevent large payload attacks)
+  if (event.body && event.body.length > 50000) {
+    return {
+      statusCode: 413,
+      body: JSON.stringify({ error: 'Request too large' })
+    };
+  }
+
   try {
-    const { name, email, subject, message } = JSON.parse(event.body);
+    // Parse JSON with proper error handling
+    let data;
+    try {
+      data = JSON.parse(event.body || '{}');
+    } catch (parseError) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid JSON in request body' })
+      };
+    }
+
+    const { name, email, subject, message } = data;
 
     // Validate required fields
     if (!name || !email || !subject || !message) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Missing required fields' })
+      };
+    }
+
+    // Validate field types and lengths
+    if (typeof name !== 'string' || name.length > 100) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid name field' })
+      };
+    }
+    if (typeof email !== 'string' || email.length > 200 || !email.includes('@')) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid email field' })
+      };
+    }
+    if (typeof message !== 'string' || message.length > 5000) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Message too long (max 5000 characters)' })
       };
     }
 
@@ -72,27 +123,27 @@ exports.handler = async (event) => {
               <div class="content">
                 <div class="field">
                   <div class="label">From:</div>
-                  <div class="value">${name}</div>
+                  <div class="value">${escapeHtml(name)}</div>
                 </div>
                 
                 <div class="field">
                   <div class="label">Email:</div>
-                  <div class="value"><a href="mailto:${email}" style="color: #2d5016;">${email}</a></div>
+                  <div class="value"><a href="mailto:${escapeHtml(email)}" style="color: #2d5016;">${escapeHtml(email)}</a></div>
                 </div>
                 
                 <div class="field">
                   <div class="label">Category:</div>
-                  <div class="value">${subjectLine}</div>
+                  <div class="value">${escapeHtml(subjectLine)}</div>
                 </div>
                 
                 <div class="field">
                   <div class="label">Message:</div>
-                  <div class="value" style="white-space: pre-wrap;">${message}</div>
+                  <div class="value" style="white-space: pre-wrap;">${escapeHtml(message)}</div>
                 </div>
               </div>
               <div class="footer">
                 <p>Sent from LingoLeaf Contact Form</p>
-                <p>Reply directly to this email to respond to ${name}</p>
+                <p>Reply directly to this email to respond to ${escapeHtml(name)}</p>
               </div>
             </div>
           </body>

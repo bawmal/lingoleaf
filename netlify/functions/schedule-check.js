@@ -53,6 +53,19 @@ exports.handler = async (event) => {
     console.log(`   Country: ${p.country || 'Unknown'}`);
     console.log(`   Skip soil check: ${p.skip_soil_check || false}`);
     
+    // Deduplication: Skip if message was sent in last 30 minutes (prevents duplicate from dual schedulers)
+    if (p.last_message_at) {
+      const lastMessageTime = new Date(p.last_message_at).getTime();
+      const timeSinceLastMessage = nowTs - lastMessageTime;
+      const thirtyMinutes = 30 * 60 * 1000;
+      
+      if (timeSinceLastMessage < thirtyMinutes) {
+        const minutesAgo = Math.floor(timeSinceLastMessage / 60000);
+        console.log(`   ⏭️  SKIPPED: Message already sent ${minutesAgo} minutes ago (deduplication)`);
+        continue;
+      }
+    }
+    
     // Determine temperature units based on plant's country
     const units = getUnitsForCountry(p.country);
     console.log(`   Units: ${units === 'imperial' ? 'Fahrenheit' : 'Celsius'}`);

@@ -19,6 +19,11 @@ exports.handler = async (event) => {
         return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
     }
 
+    // Check request size
+    if (event.body && event.body.length > 10000) {
+        return { statusCode: 413, headers, body: JSON.stringify({ error: 'Request too large' }) };
+    }
+
     try {
         // Check env vars
         if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -26,10 +31,29 @@ exports.handler = async (event) => {
             return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server configuration error' }) };
         }
 
-        const { code, email, phone } = JSON.parse(event.body);
+        // Parse JSON with error handling
+        let data;
+        try {
+            data = JSON.parse(event.body || '{}');
+        } catch (parseError) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON in request body' }) };
+        }
+
+        const { code, email, phone } = data;
 
         if (!code || !email || !phone) {
             return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields' }) };
+        }
+
+        // Validate field types and lengths
+        if (typeof code !== 'string' || code.length > 50) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid code format' }) };
+        }
+        if (typeof email !== 'string' || email.length > 200 || !email.includes('@')) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid email format' }) };
+        }
+        if (typeof phone !== 'string' || phone.length > 20) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid phone format' }) };
         }
 
         // Normalize the code (remove dashes, uppercase)

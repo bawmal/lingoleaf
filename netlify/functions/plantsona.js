@@ -12,14 +12,53 @@ exports.handler = async (event) => {
     };
   }
 
+  // Check request size (images can be large but limit to 5MB)
+  if (event.body && event.body.length > 5000000) {
+    return { 
+      statusCode: 413, 
+      body: JSON.stringify({ error: 'Request too large (max 5MB)' }) 
+    };
+  }
+
   try {
-    const { image, personality, nickname } = JSON.parse(event.body);
+    // Parse JSON with error handling
+    let data;
+    try {
+      data = JSON.parse(event.body || '{}');
+    } catch (parseError) {
+      return { 
+        statusCode: 400, 
+        body: JSON.stringify({ error: 'Invalid JSON in request body' }) 
+      };
+    }
+
+    const { image, personality, nickname } = data;
 
     // Validate inputs
     if (!image) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Image is required' })
+      return { 
+        statusCode: 400, 
+        body: JSON.stringify({ error: 'Image is required' }) 
+      };
+    }
+
+    // Validate field types
+    if (typeof image !== 'string') {
+      return { 
+        statusCode: 400, 
+        body: JSON.stringify({ error: 'Invalid image format' }) 
+      };
+    }
+    if (personality && typeof personality !== 'string') {
+      return { 
+        statusCode: 400, 
+        body: JSON.stringify({ error: 'Invalid personality format' }) 
+      };
+    }
+    if (nickname && typeof nickname !== 'string') {
+      return { 
+        statusCode: 400, 
+        body: JSON.stringify({ error: 'Invalid nickname format' }) 
       };
     }
 

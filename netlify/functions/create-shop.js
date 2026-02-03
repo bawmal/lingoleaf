@@ -19,15 +19,36 @@ exports.handler = async (event) => {
         return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
     }
 
+    // Check request size
+    if (event.body && event.body.length > 10000) {
+        return { statusCode: 413, headers, body: JSON.stringify({ error: 'Request too large' }) };
+    }
+
     try {
-        const { userId, email, businessName } = JSON.parse(event.body);
+        // Parse JSON with error handling
+        let requestData;
+        try {
+            requestData = JSON.parse(event.body || '{}');
+        } catch (parseError) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON in request body' }) };
+        }
+
+        const { userId, email, businessName } = requestData;
 
         if (!userId || !email || !businessName) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'Missing required fields: userId, email, businessName' })
+                body: JSON.stringify({ error: 'Missing required fields' })
             };
+        }
+
+        // Validate field types and lengths
+        if (typeof email !== 'string' || email.length > 200 || !email.includes('@')) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid email format' }) };
+        }
+        if (typeof businessName !== 'string' || businessName.length > 200) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid business name' }) };
         }
 
         // Use service role to bypass RLS

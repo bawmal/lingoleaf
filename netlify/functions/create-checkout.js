@@ -40,15 +40,24 @@ exports.handler = async (event) => {
 
     // Only allow POST
     if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            headers: { 'Access-Control-Allow-Origin': '*' },
-            body: JSON.stringify({ error: 'Method not allowed' })
-        };
+        return { statusCode: 405, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Method not allowed' }) };
+    }
+
+    // Check request size
+    if (event.body && event.body.length > 10000) {
+        return { statusCode: 413, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Request too large' }) };
     }
 
     try {
-        const { email, userId, plantId } = JSON.parse(event.body);
+        // Parse JSON with error handling
+        let data;
+        try {
+            data = JSON.parse(event.body || '{}');
+        } catch (parseError) {
+            return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Invalid JSON in request body' }) };
+        }
+
+        const { email, userId, plantId } = data;
 
         if (!email) {
             return {
@@ -56,6 +65,11 @@ exports.handler = async (event) => {
                 headers: { 'Access-Control-Allow-Origin': '*' },
                 body: JSON.stringify({ error: 'Email is required' })
             };
+        }
+
+        // Validate email format
+        if (typeof email !== 'string' || email.length > 200 || !email.includes('@')) {
+            return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Invalid email format' }) };
         }
 
         // Create Stripe Checkout Session

@@ -20,6 +20,11 @@ exports.handler = async (event) => {
         return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
     }
 
+    // Check request size
+    if (event.body && event.body.length > 10000) {
+        return { statusCode: 413, headers, body: JSON.stringify({ error: 'Request too large' }) };
+    }
+
     try {
         // Verify auth token
         const authHeader = event.headers.authorization || event.headers.Authorization;
@@ -39,7 +44,15 @@ exports.handler = async (event) => {
             return { statusCode: 500, headers, body: JSON.stringify({ error: 'SMS service not configured' }) };
         }
 
-        const { customerId } = JSON.parse(event.body);
+        // Parse JSON with error handling
+        let data;
+        try {
+            data = JSON.parse(event.body || '{}');
+        } catch (parseError) {
+            return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON in request body' }) };
+        }
+
+        const { customerId } = data;
 
         if (!customerId) {
             return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing customerId' }) };
