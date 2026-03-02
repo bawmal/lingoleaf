@@ -248,7 +248,7 @@ exports.handler = async (event) => {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         
         const expiredTrials = await supabaseRequest(
-            `plants?trial_started_at=lt.${thirtyDaysAgo.toISOString()}&subscription_status=neq.active&trial_expiry_notified=is.null&select=id,user_email,plant_name`
+            `plants?trial_started_at=lt.${thirtyDaysAgo.toISOString()}&subscription_status=neq.active&trial_expiry_notified=is.null&select=id,email,nickname`
         );
 
         if (!expiredTrials || expiredTrials.length === 0) {
@@ -262,10 +262,10 @@ exports.handler = async (event) => {
         const errors = [];
 
         for (const plant of expiredTrials) {
-            if (!plant.user_email) continue;
+            if (!plant.email) continue;
 
             try {
-                const sent = await sendTrialExpiryEmail(plant.user_email, plant.plant_name);
+                const sent = await sendTrialExpiryEmail(plant.email, plant.nickname);
                 
                 if (sent) {
                     // Mark as notified
