@@ -1,23 +1,23 @@
-name: Hourly Plant Check
+name: Daily Trial Expiry Check
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour at minute 0
+    - cron: '0 9 * * *'  # Daily at 9am UTC
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  check-plants:
+  check-trials:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger plant watering check
+      - name: Check expired trials
         run: |
-          echo "🚀 Starting plant check at $(date)"
+          echo "🚀 Starting trial expiry check at $(date)"
           
           # Call Netlify function with proper error handling
           response=$(curl -s -w "\n%{http_code}" \
             --max-time 300 \
             -X GET \
-            https://lingoleaf.ai/.netlify/functions/schedule-check)
+            https://lingoleaf.ai/.netlify/functions/check-trial-expiry)
           
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | head -n-1)
@@ -26,9 +26,9 @@ jobs:
           echo "📝 Response: $body"
           
           if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-            echo "✅ Plant check completed successfully at $(date)"
+            echo "✅ Trial expiry check completed successfully at $(date)"
             exit 0
           else
-            echo "❌ Plant check failed with status $http_code"
+            echo "❌ Trial expiry check failed with status $http_code"
             exit 1
           fi

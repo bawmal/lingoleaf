@@ -28,12 +28,11 @@
   [headers.values]
   Cache-Control = "public, max-age=0, must-revalidate"
 
-# Scheduled job: every hour
-[[scheduled.functions]]
-  name = "schedule-check"
-  cron = "0 * * * *"
+# Scheduled jobs disabled - using GitHub Actions instead
+# [[scheduled.functions]]
+#   name = "schedule-check"
+#   cron = "0 * * * *"
 
-# Scheduled job: check trial expiry daily at 9am UTC
-[[scheduled.functions]]
-  name = "check-trial-expiry"
-  cron = "0 9 * * *"
+# [[scheduled.functions]]
+#   name = "check-trial-expiry"
+#   cron = "0 9 * * *"
