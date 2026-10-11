@@ -31,17 +31,17 @@ Nothing secret is uploaded here. This is just the empty app. Your passwords neve
 3. To use a password later, tap its name, then tap **Copy password** and paste it into the other app (press and hold in the box → Paste).
 4. Not sure what password to use for a new account? Tap **Create a strong password for me**.
 
-## Scan passwords from your notebook
+## Add passwords from your notebook
 
-Have passwords written on paper? You don't have to type them.
+Have lots of passwords written in a book? Add a whole page at once instead of typing.
 
-1. On the main screen, tap **Scan**. The camera opens.
-2. Take a photo of **one** entry: the app name, username and password. Hold the phone straight above the page, in good light.
-3. The app fills in the boxes. **Check each one against your note** before saving, because handwriting is easy to misread (0 and O, 1 and l, 5 and S).
-4. If something landed in the wrong box, tap that box, then tap the right words in the list under it.
-5. Tap **Save**, then **Scan next** to carry on through your notebook.
+1. On your home screen, tap the **camera icon** in the Google search bar (or open the **Google Lens** app).
+2. Point it at the page, tap the shutter, then **Select all** and **Copy text**.
+3. Open Password Safe and tap **Scan**, then **Paste from Google Lens**.
+4. The app lists every account it found on the page. **Check each one against your notebook**, because Lens can misread handwriting (0 and O, 1 and l, 5 and S). Fix anything wrong and untick anything you don't want.
+5. Tap **Save**. The copied text is then cleared from your phone's clipboard.
 
-Writing it as `User: ...` and `Password: ...` helps, but plain lines work too, in the order app name, username, password. The photo is read on your phone and is never sent anywhere or saved. The first scan needs internet to download the reader (about 6 MB); after that it works offline.
+It understands pages written like `Netflix - Sunflower42`, labelled lines like `Email - ...` and `PWD - ...`, and a name followed by its username and password on the next lines. Accounts you've already saved come unticked. While you're on this screen the app waits 3 minutes before locking, so you have time to use Lens.
 
 ## Fingerprint unlock
 
@@ -85,7 +85,7 @@ Nobody can reset it, by design. Try these in order:
 - The backup file is the same encrypted record as JSON.
 - Fingerprint unlock: a platform passkey with the WebAuthn **PRF** extension. The PRF output (HKDF-SHA256) becomes an AES-GCM key that encrypts a copy of the master password, stored in IndexedDB. The secret only comes out of the phone's secure hardware after a fingerprint check. If PRF isn't supported, the option stays off. Changing the master password re-seals it with one touch; restoring a backup or erasing everything turns it off. The passkey is tied to the site's domain.
 - Icons: Lucide (ISC). Font: Inter (OFL, `fonts/LICENSE-Inter.txt`), bundled so the app works offline.
-- Scan from paper: on-device OCR with Tesseract.js 5 (Apache-2.0, `ocr/`), English LSTM model (best_int). Loaded only when first used and kept in a separate service-worker cache (`password-safe-ocr-v1`) so app updates don't re-download it. CSP allows `'wasm-unsafe-eval'` for this. The photo stays in memory as a blob URL and is discarded on save, cancel or lock; the OCR worker is stopped on lock.
+- Add from notebook: the user copies text with Google Lens (Google processes the photo; this app never sees it) and pastes it. `parseNotebook()` turns lines into entries (separators `:`, `=`, spaced or em/en dashes, plain hyphens in limited cases; fuzzy label matching for misreads). The pasted text is cleared from the screen on save, leave or lock, and from the clipboard after saving. An earlier on-device OCR (Tesseract) attempt was removed because it couldn't read handwriting reliably.
 - Security hardening (Oct 2026 review): master password needs 10+ characters and a non-"Weak" score; backups are rejected if their key-derivation settings are weaker than 100k iterations or salt < 16 bytes, and restored vaults are re-encrypted with fresh settings; a lock during a slow task (e.g. changing the master password) cancels it; copied passwords are cleared from the clipboard after 45 seconds if you're still in the app; revealed passwords re-hide and the page blurs when the app loses focus (recent-apps thumbnail).
 - Known limits: copied passwords can remain in Gboard's clipboard history; a web app can't block screenshots; the phone's screen-lock PIN can stand in for the fingerprint; anyone holding the phone can erase the safe (nothing is revealed).
 - A strict Content-Security-Policy is set in `index.html` and `_headers`.
