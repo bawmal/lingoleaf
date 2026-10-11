@@ -1153,21 +1153,29 @@ function requestPersistentStorage() {
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 }
 
-function setInstallVisible(visible) {
-  document.querySelectorAll('.install-btn').forEach((b) => { b.hidden = !visible; });
-  document.querySelector('.install-section').hidden = !visible;
+const isInstalledApp = () => matchMedia('(display-mode: standalone)').matches;
+let justInstalled = false;
+
+// In a Chrome tab, show an Install button when Chrome offers one, otherwise
+// written steps. Inside the installed app, show nothing.
+function updateInstallUi() {
+  const inBrowser = !isInstalledApp();
+  document.querySelectorAll('.install-btn').forEach((b) => { b.hidden = !(inBrowser && installPrompt && !justInstalled); });
+  document.querySelectorAll('.install-help').forEach((p) => { p.hidden = !(inBrowser && !installPrompt && !justInstalled); });
+  document.querySelectorAll('.installed-note').forEach((p) => { p.hidden = !(inBrowser && justInstalled); });
+  document.querySelector('.install-section').hidden = !inBrowser;
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   installPrompt = e;
-  setInstallVisible(true);
+  updateInstallUi();
 });
 
 window.addEventListener('appinstalled', () => {
   installPrompt = null;
-  setInstallVisible(false);
-  toast('Installed. Look for Password Safe on your home screen.');
+  justInstalled = true;
+  updateInstallUi();
 });
 
 document.querySelectorAll('.install-btn').forEach((b) => b.addEventListener('click', async () => {
@@ -1175,8 +1183,10 @@ document.querySelectorAll('.install-btn').forEach((b) => b.addEventListener('cli
   installPrompt.prompt();
   await installPrompt.userChoice;
   installPrompt = null;
-  setInstallVisible(false);
+  updateInstallUi();
 }));
+
+updateInstallUi();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

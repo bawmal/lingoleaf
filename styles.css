@@ -533,3 +533,5 @@ body.privacy main { filter: blur(16px); }
 }
 .reveal .detail-value { font-size: var(--t-20); margin: var(--s-4) 0 var(--s-8); }
 #forgot-bio .error { margin-top: var(--s-12); }
+
+.install-help, .installed-note { border-left-color: var(--accent); }
