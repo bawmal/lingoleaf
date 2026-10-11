@@ -1,6 +1,6 @@
 // Keeps the app working with no internet connection.
 // Bump CACHE when any file below changes so phones pick up the new version.
-const CACHE = 'password-safe-v8';
+const CACHE = 'password-safe-v9';
 const FILES = [
   './',
   'index.html',
@@ -31,16 +31,20 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
+  const saved = () => caches.match(event.request, { ignoreSearch: true });
+  // A "not found" or server error (for example if the website is taken down)
+  // falls back to the saved copy, so the installed app keeps working.
   const network = fetch(event.request).then((response) => {
     if (response.ok) {
       const copy = response.clone();
       caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+      return response;
     }
-    return response;
+    return saved().then((cached) => cached || response);
   });
   const slow = new Promise((resolve) => setTimeout(resolve, 4000));
   event.respondWith(
-    Promise.race([network, slow.then(() => caches.match(event.request, { ignoreSearch: true }))])
+    Promise.race([network, slow.then(saved)])
       .then((response) => response || network)
-      .catch(() => caches.match(event.request, { ignoreSearch: true })));
+      .catch(saved));
 });
