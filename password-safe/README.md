@@ -27,9 +27,9 @@ Nothing secret is uploaded here. This is just the empty app. Your passwords neve
 ## Step 3: Start using it
 
 1. **Create your master password.** Pick something you'll remember, at least 8 characters. **Write it on paper and keep it somewhere safe at home.**
-2. Tap **+ Add** to save a password: type the app name, your username and the password. Tap **Save**.
+2. Tap **Add password** to save one: type the app name, your username and the password you already use. Tap **Save**.
 3. To use a password later, tap its name, then tap **Copy password** and paste it into the other app (press and hold in the box → Paste).
-4. Not sure what password to use for a new account? Tap **Make a strong password for me**.
+4. Not sure what password to use for a new account? Tap **Create a strong password for me**.
 
 ## Fingerprint unlock
 

@@ -243,8 +243,9 @@
         </div>
         <div class="field">
           <label for="edit-password">Password</label>
+          <p class="muted small" id="edit-password-hint">Type the password you already use, or tap the button below to create a new one.</p>
           <div class="input-wrap">
-            <input id="edit-password" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" data-strength="edit-strength">
+            <input id="edit-password" aria-describedby="edit-password-hint" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" data-strength="edit-strength">
             <button type="button" class="input-btn" data-toggle="edit-password" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
           </div>
           <div class="strength" id="edit-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>

@@ -1,6 +1,6 @@
 // Keeps the app working with no internet connection.
 // Bump CACHE when any file below changes so phones pick up the new version.
-const CACHE = 'password-safe-v2';
+const CACHE = 'password-safe-v3';
 const FILES = [
   './',
   'index.html',
