@@ -520,3 +520,16 @@ dialog::backdrop { background: rgba(10, 14, 18, 0.5); }
   h1 { font-size: var(--t-32); }
   .topbar-title h1, .entry-head h1 { font-size: var(--t-24); }
 }
+
+/* Recent-apps screen and fingerprint prompts: blur content while the app isn't in front */
+body.privacy main { filter: blur(16px); }
+
+.reveal {
+  margin-top: var(--s-16);
+  padding: var(--s-16);
+  border: 1px solid var(--border);
+  border-radius: var(--r-8);
+  background: var(--surface);
+}
+.reveal .detail-value { font-size: var(--t-20); margin: var(--s-4) 0 var(--s-8); }
+#forgot-bio .error { margin-top: var(--s-12); }

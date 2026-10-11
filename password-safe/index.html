@@ -49,12 +49,12 @@
       <form id="form-setup" class="stack" novalidate>
         <div>
           <h1>Create your master password</h1>
-          <p class="muted">This one password opens all the others. Use at least 8 characters. A short sentence works well, like <em>MyDogLovesPizza!</em></p>
+          <p class="muted">This one password opens all the others. Use at least 10 characters. Three or four random words that only you would put together work well.</p>
         </div>
         <div class="field">
           <label for="setup-pw1">Master password</label>
           <div class="input-wrap">
-            <input id="setup-pw1" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" data-strength="setup-strength">
+            <input id="setup-pw1" data-master type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" data-strength="setup-strength">
             <button type="button" class="input-btn" data-toggle="setup-pw1" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
           </div>
           <div class="strength" id="setup-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
@@ -120,6 +120,17 @@
           <p class="muted">For your safety, nobody can open your passwords without it, not even the people who made this app.</p>
         </div>
         <p>First, try a few more times. Check capital letters and spaces.</p>
+        <section class="section" id="forgot-bio" hidden>
+          <h2>Use your fingerprint</h2>
+          <p class="muted">If fingerprint unlock is on, your fingerprint can show your master password so you can write it down again.</p>
+          <button type="button" class="btn btn-primary" id="reveal-master-btn"><svg class="icon"><use href="#i-fingerprint"/></svg>Show my master password</button>
+          <div class="reveal" id="revealed-master" hidden>
+            <div class="detail-label">Your master password</div>
+            <div class="detail-value mono" id="revealed-master-text"></div>
+            <p class="muted small">Write it down now. It hides again in 1 minute.</p>
+          </div>
+          <p class="error" id="forgot-error" role="alert"></p>
+        </section>
         <section class="section">
           <h2>Restore a backup</h2>
           <p class="muted">You'll need the master password you were using when you made the backup.</p>
@@ -343,7 +354,7 @@
         </div>
         <div class="field">
           <label for="change-new1">New master password</label>
-          <input id="change-new1" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" data-strength="change-strength">
+          <input id="change-new1" data-master type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" data-strength="change-strength">
           <div class="strength" id="change-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
         </div>
         <div class="field">

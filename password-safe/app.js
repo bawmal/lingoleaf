@@ -14,7 +14,10 @@ const PBKDF2_ITERATIONS = 600000;
 const AUTO_LOCK_MS = 2 * 60 * 1000;     // no taps for 2 minutes
 const AWAY_LOCK_MS = 30 * 1000;         // left the app for 30 seconds
 const BACKUP_REMINDER_DAYS = 30;
-const MIN_MASTER_LENGTH = 8;
+const MIN_MASTER_LENGTH = 10;
+const MIN_ITERATIONS = 100000;          // refuse weaker settings from a backup file
+const MAX_ITERATIONS = 10000000;
+const CLIPBOARD_CLEAR_MS = 45 * 1000;
 const FORMAT = 'password-safe';
 
 const $ = (id) => document.getElementById(id);
@@ -100,15 +103,32 @@ async function decryptPayload(key, record) {
 }
 
 function isVaultRecord(r) {
-  return r && r.format === FORMAT && r.kdf && typeof r.kdf.salt === 'string' &&
-    Number.isInteger(r.kdf.iterations) && typeof r.iv === 'string' && typeof r.data === 'string';
+  if (!r || r.format !== FORMAT || !r.kdf || typeof r.kdf.salt !== 'string' ||
+    typeof r.iv !== 'string' || typeof r.data !== 'string') return false;
+  const iterations = r.kdf.iterations;
+  if (!Number.isInteger(iterations) || iterations < MIN_ITERATIONS || iterations > MAX_ITERATIONS) return false;
+  try {
+    return fromBase64(r.kdf.salt).length >= 16 && fromBase64(r.iv).length === 12;
+  } catch {
+    return false;
+  }
 }
 
-// Returns { key, entries } or throws if the password is wrong.
+class VaultDamagedError extends Error {}
+
+function isEntryList(list) {
+  return Array.isArray(list) && list.every((e) => e && typeof e.id === 'string' &&
+    typeof e.name === 'string' && typeof e.password === 'string' &&
+    (e.username === undefined || typeof e.username === 'string'));
+}
+
+// Returns { key, entries }. Throws if the password is wrong, or
+// VaultDamagedError if it decrypts but the contents aren't valid.
 async function openVault(record, password) {
   const key = await deriveKey(password, fromBase64(record.kdf.salt), record.kdf.iterations);
   const payload = await decryptPayload(key, record);
-  return { key, entries: Array.isArray(payload.entries) ? payload.entries : [] };
+  if (!payload || !isEntryList(payload.entries)) throw new VaultDamagedError('damaged');
+  return { key, entries: payload.entries };
 }
 
 async function newVaultKey(password) {
@@ -183,11 +203,25 @@ async function enableBio(masterPassword) {
     ? new Uint8Array(prf.results.first)
     : await bioEvaluate(credentialId, prfSalt);
   const sealed = await encryptPayload(await prfToKey(output), { password: masterPassword });
+  await disableBio(); // replaces any older fingerprint setup
   await dbSet('biometric', { credentialId: toBase64(credentialId), prfSalt: toBase64(prfSalt), ...sealed });
 }
 
 async function disableBio() {
+  const bio = await dbGet('biometric');
   await dbDelete('biometric');
+  // Newer Chrome can remove the unused passkey from the phone's passkey list.
+  if (bio && window.PublicKeyCredential && PublicKeyCredential.signalUnknownCredential) {
+    const id = toBase64(fromBase64(bio.credentialId)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    PublicKeyCredential.signalUnknownCredential({ rpId: location.hostname, credentialId: id }).catch(() => {});
+  }
+}
+
+// Fingerprint check that returns the stored master password.
+async function bioMasterPassword(bio) {
+  const output = await bioEvaluate(fromBase64(bio.credentialId), fromBase64(bio.prfSalt));
+  const { password } = await decryptPayload(await prfToKey(output), bio);
+  return password;
 }
 
 function bioErrorMessage(err) {
@@ -243,7 +277,14 @@ function updateStrength(input) {
   if (score === null) return;
   meter.dataset.score = score;
   meter.querySelector('span').textContent =
-    input.value.length < MIN_MASTER_LENGTH ? 'Too short' : STRENGTH_LABELS[score];
+    'master' in input.dataset && input.value.length < MIN_MASTER_LENGTH ? 'Too short' : STRENGTH_LABELS[score];
+}
+
+// Backups live in email or Drive, so the master password must stand up to guessing.
+function masterPasswordProblem(pw) {
+  if (pw.length < MIN_MASTER_LENGTH) return `Please use at least ${MIN_MASTER_LENGTH} characters.`;
+  if (passwordScore(pw) < 2) return 'That password is too easy to guess. Try 3 or 4 words that only you would put together.';
+  return null;
 }
 
 document.querySelectorAll('[data-strength]').forEach((input) =>
@@ -261,11 +302,15 @@ let hiddenAt = null;
 let installPrompt = null;
 let canUseBio = false;
 let autoBioAllowed = true;
+let session = 0;          // goes up on every lock, so slow tasks can tell they're stale
+let clipboardTimer = null;
+let clipboardLeftApp = false;
 
 const LOCKED_SCREENS = ['setup', 'unlock', 'forgot', 'restore'];
 const UNLOCKED_SCREENS = ['list', 'view', 'edit', 'settings', 'change', 'restore', 'bio'];
 
 async function saveVault() {
+  if (!vaultKey) throw new Error('locked');
   const { iv, data } = await encryptPayload(vaultKey, { entries });
   vaultRecord = { ...vaultRecord, iv, data, updated: new Date().toISOString() };
   await dbSet('vault', vaultRecord);
@@ -278,6 +323,8 @@ function findEntry(id) {
 // ---------- Navigation ----------
 
 function show(name) {
+  if (name !== 'list') dismissBioOffer();
+  if (name !== 'forgot') hideRevealedMaster();
   document.querySelectorAll('.screen').forEach((s) => { s.hidden = s.id !== 'screen-' + name; });
   document.body.dataset.screen = name;
   window.scrollTo(0, 0);
@@ -362,7 +409,39 @@ async function copyText(text, button, message) {
     label.textContent = button.dataset.label;
   }, 2000));
   toast(message);
+  clipboardLeftApp = false;
+  clearTimeout(clipboardTimer);
+  clipboardTimer = setTimeout(clearClipboard, CLIPBOARD_CLEAR_MS);
 }
+
+// Wipes a copied password from the clipboard, but only if the person never
+// left the app since copying (otherwise they may have copied something else).
+function clearClipboard() {
+  clearTimeout(clipboardTimer);
+  if (clipboardTimer && !clipboardLeftApp && document.hasFocus()) {
+    navigator.clipboard.writeText('').catch(() => {});
+  }
+  clipboardTimer = null;
+}
+
+// Android shows a picture of the app in the recent-apps screen, so hide
+// anything revealed and blur the page whenever the app loses focus.
+function hideSecretsOnScreen() {
+  if (passwordVisible) {
+    passwordVisible = false;
+    const entry = findEntry(currentId);
+    if (entry) updatePasswordView(entry);
+  }
+  document.querySelectorAll('input[data-toggled]').forEach((input) => setVisible(input, false));
+  hideRevealedMaster();
+}
+
+window.addEventListener('blur', () => {
+  clipboardLeftApp = true;
+  document.body.classList.add('privacy');
+  hideSecretsOnScreen();
+});
+window.addEventListener('focus', () => document.body.classList.remove('privacy'));
 
 function busy(button, isBusy) {
   button.setAttribute('aria-busy', String(isBusy));
@@ -394,13 +473,18 @@ $('dialog').addEventListener('cancel', () => closeDialog(false));
 // ---------- Locking ----------
 
 function lock({ manual = false } = {}) {
+  clearClipboard();
+  session++;
   vaultKey = null;
   entries = [];
   currentId = null;
-  offerPassword = null;
+  dismissBioOffer();
+  hideRevealedMaster();
   autoBioAllowed = !manual;
   closeDialog(false);
   $('toast').hidden = true;
+  ['view-name', 'view-avatar', 'view-updated', 'entry-count', 'dialog-title', 'dialog-message']
+    .forEach((id) => { $(id).textContent = ''; });
   clearInputs(['unlock-pw', 'edit-name', 'edit-username', 'edit-password', 'bio-pw',
     'change-old', 'change-new1', 'change-new2', 'restore-pw', 'search']);
   resetRestoreFile();
@@ -422,6 +506,8 @@ setInterval(() => {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     hiddenAt = Date.now();
+    clipboardLeftApp = true;
+    hideSecretsOnScreen();
     return;
   }
   if (vaultKey && hiddenAt && Date.now() - hiddenAt > AWAY_LOCK_MS) lock();
@@ -430,8 +516,14 @@ document.addEventListener('visibilitychange', () => {
   hiddenAt = null;
 });
 
+function dismissBioOffer() {
+  offerPassword = null;
+  $('bio-offer').hidden = true;
+}
+
 async function afterUnlock(password) {
   noteActivity();
+  requestPersistentStorage();
   goBase('list');
   // Offer fingerprint once, right after the master password was typed.
   if (password && canUseBio && !(await dbGet('biometric')) && !(await dbGet('bioDeclined'))) {
@@ -447,7 +539,45 @@ const renderers = {
   view: renderView,
   settings: renderSettings,
   unlock: renderUnlock,
+  forgot: renderForgot,
 };
+
+async function renderForgot() {
+  $('forgot-bio').hidden = !(canUseBio && (await dbGet('biometric')));
+  setError('forgot-error', '');
+}
+
+let revealTimer = null;
+function hideRevealedMaster() {
+  clearTimeout(revealTimer);
+  $('revealed-master').hidden = true;
+  $('revealed-master-text').textContent = '';
+}
+
+$('reveal-master-btn').addEventListener('click', async () => {
+  const bio = await dbGet('biometric');
+  if (!bio) return;
+  const button = $('reveal-master-btn');
+  busy(button, true);
+  setError('forgot-error', '');
+  try {
+    const password = await bioMasterPassword(bio);
+    try {
+      await openVault(vaultRecord, password);
+    } catch {
+      return setError('forgot-error', "Your fingerprint has an old master password saved, so it can't help here.");
+    }
+    $('revealed-master-text').textContent = password;
+    $('revealed-master').hidden = false;
+    clearTimeout(revealTimer);
+    revealTimer = setTimeout(hideRevealedMaster, 60 * 1000);
+  } catch (err) {
+    const message = bioErrorMessage(err);
+    if (message) setError('forgot-error', message);
+  } finally {
+    busy(button, false);
+  }
+});
 
 async function renderUnlock() {
   const bio = canUseBio && (await dbGet('biometric'));
@@ -559,7 +689,8 @@ async function renderSettings() {
   toggle.disabled = !canUseBio;
   $('bio-status').textContent = !canUseBio
     ? "This phone or browser can't use fingerprint unlock. Open the app in Chrome and make sure a fingerprint is set up in your phone's settings."
-    : enabled ? 'On. Touch the sensor to open the app.' : 'Off. Open the app with a touch instead of typing.';
+    : enabled ? "On. Your fingerprint opens the app. Your phone's screen lock PIN works too."
+      : 'Off. Open the app with a touch instead of typing.';
 }
 
 function openEditor(entry) {
@@ -595,7 +726,8 @@ $('form-setup').addEventListener('submit', async (e) => {
   e.preventDefault();
   const pw1 = $('setup-pw1').value;
   const pw2 = $('setup-pw2').value;
-  if (pw1.length < MIN_MASTER_LENGTH) return setError('setup-error', `Please use at least ${MIN_MASTER_LENGTH} characters.`);
+  const problem = masterPasswordProblem(pw1);
+  if (problem) return setError('setup-error', problem);
   if (pw1 !== pw2) return setError('setup-error', "The two passwords don't match. Please type them again.");
   if (!$('setup-confirm').checked) return setError('setup-error', 'Please write your master password down, then tick the box.');
   setError('setup-error', '');
@@ -609,7 +741,6 @@ $('form-setup').addEventListener('submit', async (e) => {
     entries = [];
     await saveVault();
     await disableBio();
-    requestPersistentStorage();
     clearInputs(['setup-pw1', 'setup-pw2']);
     $('setup-confirm').checked = false;
     await afterUnlock(pw1);
@@ -653,8 +784,7 @@ async function unlockWithBio() {
   try {
     let password;
     try {
-      const output = await bioEvaluate(fromBase64(bio.credentialId), fromBase64(bio.prfSalt));
-      ({ password } = await decryptPayload(await prfToKey(output), bio));
+      password = await bioMasterPassword(bio);
     } catch (err) {
       const message = bioErrorMessage(err);
       if (message) setError('unlock-error', message + ' You can type your master password instead.');
@@ -715,10 +845,12 @@ $('form-change').addEventListener('submit', async (e) => {
   const oldPw = $('change-old').value;
   const pw1 = $('change-new1').value;
   const pw2 = $('change-new2').value;
-  if (pw1.length < MIN_MASTER_LENGTH) return setError('change-error', `Please use at least ${MIN_MASTER_LENGTH} characters for the new password.`);
+  const problem = masterPasswordProblem(pw1);
+  if (problem) return setError('change-error', problem);
   if (pw1 !== pw2) return setError('change-error', "The two new passwords don't match.");
 
   const button = e.target.querySelector('[type="submit"]');
+  const started = session;
   busy(button, true);
   try {
     try {
@@ -727,6 +859,8 @@ $('form-change').addEventListener('submit', async (e) => {
       return setError('change-error', "Your current master password isn't right.");
     }
     const { key, kdf } = await newVaultKey(pw1);
+    // If the app locked while we were working, stop: saving now would write an empty safe.
+    if (session !== started) return;
     const previous = { key: vaultKey, record: vaultRecord };
     vaultKey = key;
     vaultRecord = { ...vaultRecord, kdf };
@@ -742,7 +876,15 @@ $('form-change').addEventListener('submit', async (e) => {
     setError('change-error', '');
     clearInputs(['change-old', 'change-new1', 'change-new2']);
     history.back();
-    toast(hadBio
+    let bioKept = false;
+    if (hadBio && session === started) {
+      try {
+        await enableBio(pw1); // one fingerprint touch keeps fingerprint unlock working
+        bioKept = true;
+      } catch { /* stays off; shown in Settings */ }
+      if (document.body.dataset.screen === 'settings') renderSettings();
+    }
+    toast(hadBio && !bioKept
       ? 'Master password changed. Turn fingerprint on again below.'
       : 'Master password changed. Make a new backup.');
   } catch (err) {
@@ -758,6 +900,7 @@ $('form-bio').addEventListener('submit', async (e) => {
   const pw = $('bio-pw').value;
   if (!pw) return setError('bio-error', 'Please type your master password.');
   const button = $('bio-btn');
+  const started = session;
   busy(button, true);
   try {
     try {
@@ -765,6 +908,7 @@ $('form-bio').addEventListener('submit', async (e) => {
     } catch {
       return setError('bio-error', "That's not the right master password.");
     }
+    if (session !== started) return;
     try {
       await enableBio(pw);
     } catch (err) {
@@ -802,8 +946,10 @@ $('form-restore').addEventListener('submit', async (e) => {
     let opened;
     try {
       opened = await openVault(record, pw);
-    } catch {
-      return setError('restore-error', "That master password doesn't open this backup.");
+    } catch (err) {
+      return setError('restore-error', err instanceof VaultDamagedError
+        ? 'This backup file is damaged and could not be restored.'
+        : "That master password doesn't open this backup.");
     }
     if (vaultRecord && !(await ask({
       title: 'Replace your passwords?',
@@ -811,12 +957,13 @@ $('form-restore').addEventListener('submit', async (e) => {
       confirm: 'Replace',
       danger: true,
     }))) return;
-    vaultKey = opened.key;
+    // Re-encrypt with fresh, full-strength settings rather than keeping the file's.
+    const { key, kdf } = await newVaultKey(pw);
+    vaultKey = key;
     entries = opened.entries;
-    vaultRecord = { format: FORMAT, version: 1, kdf: record.kdf, created: record.created || new Date().toISOString() };
+    vaultRecord = { format: FORMAT, version: 1, kdf, created: new Date().toISOString() };
     await saveVault();
     await disableBio();
-    requestPersistentStorage();
     setError('restore-error', '');
     clearInputs(['restore-pw']);
     resetRestoreFile();
@@ -1052,6 +1199,14 @@ if ('serviceWorker' in navigator) {
       "Sorry, your saved data couldn't be opened. Please close the app completely and open it again.";
     return;
   }
-  vaultRecord = isVaultRecord(stored) ? stored : null;
+  if (stored && !isVaultRecord(stored)) {
+    // Something is saved but it doesn't look right: never offer setup, which would overwrite it.
+    goBase('unlock');
+    $('form-unlock').hidden = true;
+    $('unlock-lead').textContent =
+      "Sorry, your saved data looks damaged. You can restore a backup from \"Forgot your master password?\" below.";
+    return;
+  }
+  vaultRecord = stored || null;
   goBase(vaultRecord ? 'unlock' : 'setup');
 })();

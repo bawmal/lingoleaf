@@ -26,7 +26,7 @@ Nothing secret is uploaded here. This is just the empty app. Your passwords neve
 
 ## Step 3: Start using it
 
-1. **Create your master password.** Pick something you'll remember, at least 8 characters. **Write it on paper and keep it somewhere safe at home.**
+1. **Create your master password.** Pick something you'll remember, at least 10 characters (three or four random words work well). The app won't accept passwords that are easy to guess. **Write it on paper and keep it somewhere safe at home.**
 2. Tap **Add password** to save one: type the app name, your username and the password you already use. Tap **Save**.
 3. To use a password later, tap its name, then tap **Copy password** and paste it into the other app (press and hold in the box → Paste).
 4. Not sure what password to use for a new account? Tap **Create a strong password for me**.
@@ -49,10 +49,18 @@ If you lose your phone or delete the app, your passwords go with it, unless you 
 
 **New phone?** Install the app (Step 2), tap **"I have a backup file from before"**, choose the file, and type the master password you were using when you made it.
 
+## If you forget your master password
+
+Nobody can reset it, by design. Try these in order:
+
+1. **Your paper note.** That's why the app asks you to write it down.
+2. **Your fingerprint.** If fingerprint unlock is on, tap **Forgot your master password? → Show my master password** and touch the sensor. Write it down again.
+3. **A backup file**, plus the master password you were using when you made it.
+4. **Start over.** Erase everything, then use each website's own "Forgot password?" link to reset your accounts.
+
 ## Good to know
 
 - The app **locks itself** after 2 minutes without use, or when you leave it for more than 30 seconds. Tap 🔒 to lock it right away.
-- **Forgot your master password?** Nobody can unlock it, by design. You can restore a backup (you'll need the master password from back then) or erase everything and start fresh.
 - Clearing Chrome's data or uninstalling the app also deletes your passwords. Keep your backup up to date.
 
 ---
@@ -65,6 +73,8 @@ If you lose your phone or delete the app, your passwords go with it, unless you 
 - The backup file is the same encrypted record as JSON.
 - Fingerprint unlock: a platform passkey with the WebAuthn **PRF** extension. The PRF output (HKDF-SHA256) becomes an AES-GCM key that encrypts a copy of the master password, stored in IndexedDB. The secret only comes out of the phone's secure hardware after a fingerprint check. If PRF isn't supported, the option stays off. Changing the master password, restoring a backup or erasing everything turns it off. The passkey is tied to the site's domain.
 - Icons: Lucide (ISC). Font: Inter (OFL, `fonts/LICENSE-Inter.txt`), bundled so the app works offline.
+- Security hardening (Oct 2026 review): master password needs 10+ characters and a non-"Weak" score; backups are rejected if their key-derivation settings are weaker than 100k iterations or salt < 16 bytes, and restored vaults are re-encrypted with fresh settings; a lock during a slow task (e.g. changing the master password) cancels it; copied passwords are cleared from the clipboard after 45 seconds if you're still in the app; revealed passwords re-hide and the page blurs when the app loses focus (recent-apps thumbnail).
+- Known limits: copied passwords can remain in Gboard's clipboard history; a web app can't block screenshots; the phone's screen-lock PIN can stand in for the fingerprint; anyone holding the phone can erase the safe (nothing is revealed).
 - A strict Content-Security-Policy is set in `index.html` and `_headers`.
 - When you change any app file, bump `CACHE` in `sw.js` so installed copies update.
 - This folder is blocked from the LingoLeaf site by a rule in the root `_redirects`. Deploy it as its own Netlify site.
