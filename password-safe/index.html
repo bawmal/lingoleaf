@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#1f5f8b">
+  <meta name="description" content="Keep your usernames and passwords safe on your phone.">
+  <title>Password Safe</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+
+    <!-- First time: create master password -->
+    <section class="screen" id="screen-setup" hidden>
+      <div class="brand">
+        <img src="icons/icon.svg" alt="" width="72" height="72">
+        <h1>Password Safe</h1>
+        <p class="lead">Keep all your passwords in one safe place, locked with one master password.</p>
+      </div>
+      <form id="form-setup" class="card" novalidate>
+        <h2>Create your master password</h2>
+        <p class="hint">This is the only password you'll need to remember. Use at least 8 characters. A short sentence works well, like <em>MyDogLovesPizza!</em></p>
+        <label for="setup-pw1">Master password</label>
+        <div class="pw-field">
+          <input id="setup-pw1" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+          <button type="button" class="btn-show" data-toggle="setup-pw1">Show</button>
+        </div>
+        <label for="setup-pw2">Type it again</label>
+        <div class="pw-field">
+          <input id="setup-pw2" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+          <button type="button" class="btn-show" data-toggle="setup-pw2">Show</button>
+        </div>
+        <div class="warning">
+          <strong>Important:</strong> if you forget your master password, your saved passwords can't be recovered by anyone. Write it on paper and keep it somewhere safe at home.
+        </div>
+        <label class="check">
+          <input id="setup-confirm" type="checkbox">
+          <span>I have written my master password down</span>
+        </label>
+        <p class="error" id="setup-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary">Create my safe</button>
+      </form>
+      <button type="button" class="btn btn-link" data-action="restore-start">I have a backup file from before</button>
+      <button type="button" class="btn btn-secondary install-btn" hidden>Install this app on my phone</button>
+    </section>
+
+    <!-- Unlock -->
+    <section class="screen" id="screen-unlock" hidden>
+      <div class="brand">
+        <img src="icons/icon.svg" alt="" width="72" height="72">
+        <h1>Password Safe</h1>
+        <p class="lead">Your safe is locked.</p>
+      </div>
+      <form id="form-unlock" class="card" novalidate>
+        <label for="unlock-pw">Master password</label>
+        <div class="pw-field">
+          <input id="unlock-pw" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+          <button type="button" class="btn-show" data-toggle="unlock-pw">Show</button>
+        </div>
+        <p class="error" id="unlock-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary" id="unlock-btn">Unlock</button>
+      </form>
+      <button type="button" class="btn btn-link" data-action="forgot">Forgot your master password?</button>
+      <button type="button" class="btn btn-secondary install-btn" hidden>Install this app on my phone</button>
+    </section>
+
+    <!-- Forgot master password -->
+    <section class="screen" id="screen-forgot" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back" aria-label="Back">‹ Back</button>
+        <h1>Forgot password</h1>
+      </header>
+      <div class="card">
+        <p>For your safety, nobody can unlock your passwords without the master password, not even the people who made this app.</p>
+        <p>Try a few more times first. Check for capital letters and spaces.</p>
+        <p>If you really can't remember it, you can:</p>
+        <button type="button" class="btn btn-secondary" data-action="restore-start">Restore from a backup file</button>
+        <p class="hint">You'll need the master password you were using when you made that backup.</p>
+        <hr>
+        <button type="button" class="btn btn-danger" data-action="erase">Erase everything and start over</button>
+        <p class="hint">This permanently deletes all passwords saved in this app.</p>
+      </div>
+    </section>
+
+    <!-- List of saved passwords -->
+    <section class="screen" id="screen-list" hidden>
+      <header class="topbar">
+        <h1>My passwords</h1>
+        <button type="button" class="btn-icon" data-action="settings" aria-label="Settings">⚙︎</button>
+        <button type="button" class="btn-icon" data-action="lock" aria-label="Lock">🔒</button>
+      </header>
+      <div class="banner" id="backup-banner" hidden>
+        <span>It's been a while since your last backup.</span>
+        <button type="button" class="btn btn-small" data-action="settings">Back up now</button>
+      </div>
+      <input id="search" class="search" type="search" placeholder="Search…" aria-label="Search" autocomplete="off">
+      <ul id="entry-list" class="entry-list"></ul>
+      <div id="empty" class="empty" hidden>
+        <p class="big">🔐</p>
+        <p>You haven't saved any passwords yet.</p>
+        <p>Tap <strong>+ Add</strong> below to save your first one.</p>
+      </div>
+      <p id="no-results" class="empty" hidden>Nothing matches your search.</p>
+      <button type="button" class="fab" data-action="add">+ Add</button>
+    </section>
+
+    <!-- View one entry -->
+    <section class="screen" id="screen-view" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back" aria-label="Back">‹ Back</button>
+        <h1 id="view-name"></h1>
+      </header>
+      <div class="card">
+        <div class="field-row">
+          <div class="field-label">Username</div>
+          <div class="field-value" id="view-username"></div>
+          <button type="button" class="btn btn-secondary" data-action="copy-username">Copy username</button>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Password</div>
+          <div class="field-value mono" id="view-password"></div>
+          <div class="row-buttons">
+            <button type="button" class="btn btn-secondary" id="view-show">Show</button>
+            <button type="button" class="btn btn-primary" data-action="copy-password">Copy password</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-secondary" data-action="edit">Edit</button>
+      <button type="button" class="btn btn-danger-outline" data-action="delete">Delete</button>
+    </section>
+
+    <!-- Add / edit entry -->
+    <section class="screen" id="screen-edit" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back" aria-label="Cancel">‹ Cancel</button>
+        <h1 id="edit-title">Add password</h1>
+      </header>
+      <form id="form-edit" class="card" novalidate>
+        <label for="edit-name">App or website name</label>
+        <input id="edit-name" type="text" placeholder="e.g. Netflix, Gmail, My Bank" autocomplete="off">
+        <label for="edit-username">Username or email</label>
+        <input id="edit-username" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <label for="edit-password">Password</label>
+        <div class="pw-field">
+          <input id="edit-password" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button type="button" class="btn-show" data-toggle="edit-password">Show</button>
+        </div>
+        <button type="button" class="btn btn-secondary" data-action="generate">Make a strong password for me</button>
+        <p class="error" id="edit-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </section>
+
+    <!-- Settings -->
+    <section class="screen" id="screen-settings" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back" aria-label="Back">‹ Back</button>
+        <h1>Settings</h1>
+      </header>
+      <div class="card">
+        <h2>Backup</h2>
+        <p class="hint">A backup file keeps your passwords safe if you lose or change your phone. It's locked with your master password, so nobody else can read it.</p>
+        <p class="hint" id="last-backup"></p>
+        <button type="button" class="btn btn-primary" data-action="backup-share">Send backup to email or Google Drive</button>
+        <button type="button" class="btn btn-secondary" data-action="backup-download">Download backup file</button>
+        <button type="button" class="btn btn-secondary" data-action="restore-start">Restore from a backup file</button>
+      </div>
+      <div class="card">
+        <h2>Master password</h2>
+        <button type="button" class="btn btn-secondary" data-action="change-pw">Change master password</button>
+      </div>
+      <div class="card">
+        <h2>Install</h2>
+        <button type="button" class="btn btn-secondary install-btn" hidden>Install this app on my phone</button>
+        <p class="hint">The app locks itself after 2 minutes without use, or when you leave it for more than 30 seconds.</p>
+      </div>
+    </section>
+
+    <!-- Change master password -->
+    <section class="screen" id="screen-change" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back" aria-label="Cancel">‹ Cancel</button>
+        <h1>Change master password</h1>
+      </header>
+      <form id="form-change" class="card" novalidate>
+        <label for="change-old">Current master password</label>
+        <input id="change-old" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+        <label for="change-new1">New master password</label>
+        <input id="change-new1" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+        <label for="change-new2">Type the new one again</label>
+        <input id="change-new2" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+        <p class="hint">Remember to write the new one down. Old backup files still open with the old master password, so make a new backup afterwards.</p>
+        <p class="error" id="change-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary">Change password</button>
+      </form>
+    </section>
+
+    <!-- Restore from backup -->
+    <section class="screen" id="screen-restore" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back" aria-label="Cancel">‹ Cancel</button>
+        <h1>Restore backup</h1>
+      </header>
+      <form id="form-restore" class="card" novalidate>
+        <label for="restore-file">1. Choose your backup file</label>
+        <input id="restore-file" type="file" accept=".json,.txt,application/json,text/plain">
+        <label for="restore-pw">2. Master password used for that backup</label>
+        <input id="restore-pw" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+        <div class="warning">This replaces everything currently saved in this app with what's in the backup.</div>
+        <p class="error" id="restore-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary" id="restore-btn">Restore</button>
+      </form>
+    </section>
+
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
