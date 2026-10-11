@@ -1,3 +1,6 @@
+# Password Safe is a separate app; don't serve it on the LingoLeaf site
+/password-safe/*  /index.html  404!
+
 # Form submission redirect
 /success /success.html 200
 

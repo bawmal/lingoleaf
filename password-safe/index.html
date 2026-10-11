@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f7f8f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111416" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="Keep your usernames and passwords safe on your phone.">
+  <title>Password Safe</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Icons: Lucide (ISC license), lucide.dev -->
+  <svg xmlns="http://www.w3.org/2000/svg" hidden>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-fingerprint" viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-trash-2" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+    <symbol id="i-wand-sparkles" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol>
+    <symbol id="i-share-2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></symbol>
+    <symbol id="i-key-round" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+    <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  </svg>
+
+  <main id="app">
+
+    <!-- First time: create master password -->
+    <section class="screen" id="screen-setup" hidden>
+      <div class="brand"><img src="icons/icon.svg" alt="" width="40" height="40"><span>Password Safe</span></div>
+      <div class="install-top">
+          <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
+          <div class="callout install-help" hidden>
+            <svg class="icon icon-accent"><use href="#i-download"/></svg>
+            <div class="install-help-body">
+              <p class="install-steps"></p>
+              <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+            </div>
+          </div>
+          <div class="callout installed-note" hidden>
+            <svg class="icon icon-accent"><use href="#i-check"/></svg>
+            <p><strong>Installed.</strong> Close this Chrome tab and open <strong>Password Safe</strong> from your home screen. If it isn't there, swipe up to see all your apps and look for it.</p>
+          </div>
+      </div>
+      <form id="form-setup" class="stack" novalidate>
+        <div>
+          <h1>Create your master password</h1>
+          <p class="muted">This one password opens all the others. Use at least 10 characters. Three or four random words that only you would put together work well.</p>
+        </div>
+        <div class="field">
+          <label for="setup-pw1">Master password</label>
+          <div class="input-wrap">
+            <input id="setup-pw1" data-master type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" data-strength="setup-strength">
+            <button type="button" class="input-btn" data-toggle="setup-pw1" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
+          </div>
+          <div class="strength" id="setup-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
+        </div>
+        <div class="field">
+          <label for="setup-pw2">Type it again</label>
+          <div class="input-wrap">
+            <input id="setup-pw2" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+            <button type="button" class="input-btn" data-toggle="setup-pw2" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
+          </div>
+        </div>
+        <div class="callout">
+          <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
+          <p>If you forget your master password, nobody can recover your saved passwords. Write it on paper and keep it somewhere safe at home.</p>
+        </div>
+        <label class="check">
+          <input id="setup-confirm" type="checkbox">
+          <span>I have written my master password down</span>
+        </label>
+        <p class="error" id="setup-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary">Create my safe</button>
+        <button type="button" class="btn btn-ghost" data-action="restore-start">Restore from a backup file</button>
+      </form>
+    </section>
+
+    <!-- Unlock -->
+    <section class="screen" id="screen-unlock" hidden>
+      <div class="brand"><img src="icons/icon.svg" alt="" width="40" height="40"><span>Password Safe</span></div>
+      <div class="install-top">
+          <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
+          <div class="callout install-help" hidden>
+            <svg class="icon icon-accent"><use href="#i-download"/></svg>
+            <div class="install-help-body">
+              <p class="install-steps"></p>
+              <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+            </div>
+          </div>
+          <div class="callout installed-note" hidden>
+            <svg class="icon icon-accent"><use href="#i-check"/></svg>
+            <p><strong>Installed.</strong> Close this Chrome tab and open <strong>Password Safe</strong> from your home screen. If it isn't there, swipe up to see all your apps and look for it.</p>
+          </div>
+      </div>
+      <div class="stack">
+        <div>
+          <h1>Welcome back</h1>
+          <p class="muted" id="unlock-lead">Your passwords are locked.</p>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg" id="bio-unlock-btn" hidden>
+          <svg class="icon"><use href="#i-fingerprint"/></svg>Unlock with fingerprint
+        </button>
+        <div class="divider" id="bio-divider" hidden><span>or use your master password</span></div>
+        <form id="form-unlock" class="stack" novalidate>
+          <div class="field">
+            <label for="unlock-pw">Master password</label>
+            <div class="input-wrap">
+              <input id="unlock-pw" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+              <button type="button" class="input-btn" data-toggle="unlock-pw" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
+            </div>
+          </div>
+          <p class="error" id="unlock-error" role="alert"></p>
+          <button type="submit" class="btn btn-primary" id="unlock-btn">Unlock</button>
+        </form>
+        <button type="button" class="btn btn-ghost" data-action="forgot">Forgot your master password?</button>
+      </div>
+    </section>
+
+    <!-- Forgot master password -->
+    <section class="screen" id="screen-forgot" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Back</button>
+      </header>
+      <div class="stack">
+        <div>
+          <h1>Forgot your master password?</h1>
+          <p class="muted">For your safety, nobody can open your passwords without it, not even the people who made this app.</p>
+        </div>
+        <p>First, try a few more times. Check capital letters and spaces.</p>
+        <section class="section" id="forgot-bio" hidden>
+          <h2>Use your fingerprint</h2>
+          <p class="muted">If fingerprint unlock is on, your fingerprint can show your master password so you can write it down again.</p>
+          <button type="button" class="btn btn-primary" id="reveal-master-btn"><svg class="icon"><use href="#i-fingerprint"/></svg>Show my master password</button>
+          <div class="reveal" id="revealed-master" hidden>
+            <div class="detail-label">Your master password</div>
+            <div class="detail-value mono" id="revealed-master-text"></div>
+            <p class="muted small">Write it down now. It hides again in 1 minute.</p>
+          </div>
+          <p class="error" id="forgot-error" role="alert"></p>
+        </section>
+        <section class="section">
+          <h2>Restore a backup</h2>
+          <p class="muted">You'll need the master password you were using when you made the backup.</p>
+          <button type="button" class="btn btn-outline" data-action="restore-start"><svg class="icon"><use href="#i-upload"/></svg>Restore from a backup file</button>
+        </section>
+        <section class="section">
+          <h2>Start over</h2>
+          <p class="muted">This permanently deletes every password saved in this app.</p>
+          <button type="button" class="btn btn-danger-outline" data-action="erase"><svg class="icon"><use href="#i-trash-2"/></svg>Erase everything</button>
+        </section>
+      </div>
+    </section>
+
+    <!-- List of saved passwords -->
+    <section class="screen" id="screen-list" hidden>
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>Passwords</h1>
+          <span class="muted small" id="entry-count"></span>
+        </div>
+        <button type="button" class="btn-icon" data-action="settings" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
+        <button type="button" class="btn-icon" data-action="lock" aria-label="Lock now"><svg class="icon"><use href="#i-lock"/></svg></button>
+      </header>
+
+      <div class="notice" id="bio-offer" hidden>
+        <svg class="icon icon-accent"><use href="#i-fingerprint"/></svg>
+        <div class="notice-body">
+          <p class="notice-title">Use your fingerprint next time?</p>
+          <p class="muted small">Open the app with a touch instead of typing your master password.</p>
+          <div class="notice-actions">
+            <button type="button" class="btn btn-sm btn-primary" data-action="bio-offer-yes">Turn on</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-action="bio-offer-no">Not now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice" id="backup-banner" hidden>
+        <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
+        <div class="notice-body">
+          <p class="notice-title">Make a backup</p>
+          <p class="muted small" id="backup-banner-text">If you lose this phone, a backup is the only way to get your passwords back.</p>
+          <div class="notice-actions">
+            <button type="button" class="btn btn-sm btn-outline" data-action="settings">Back up now</button>
+          </div>
+        </div>
+      </div>
+
+        <div class="callout install-help list-install-help" hidden>
+          <svg class="icon icon-accent"><use href="#i-download"/></svg>
+          <div class="install-help-body">
+            <p class="install-steps"></p>
+            <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+          </div>
+        </div>
+      <div class="search-wrap" id="search-wrap">
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input id="search" type="search" placeholder="Search passwords" aria-label="Search passwords" autocomplete="off">
+      </div>
+
+      <ul id="entry-list" class="list"></ul>
+
+      <div id="empty" class="empty" hidden>
+        <div class="empty-icon"><svg class="icon"><use href="#i-key-round"/></svg></div>
+        <p class="empty-title">No passwords yet</p>
+        <p class="muted">Tap <strong>Add password</strong>, or <strong>Scan</strong> to copy them from your notebook.</p>
+      </div>
+      <div id="no-results" class="empty" hidden>
+        <p class="empty-title">No matches</p>
+        <p class="muted">Try a different name.</p>
+      </div>
+
+      <div class="bottom-bar">
+        <div class="bottom-bar-inner">
+          <button type="button" class="btn btn-outline btn-lg" data-action="import" aria-label="Add from my notebook"><svg class="icon"><use href="#i-camera"/></svg>Scan</button>
+          <button type="button" class="btn btn-primary btn-lg" data-action="add"><svg class="icon"><use href="#i-plus"/></svg>Add password</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- View one entry -->
+    <section class="screen" id="screen-view" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Passwords</button>
+      </header>
+      <div class="entry-head">
+        <span class="avatar avatar-lg" id="view-avatar"></span>
+        <div class="entry-head-text">
+          <h1 id="view-name"></h1>
+          <p class="muted small" id="view-updated"></p>
+        </div>
+      </div>
+      <ul class="list">
+        <li class="detail-row">
+          <div class="detail-text">
+            <div class="detail-label">Username</div>
+            <div class="detail-value" id="view-username"></div>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline" data-action="copy-username" id="copy-username-btn"><svg class="icon"><use href="#i-copy"/></svg><span>Copy</span></button>
+        </li>
+        <li class="detail-row detail-row-stack">
+          <div class="detail-text">
+            <div class="detail-label">Password</div>
+            <div class="detail-value mono" id="view-password"></div>
+          </div>
+          <div class="detail-actions">
+            <button type="button" class="btn btn-sm btn-outline" id="view-show"><svg class="icon"><use href="#i-eye"/></svg><span>Show</span></button>
+            <button type="button" class="btn btn-sm btn-primary" data-action="copy-password" id="copy-password-btn"><svg class="icon"><use href="#i-copy"/></svg><span>Copy password</span></button>
+          </div>
+        </li>
+      </ul>
+      <div class="stack stack-top">
+        <button type="button" class="btn btn-outline" data-action="edit"><svg class="icon"><use href="#i-pencil"/></svg>Edit</button>
+        <button type="button" class="btn btn-danger-ghost" data-action="delete"><svg class="icon"><use href="#i-trash-2"/></svg>Delete</button>
+      </div>
+    </section>
+
+    <!-- Add / edit entry -->
+    <section class="screen" id="screen-edit" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Cancel</button>
+      </header>
+      <form id="form-edit" class="stack" novalidate>
+        <h1 id="edit-title">Add password</h1>
+        <button type="button" class="btn btn-outline" id="import-link" data-action="import"><svg class="icon"><use href="#i-camera"/></svg>Copy from my notebook instead</button>
+        <div class="field">
+          <label for="edit-name">App or website</label>
+          <input id="edit-name" type="text" placeholder="Netflix, Gmail, TD Bank" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="edit-username">Username or email</label>
+          <input id="edit-username" type="text" placeholder="jane.doe@gmail.com" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="edit-password">Password</label>
+          <p class="muted small" id="edit-password-hint">Type the password you already use, or tap the button below to create a new one.</p>
+          <div class="input-wrap">
+            <input id="edit-password" aria-describedby="edit-password-hint" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" data-strength="edit-strength">
+            <button type="button" class="input-btn" data-toggle="edit-password" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
+          </div>
+          <div class="strength" id="edit-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
+          <button type="button" class="btn btn-outline" data-action="generate" id="generate-btn"><svg class="icon"><use href="#i-wand-sparkles"/></svg>Create a strong password for me</button>
+        </div>
+        <p class="error" id="edit-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-lg">Save</button>
+      </form>
+    </section>
+
+    <!-- Add from a notebook via Google Lens -->
+    <section class="screen" id="screen-import" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Passwords</button>
+      </header>
+      <h1>Add from your notebook</h1>
+      <p class="muted">Copy a whole page at once. Google Lens reads the handwriting, and this app turns it into entries for you to check.</p>
+
+      <section class="section">
+        <h2>1. Copy the page with Google Lens</h2>
+        <ol class="steps">
+          <li>Go to your home screen and tap the <strong>camera icon</strong> in the Google search bar. (Or open the <strong>Google Lens</strong> app.)</li>
+          <li>Point it at the page and tap the shutter button.</li>
+          <li>Tap <strong>Select all</strong>, then <strong>Copy text</strong>. (On some phones, tap <strong>Text</strong> first.)</li>
+          <li>Come back to Password Safe. You have 3 minutes before it locks.</li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <h2>2. Paste it here</h2>
+        <div class="stack">
+          <button type="button" class="btn btn-outline btn-lg" id="import-paste-btn"><svg class="icon"><use href="#i-copy"/></svg>Paste from Google Lens</button>
+          <textarea id="import-text" rows="6" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Text from your notebook" placeholder="Or press and hold here and tap Paste"></textarea>
+          <p class="error" id="import-error" role="alert"></p>
+          <button type="button" class="btn btn-primary" id="import-find-btn">Find passwords</button>
+        </div>
+      </section>
+
+      <section class="section" id="import-results" hidden>
+        <h2 id="import-count"></h2>
+        <div class="callout">
+          <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
+          <p><strong>Check each one against your notebook.</strong> Lens can misread handwriting too, especially 0 and O, 1 and l, 5 and S. Untick anything you don't want.</p>
+        </div>
+        <ul class="import-list" id="import-list"></ul>
+        <p class="error" id="import-save-error" role="alert"></p>
+        <button type="button" class="btn btn-primary btn-lg" id="import-save-btn">Save</button>
+        <p class="muted small import-privacy">After saving, the copied text is cleared from your phone's clipboard.</p>
+      </section>
+    </section>
+
+    <!-- Settings -->
+    <section class="screen" id="screen-settings" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Passwords</button>
+      </header>
+      <h1>Settings</h1>
+
+      <section class="section">
+        <h2>Fingerprint</h2>
+        <div class="setting-row">
+          <svg class="icon"><use href="#i-fingerprint"/></svg>
+          <div class="setting-text">
+            <label for="bio-toggle" class="setting-label">Unlock with fingerprint</label>
+            <p class="muted small" id="bio-status">Open the app with a touch.</p>
+          </div>
+          <input type="checkbox" id="bio-toggle" class="switch" role="switch">
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Backup</h2>
+        <p class="muted">A backup keeps your passwords safe if you lose or change your phone. It's locked with your master password, so nobody else can read it.</p>
+        <p class="small" id="last-backup"></p>
+        <div class="stack">
+          <button type="button" class="btn btn-primary" data-action="backup-share"><svg class="icon"><use href="#i-share-2"/></svg>Send backup to email or Drive</button>
+          <button type="button" class="btn btn-outline" data-action="backup-download"><svg class="icon"><use href="#i-download"/></svg>Download backup file</button>
+          <button type="button" class="btn btn-outline" data-action="restore-start"><svg class="icon"><use href="#i-upload"/></svg>Restore from a backup file</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Security</h2>
+        <button type="button" class="setting-row setting-link" data-action="change-pw">
+          <svg class="icon"><use href="#i-key-round"/></svg>
+          <span class="setting-text"><span class="setting-label">Change master password</span></span>
+          <svg class="icon icon-muted"><use href="#i-chevron-right"/></svg>
+        </button>
+        <div class="setting-row">
+          <svg class="icon"><use href="#i-shield-check"/></svg>
+          <div class="setting-text">
+            <span class="setting-label">Locks by itself</span>
+            <p class="muted small">After 2 minutes without use, or 30 seconds after you leave the app.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section install-section" hidden>
+        <h2>Install</h2>
+        <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
+        <div class="callout install-help" hidden>
+          <svg class="icon icon-accent"><use href="#i-download"/></svg>
+          <div class="install-help-body">
+            <p class="install-steps"></p>
+            <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+          </div>
+        </div>
+        <p class="muted small installed-note" hidden>Installed. Open Password Safe from your home screen or apps list.</p>
+      </section>
+    </section>
+
+    <!-- Turn on fingerprint (from Settings) -->
+    <section class="screen" id="screen-bio" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Cancel</button>
+      </header>
+      <form id="form-bio" class="stack" novalidate>
+        <div>
+          <h1>Turn on fingerprint</h1>
+          <p class="muted">Type your master password once more. Then your phone will ask for your fingerprint.</p>
+        </div>
+        <div class="field">
+          <label for="bio-pw">Master password</label>
+          <div class="input-wrap">
+            <input id="bio-pw" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+            <button type="button" class="input-btn" data-toggle="bio-pw" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
+          </div>
+        </div>
+        <p class="error" id="bio-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-lg" id="bio-btn"><svg class="icon"><use href="#i-fingerprint"/></svg>Turn on</button>
+      </form>
+    </section>
+
+    <!-- Change master password -->
+    <section class="screen" id="screen-change" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Cancel</button>
+      </header>
+      <form id="form-change" class="stack" novalidate>
+        <h1>Change master password</h1>
+        <div class="field">
+          <label for="change-old">Current master password</label>
+          <input id="change-old" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="change-new1">New master password</label>
+          <input id="change-new1" data-master type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false" data-strength="change-strength">
+          <div class="strength" id="change-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
+        </div>
+        <div class="field">
+          <label for="change-new2">Type the new one again</label>
+          <input id="change-new2" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="callout">
+          <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
+          <p>Write the new one down. Old backups still open with the old master password, so make a new backup afterwards.</p>
+        </div>
+        <p class="error" id="change-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-lg">Change master password</button>
+      </form>
+    </section>
+
+    <!-- Restore from backup -->
+    <section class="screen" id="screen-restore" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Cancel</button>
+      </header>
+      <form id="form-restore" class="stack" novalidate>
+        <div>
+          <h1>Restore a backup</h1>
+          <p class="muted">This replaces everything saved in this app with what's in the backup.</p>
+        </div>
+        <div class="field">
+          <span class="label">1. Choose your backup file</span>
+          <label class="file-pick" for="restore-file">
+            <svg class="icon"><use href="#i-upload"/></svg>
+            <span id="restore-file-name">Choose file</span>
+          </label>
+          <input id="restore-file" class="visually-hidden" type="file" accept=".json,.txt,application/json,text/plain">
+        </div>
+        <div class="field">
+          <label for="restore-pw">2. Master password for that backup</label>
+          <input id="restore-pw" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+        </div>
+        <p class="error" id="restore-error" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-lg" id="restore-btn">Restore</button>
+      </form>
+    </section>
+
+  </main>
+
+  <dialog id="dialog" aria-labelledby="dialog-title">
+    <div class="dialog-body">
+      <h2 id="dialog-title"></h2>
+      <p class="muted" id="dialog-message"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-outline" id="dialog-cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="dialog-ok">OK</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+    <svg class="icon"><use href="#i-check"/></svg><span id="toast-text"></span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
