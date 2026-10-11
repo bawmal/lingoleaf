@@ -475,6 +475,8 @@ $('dialog').addEventListener('cancel', () => closeDialog(false));
 function lock({ manual = false } = {}) {
   clearClipboard();
   session++;
+  resetScan();
+  stopOcr();
   vaultKey = null;
   entries = [];
   currentId = null;
@@ -694,6 +696,8 @@ async function renderSettings() {
 }
 
 function openEditor(entry) {
+  resetScan();
+  $('scan-btn').hidden = !!entry;
   currentId = entry ? entry.id : null;
   $('edit-title').textContent = entry ? 'Edit password' : 'Add password';
   $('edit-name').value = entry ? entry.name : '';
@@ -705,6 +709,241 @@ function openEditor(entry) {
   setError('edit-error', '');
   go('edit');
   if (!entry) setTimeout(() => $('edit-name').focus(), 50);
+}
+
+// ---------- Scan from paper (on-device text reading) ----------
+
+let ocrWorkerPromise = null;
+let ocrLogger = null;
+let scanImageUrl = null;
+let scanUsed = false;
+let scanTarget = 'edit-name';
+const SCAN_FIELDS = ['edit-name', 'edit-username', 'edit-password'];
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Could not load ' + src));
+    document.head.append(s);
+  });
+}
+
+// The reader (Tesseract) is about 6 MB, so it loads the first time it's
+// needed and the service worker keeps it for offline use.
+function getOcrWorker() {
+  if (!ocrWorkerPromise) {
+    ocrWorkerPromise = (async () => {
+      if (!window.Tesseract) await loadScript('ocr/tesseract.min.js');
+      const base = new URL('ocr/', location.href).href;
+      const worker = await Tesseract.createWorker('eng', 1, {
+        workerPath: base + 'worker.min.js',
+        corePath: base + 'tesseract-core-simd-lstm.js',
+        langPath: base.replace(/\/$/, ''),
+        workerBlobURL: false,
+        cacheMethod: 'none',
+        gzip: true,
+        logger: (m) => { if (ocrLogger) ocrLogger(m); },
+      });
+      await worker.setParameters({ tessedit_pageseg_mode: '6', preserve_interword_spaces: '1' });
+      return worker;
+    })();
+    ocrWorkerPromise.catch(() => { ocrWorkerPromise = null; });
+  }
+  return ocrWorkerPromise;
+}
+
+function stopOcr() {
+  if (ocrWorkerPromise) {
+    ocrWorkerPromise.then((w) => w.terminate()).catch(() => {});
+    ocrWorkerPromise = null;
+  }
+}
+
+// Shrinks and greys the photo, which makes reading faster and more reliable.
+async function prepareImage(file) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1800 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.filter = 'grayscale(1) contrast(1.5)';
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return canvas;
+}
+
+// Words people write before each item. Handwriting is often misread
+// ("Paceword"), so labels are matched loosely.
+const NOTE_LABELS = {
+  password: ['password', 'passwd', 'pass', 'pwd', 'pw', 'pin', 'passcode'],
+  username: ['username', 'user', 'userid', 'login', 'email', 'mail', 'id'],
+  name: ['website', 'site', 'app', 'account', 'service', 'name', 'for'],
+};
+
+function editDistance(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+  }
+  return d[a.length][b.length];
+}
+
+function matchLabel(text, fields, strict) {
+  const label = text.toLowerCase().replace(/[^a-z]/g, '');
+  let best = null;
+  for (const field of fields) {
+    for (const word of NOTE_LABELS[field]) {
+      const allowed = word.length <= 3 ? 0 : word.length <= 5 ? 1 : strict ? 2 : 3;
+      const dist = editDistance(label, word);
+      if (dist <= allowed && (!best || dist < best.dist)) best = { field, dist };
+    }
+  }
+  return best && best.field;
+}
+
+// "Paceword: Sunflower42" -> { field: 'password', value: 'Sunflower42' }
+function splitLabel(line) {
+  const withColon = line.match(/^([A-Za-z][A-Za-z .-]{0,13}?)\s*[:=;]\s*(.+)$/);
+  if (withColon) {
+    const field = matchLabel(withColon[1], Object.keys(NOTE_LABELS), false);
+    if (field) return { field, value: withColon[2].trim() };
+  }
+  // "Pasword Blue!Sky9": no colon, so only clear password/username words count.
+  const firstWord = line.match(/^([A-Za-z-]{2,10})\s+(\S.*)$/);
+  if (firstWord) {
+    const field = matchLabel(firstWord[1], ['password', 'username'], true);
+    if (field) return { field, value: firstWord[2].trim() };
+  }
+  return null;
+}
+
+const EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+
+// Turns the text read from a note into app name, username and password.
+// Works with labelled notes ("User: jane") and plain lists of lines.
+function parseNote(text) {
+  const lines = text.split('\n').map((l) => l.replace(/\s+/g, ' ').trim()).filter((l) => l.length >= 2);
+  const out = { name: '', username: '', password: '' };
+  const rest = [];
+  for (const line of lines) {
+    const labelled = splitLabel(line);
+    if (labelled && labelled.value && !out[labelled.field]) out[labelled.field] = labelled.value;
+    else rest.push(line);
+  }
+  if (!out.username) {
+    const i = rest.findIndex((l) => EMAIL.test(l));
+    if (i >= 0) { out.username = rest[i].match(EMAIL)[0]; rest.splice(i, 1); }
+  }
+  // Unlabelled lines are usually written in order: name, username, password.
+  if (!out.name && rest.length) out.name = rest.shift();
+  if (!out.username && rest.length > 1) out.username = rest.shift();
+  if (!out.password && rest.length) out.password = rest.shift();
+  if (!out.username && rest.length) out.username = rest.shift();
+  return { ...out, lines };
+}
+
+function resetScan() {
+  ocrLogger = null;
+  scanUsed = false;
+  scanTarget = 'edit-name';
+  if (scanImageUrl) URL.revokeObjectURL(scanImageUrl);
+  scanImageUrl = null;
+  $('scan-img').removeAttribute('src');
+  $('scan-panel').hidden = true;
+  $('scan-result').hidden = true;
+  $('scan-words').hidden = true;
+  $('generate-btn').hidden = false;
+  $('edit-password-hint').hidden = false;
+  $('scan-lines').replaceChildren();
+  $('scan-file').value = '';
+  SCAN_FIELDS.forEach((id) => $(id).classList.remove('filled-from-scan'));
+}
+
+function setScanStatus(text, working) {
+  $('scan-status').hidden = !text;
+  $('scan-status-text').textContent = text || '';
+  $('scan-spinner').hidden = !working;
+}
+
+function putInField(id, value) {
+  const input = $(id);
+  input.value = value;
+  input.classList.add('filled-from-scan');
+  if (id === 'edit-password') {
+    input.dataset.toggled = '1';
+    setVisible(input, true); // shown so it can be checked against the note
+    updateStrength(input);
+  }
+}
+
+async function readNote(file) {
+  resetScan();
+  const started = session;
+  scanImageUrl = URL.createObjectURL(file);
+  $('scan-img').src = scanImageUrl;
+  $('scan-panel').hidden = false;
+  setScanStatus('Getting ready', true);
+  $('scan-panel').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  try {
+    const canvas = await prepareImage(file);
+    ocrLogger = (m) => {
+      if (m.status === 'recognizing text') setScanStatus(`Reading your note ${Math.round(m.progress * 100)}%`, true);
+      else setScanStatus('Getting the reader ready. The first time takes a little longer.', true);
+    };
+    const worker = await getOcrWorker();
+    const { data } = await worker.recognize(canvas);
+    ocrLogger = null;
+    if (session !== started) return;
+    const note = parseNote(data.text || '');
+    if (!note.lines.length) {
+      setScanStatus("Couldn't find any writing. Try again in good light, with the phone held straight above the page.", false);
+      return;
+    }
+    if (note.name) putInField('edit-name', note.name);
+    if (note.username) putInField('edit-username', note.username);
+    if (note.password) putInField('edit-password', note.password);
+    for (const line of note.lines) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.textContent = line;
+      chip.addEventListener('click', () => {
+        putInField(scanTarget, line);
+        const next = SCAN_FIELDS[SCAN_FIELDS.indexOf(scanTarget) + 1];
+        if (next) scanTarget = next;
+      });
+      $('scan-lines').append(chip);
+    }
+    scanUsed = true;
+    setScanStatus('', false);
+    $('scan-result').hidden = false;
+    $('scan-words').hidden = false;
+    $('generate-btn').hidden = true; // keeping the password from the note, not making a new one
+    $('edit-password-hint').hidden = true;
+  } catch (err) {
+    console.error(err);
+    if (session === started) setScanStatus("Sorry, the reader couldn't start. Check your internet connection the first time you scan, then try again.", false);
+  }
+}
+
+SCAN_FIELDS.forEach((id) => $(id).addEventListener('focus', () => { scanTarget = id; }));
+SCAN_FIELDS.forEach((id) => $(id).addEventListener('input', () => $(id).classList.remove('filled-from-scan')));
+$('scan-file').addEventListener('change', () => {
+  const file = $('scan-file').files[0];
+  if (file) readNote(file);
+});
+
+function goBack() {
+  return new Promise((resolve) => {
+    window.addEventListener('popstate', () => setTimeout(resolve, 0), { once: true });
+    history.back();
+  });
 }
 
 function resetRestoreFile() {
@@ -836,8 +1075,18 @@ $('form-edit').addEventListener('submit', async (e) => {
     return setError('edit-error', "Couldn't save. Please try again.");
   }
   clearInputs(['edit-name', 'edit-username', 'edit-password']);
-  history.back();
+  const fromScan = scanUsed;
+  resetScan();
+  await goBack();
   toast('Saved');
+  if (fromScan && await ask({
+    title: `${name} saved`,
+    message: 'Scan the next one from your notes?',
+    confirm: 'Scan next',
+  })) {
+    openEditor(null);
+    $('scan-file').click();
+  }
 });
 
 $('form-change').addEventListener('submit', async (e) => {
@@ -999,6 +1248,8 @@ const actions = {
   lock: () => lock({ manual: true }),
   settings: () => go('settings'),
   add: () => openEditor(null),
+  scan: () => $('scan-file').click(),
+  'scan-new': () => { openEditor(null); $('scan-file').click(); },
   edit: () => openEditor(findEntry(currentId)),
   forgot: () => go('forgot'),
   'change-pw': () => { setError('change-error', ''); go('change'); },

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#f7f8f9" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#111416" media="(prefers-color-scheme: dark)">
@@ -39,6 +39,7 @@
     <symbol id="i-key-round" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
     <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
     <symbol id="i-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
   </svg>
 
   <main id="app">
@@ -204,7 +205,7 @@
       <div id="empty" class="empty" hidden>
         <div class="empty-icon"><svg class="icon"><use href="#i-key-round"/></svg></div>
         <p class="empty-title">No passwords yet</p>
-        <p class="muted">Tap <strong>Add password</strong> to save your first one.</p>
+        <p class="muted">Tap <strong>Add password</strong>, or <strong>Scan</strong> to copy one from paper.</p>
       </div>
       <div id="no-results" class="empty" hidden>
         <p class="empty-title">No matches</p>
@@ -212,7 +213,10 @@
       </div>
 
       <div class="bottom-bar">
-        <button type="button" class="btn btn-primary btn-lg" data-action="add"><svg class="icon"><use href="#i-plus"/></svg>Add password</button>
+        <div class="bottom-bar-inner">
+          <button type="button" class="btn btn-outline btn-lg" data-action="scan-new" aria-label="Scan from paper"><svg class="icon"><use href="#i-camera"/></svg>Scan</button>
+          <button type="button" class="btn btn-primary btn-lg" data-action="add"><svg class="icon"><use href="#i-plus"/></svg>Add password</button>
+        </div>
       </div>
     </section>
 
@@ -260,6 +264,21 @@
       </header>
       <form id="form-edit" class="stack" novalidate>
         <h1 id="edit-title">Add password</h1>
+        <button type="button" class="btn btn-outline" id="scan-btn" data-action="scan"><svg class="icon"><use href="#i-camera"/></svg>Scan from paper</button>
+        <input type="file" id="scan-file" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+        <div class="scan-panel" id="scan-panel" hidden>
+          <img id="scan-img" alt="Your photo of the note">
+          <div class="scan-status" id="scan-status">
+            <span class="spinner" id="scan-spinner"></span>
+            <span id="scan-status-text">Reading your note</span>
+          </div>
+          <div id="scan-result" hidden>
+            <div class="callout">
+              <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
+              <p><strong>Check each box below against your note.</strong> Handwriting is easy to misread, especially 0 and O, 1 and l, 5 and S.</p>
+            </div>
+          </div>
+        </div>
         <div class="field">
           <label for="edit-name">App or website</label>
           <input id="edit-name" type="text" placeholder="Netflix, Gmail, TD Bank" autocomplete="off">
@@ -276,7 +295,12 @@
             <button type="button" class="input-btn" data-toggle="edit-password" aria-label="Show password"><svg class="icon"><use href="#i-eye"/></svg></button>
           </div>
           <div class="strength" id="edit-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
-          <button type="button" class="btn btn-outline" data-action="generate"><svg class="icon"><use href="#i-wand-sparkles"/></svg>Create a strong password for me</button>
+          <button type="button" class="btn btn-outline" data-action="generate" id="generate-btn"><svg class="icon"><use href="#i-wand-sparkles"/></svg>Create a strong password for me</button>
+        </div>
+        <div class="stack-sm" id="scan-words" hidden>
+          <p class="label">Wrong box? Tap a box above, then tap the right words here.</p>
+          <div class="chips" id="scan-lines"></div>
+          <p class="muted small">Your photo is read on this phone. It isn't sent anywhere or saved.</p>
         </div>
         <p class="error" id="edit-error" role="alert"></p>
         <button type="submit" class="btn btn-primary btn-lg">Save</button>
