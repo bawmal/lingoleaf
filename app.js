@@ -13,6 +13,7 @@
 const PBKDF2_ITERATIONS = 600000;
 const AUTO_LOCK_MS = 2 * 60 * 1000;     // no taps for 2 minutes
 const AWAY_LOCK_MS = 30 * 1000;         // left the app for 30 seconds
+const IMPORT_LOCK_MS = 3 * 60 * 1000;   // while adding from a notebook (time to use Google Lens)
 const BACKUP_REMINDER_DAYS = 30;
 const MIN_MASTER_LENGTH = 10;
 const MIN_ITERATIONS = 100000;          // refuse weaker settings from a backup file
@@ -307,7 +308,7 @@ let clipboardTimer = null;
 let clipboardLeftApp = false;
 
 const LOCKED_SCREENS = ['setup', 'unlock', 'forgot', 'restore'];
-const UNLOCKED_SCREENS = ['list', 'view', 'edit', 'settings', 'change', 'restore', 'bio'];
+const UNLOCKED_SCREENS = ['list', 'view', 'edit', 'settings', 'change', 'restore', 'bio', 'import'];
 
 async function saveVault() {
   if (!vaultKey) throw new Error('locked');
@@ -325,6 +326,7 @@ function findEntry(id) {
 function show(name) {
   if (name !== 'list') dismissBioOffer();
   if (name !== 'forgot') hideRevealedMaster();
+  if (name !== 'import' && document.body.dataset.screen === 'import') resetImport();
   document.querySelectorAll('.screen').forEach((s) => { s.hidden = s.id !== 'screen-' + name; });
   document.body.dataset.screen = name;
   window.scrollTo(0, 0);
@@ -475,8 +477,7 @@ $('dialog').addEventListener('cancel', () => closeDialog(false));
 function lock({ manual = false } = {}) {
   clearClipboard();
   session++;
-  resetScan();
-  stopOcr();
+  resetImport();
   vaultKey = null;
   entries = [];
   currentId = null;
@@ -502,8 +503,12 @@ function noteActivity() { lastActivity = Date.now(); }
   document.addEventListener(ev, noteActivity, { passive: true, capture: true }));
 
 setInterval(() => {
-  if (vaultKey && Date.now() - lastActivity > AUTO_LOCK_MS) lock();
+  if (vaultKey && Date.now() - lastActivity > lockLimit(AUTO_LOCK_MS)) lock();
 }, 5000);
+
+function lockLimit(normal) {
+  return document.body.dataset.screen === 'import' ? IMPORT_LOCK_MS : normal;
+}
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
@@ -512,8 +517,8 @@ document.addEventListener('visibilitychange', () => {
     hideSecretsOnScreen();
     return;
   }
-  if (vaultKey && hiddenAt && Date.now() - hiddenAt > AWAY_LOCK_MS) lock();
-  else if (vaultKey && Date.now() - lastActivity > AUTO_LOCK_MS) lock();
+  if (vaultKey && hiddenAt && Date.now() - hiddenAt > lockLimit(AWAY_LOCK_MS)) lock();
+  else if (vaultKey && Date.now() - lastActivity > lockLimit(AUTO_LOCK_MS)) lock();
   else if (!vaultKey && document.body.dataset.screen === 'unlock') maybeAutoBio();
   hiddenAt = null;
 });
@@ -696,8 +701,7 @@ async function renderSettings() {
 }
 
 function openEditor(entry) {
-  resetScan();
-  $('scan-btn').hidden = !!entry;
+  $('import-link').hidden = !!entry;
   currentId = entry ? entry.id : null;
   $('edit-title').textContent = entry ? 'Edit password' : 'Add password';
   $('edit-name').value = entry ? entry.name : '';
@@ -711,69 +715,7 @@ function openEditor(entry) {
   if (!entry) setTimeout(() => $('edit-name').focus(), 50);
 }
 
-// ---------- Scan from paper (on-device text reading) ----------
-
-let ocrWorkerPromise = null;
-let ocrLogger = null;
-let scanImageUrl = null;
-let scanUsed = false;
-let scanTarget = 'edit-name';
-const SCAN_FIELDS = ['edit-name', 'edit-username', 'edit-password'];
-
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = () => reject(new Error('Could not load ' + src));
-    document.head.append(s);
-  });
-}
-
-// The reader (Tesseract) is about 6 MB, so it loads the first time it's
-// needed and the service worker keeps it for offline use.
-function getOcrWorker() {
-  if (!ocrWorkerPromise) {
-    ocrWorkerPromise = (async () => {
-      if (!window.Tesseract) await loadScript('ocr/tesseract.min.js');
-      const base = new URL('ocr/', location.href).href;
-      const worker = await Tesseract.createWorker('eng', 1, {
-        workerPath: base + 'worker.min.js',
-        corePath: base + 'tesseract-core-simd-lstm.js',
-        langPath: base.replace(/\/$/, ''),
-        workerBlobURL: false,
-        cacheMethod: 'none',
-        gzip: true,
-        logger: (m) => { if (ocrLogger) ocrLogger(m); },
-      });
-      await worker.setParameters({ tessedit_pageseg_mode: '6', preserve_interword_spaces: '1' });
-      return worker;
-    })();
-    ocrWorkerPromise.catch(() => { ocrWorkerPromise = null; });
-  }
-  return ocrWorkerPromise;
-}
-
-function stopOcr() {
-  if (ocrWorkerPromise) {
-    ocrWorkerPromise.then((w) => w.terminate()).catch(() => {});
-    ocrWorkerPromise = null;
-  }
-}
-
-// Shrinks and greys the photo, which makes reading faster and more reliable.
-async function prepareImage(file) {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, 1800 / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.round(bitmap.width * scale);
-  canvas.height = Math.round(bitmap.height * scale);
-  const ctx = canvas.getContext('2d');
-  ctx.filter = 'grayscale(1) contrast(1.5)';
-  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
-  return canvas;
-}
+// ---------- Add from a notebook (text copied with Google Lens) ----------
 
 // Words people write before each item. Handwriting is often misread
 // ("Paceword"), so labels are matched loosely.
@@ -807,136 +749,233 @@ function matchLabel(text, fields, strict) {
   return best && best.field;
 }
 
-// "Paceword: Sunflower42" -> { field: 'password', value: 'Sunflower42' }
-function splitLabel(line) {
-  const withColon = line.match(/^([A-Za-z][A-Za-z .-]{0,13}?)\s*[:=;]\s*(.+)$/);
-  if (withColon) {
-    const field = matchLabel(withColon[1], Object.keys(NOTE_LABELS), false);
-    if (field) return { field, value: withColon[2].trim() };
+const EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+
+// Splits "HP Laptop - Chapelofmercy" or "Email: jane@x.com" into its two sides.
+function splitLine(line) {
+  let m = line.match(/^(.{1,30}?)\s*(?:[:=;]|\s[-~]+\s|[–—]+)\s*(.+)$/);
+  if (m && m[2].startsWith('//')) m = null; // a web address, not "label: value"
+  if (!m) {
+    // A plain hyphen with no spaces ("HP Laptop-Riverstone", "Email-jane@x.com")
+    // counts after a known label, a name of two or more words, or before a
+    // value with digits or symbols. Otherwise it's probably part of a password.
+    const h = line.match(/^([A-Za-z][A-Za-z ]{1,29})-(\S.*)$/);
+    if (h && (matchLabel(h[1], Object.keys(NOTE_LABELS), false) || h[1].includes(' ') || /[\d@!#$%&*?]/.test(h[2]))) m = h;
   }
-  // "Pasword Blue!Sky9": no colon, so only clear password/username words count.
+  return m ? { left: m[1].trim(), right: m[2].trim() } : null;
+}
+
+function classifyLine(line) {
+  const parts = splitLine(line);
+  if (parts) {
+    const field = matchLabel(parts.left, Object.keys(NOTE_LABELS), false);
+    if (field) return { kind: field, value: parts.right };
+    return { kind: 'pair', name: parts.left, value: parts.right };
+  }
+  // "Pasword Blue!Sky9": no separator, so only clear password/username words count
   const firstWord = line.match(/^([A-Za-z-]{2,10})\s+(\S.*)$/);
   if (firstWord) {
     const field = matchLabel(firstWord[1], ['password', 'username'], true);
-    if (field) return { field, value: firstWord[2].trim() };
+    if (field) return { kind: field, value: firstWord[2].trim() };
   }
-  return null;
+  return { kind: 'plain', value: line };
 }
 
-const EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+function cleanEmail(value) {
+  return value.includes('@') ? value.replace(/\s+/g, '') : value;
+}
 
-// Turns the text read from a note into app name, username and password.
-// Works with labelled notes ("User: jane") and plain lists of lines.
-function parseNote(text) {
-  const lines = text.split('\n').map((l) => l.replace(/\s+/g, ' ').trim()).filter((l) => l.length >= 2);
-  const out = { name: '', username: '', password: '' };
-  const rest = [];
+function nameFromEmail(email) {
+  const domain = (email.split('@')[1] || '').split('.')[0];
+  return domain ? domain[0].toUpperCase() + domain.slice(1) : 'Email';
+}
+
+// Turns a page of notes into accounts. Understands:
+//   "HP Laptop - Chapelofmercy"            (name - password, one per line)
+//   "Email - jane@gmail.com" + "PWD - xyz" (labelled lines)
+//   "Netflix" / "jane@x.com" / "Sunflower42" (a name followed by its details)
+function parseNotebook(text) {
+  const found = [];
+  let cur = null;
+  const finish = () => {
+    // A lone unlabelled line after the name was more likely the password.
+    if (cur && cur.guessedUsername && !cur.password) { cur.password = cur.username; cur.username = ''; }
+  };
+  const start = (fields) => { finish(); cur = { name: '', username: '', password: '', lines: [], ...fields }; found.push(cur); };
+
+  const lines = text.split(/\r?\n/).map((l) => l.replace(/\s+/g, ' ').trim()).filter((l) => l.length >= 2);
   for (const line of lines) {
-    const labelled = splitLabel(line);
-    if (labelled && labelled.value && !out[labelled.field]) out[labelled.field] = labelled.value;
-    else rest.push(line);
+    const c = classifyLine(line);
+    const value = c.value && (c.kind === 'username' || EMAIL.test(c.value) ? cleanEmail(c.value) : c.value);
+    if (c.kind === 'pair') {
+      start({ name: c.name });
+      if (EMAIL.test(value)) cur.username = value; else cur.password = value;
+    } else if (c.kind === 'name') {
+      start({ name: value.replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '') });
+    } else if (c.kind === 'username') {
+      if (cur && !cur.username && !cur.password) cur.username = value;
+      else start({ name: nameFromEmail(value), username: value });
+    } else if (c.kind === 'password') {
+      if (cur && !cur.password) cur.password = value;
+      else start({ password: value });
+    } else if (!cur || cur.password) {
+      start({ name: value });
+    } else if (EMAIL.test(value) && !cur.username) {
+      cur.username = value.match(EMAIL)[0];
+    } else if (!cur.username) {
+      cur.username = value;
+      cur.guessedUsername = true;
+    } else {
+      cur.password = value;
+    }
+    cur.lines.push(line);
   }
-  if (!out.username) {
-    const i = rest.findIndex((l) => EMAIL.test(l));
-    if (i >= 0) { out.username = rest[i].match(EMAIL)[0]; rest.splice(i, 1); }
-  }
-  // Unlabelled lines are usually written in order: name, username, password.
-  if (!out.name && rest.length) out.name = rest.shift();
-  if (!out.username && rest.length > 1) out.username = rest.shift();
-  if (!out.password && rest.length) out.password = rest.shift();
-  if (!out.username && rest.length) out.username = rest.shift();
-  return { ...out, lines };
+  finish();
+  return found
+    .filter((e) => e.username || e.password)
+    .map((e) => ({ name: e.name || (EMAIL.test(e.username) ? nameFromEmail(e.username) : ''), username: e.username, password: e.password, lines: e.lines }));
 }
 
-function resetScan() {
-  ocrLogger = null;
-  scanUsed = false;
-  scanTarget = 'edit-name';
-  if (scanImageUrl) URL.revokeObjectURL(scanImageUrl);
-  scanImageUrl = null;
-  $('scan-img').removeAttribute('src');
-  $('scan-panel').hidden = true;
-  $('scan-result').hidden = true;
-  $('scan-words').hidden = true;
-  $('generate-btn').hidden = false;
-  $('edit-password-hint').hidden = false;
-  $('scan-lines').replaceChildren();
-  $('scan-file').value = '';
-  SCAN_FIELDS.forEach((id) => $(id).classList.remove('filled-from-scan'));
+function resetImport() {
+  $('import-text').value = '';
+  $('import-results').hidden = true;
+  $('import-list').replaceChildren();
+  setError('import-error', '');
+  $('import-find-btn').className = 'btn btn-primary';
 }
 
-function setScanStatus(text, working) {
-  $('scan-status').hidden = !text;
-  $('scan-status-text').textContent = text || '';
-  $('scan-spinner').hidden = !working;
+function isAlreadySaved(e) {
+  const name = e.name.trim().toLowerCase();
+  const user = e.username.trim().toLowerCase();
+  return entries.some((x) => x.name.trim().toLowerCase() === name && (x.username || '').trim().toLowerCase() === user);
 }
 
-function putInField(id, value) {
-  const input = $(id);
+function importField(labelText, value, cls) {
+  const wrap = document.createElement('div');
+  wrap.className = 'field';
+  const label = document.createElement('label');
+  const input = document.createElement('input');
+  input.type = 'text';
   input.value = value;
-  input.classList.add('filled-from-scan');
-  if (id === 'edit-password') {
-    input.dataset.toggled = '1';
-    setVisible(input, true); // shown so it can be checked against the note
-    updateStrength(input);
-  }
+  input.className = cls;
+  input.autocomplete = 'off';
+  input.autocapitalize = 'off';
+  input.spellcheck = false;
+  input.id = 'imp-' + Math.random().toString(36).slice(2);
+  label.htmlFor = input.id;
+  label.textContent = labelText;
+  wrap.append(label, input);
+  return wrap;
 }
 
-async function readNote(file) {
-  resetScan();
-  const started = session;
-  scanImageUrl = URL.createObjectURL(file);
-  $('scan-img').src = scanImageUrl;
-  $('scan-panel').hidden = false;
-  setScanStatus('Getting ready', true);
-  $('scan-panel').scrollIntoView({ block: 'start', behavior: 'smooth' });
+function updateImportCount() {
+  const n = document.querySelectorAll('.import-card .imp-save:checked').length;
+  $('import-save-btn').textContent = n === 1 ? 'Save 1 password' : `Save ${n} passwords`;
+  $('import-save-btn').disabled = n === 0;
+}
+
+function findInNotes() {
+  const text = $('import-text').value;
+  const found = parseNotebook(text);
+  const list = $('import-list');
+  list.replaceChildren();
+  setError('import-error', '');
+  if (!found.length) {
+    $('import-results').hidden = true;
+    setError('import-error', text.trim()
+      ? "Couldn't find any passwords in that text. Check it was copied from your notes, or add them one at a time instead."
+      : 'Paste the text from Google Lens first.');
+    return;
+  }
+  for (const e of found) {
+    const dup = isAlreadySaved(e);
+    const li = document.createElement('li');
+    li.className = 'import-card';
+    const check = document.createElement('label');
+    check.className = 'check';
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.className = 'imp-save';
+    box.checked = !dup;
+    box.addEventListener('change', () => { li.classList.toggle('unchecked', !box.checked); updateImportCount(); });
+    const span = document.createElement('span');
+    span.textContent = 'Save this one';
+    check.append(box, span);
+    li.append(check,
+      importField('App or website', e.name, 'imp-name'),
+      importField('Username or email', e.username, 'imp-user'),
+      importField('Password', e.password, 'imp-pass mono'));
+    const from = document.createElement('p');
+    from.className = 'muted small';
+    from.textContent = 'From your notes: ' + e.lines.join('  /  ');
+    li.append(from);
+    if (dup) {
+      const note = document.createElement('p');
+      note.className = 'small dup-note';
+      note.textContent = 'You already have this one saved, so it is not ticked.';
+      li.append(note);
+      li.classList.add('unchecked');
+    }
+    list.append(li);
+  }
+  $('import-count').textContent = found.length === 1 ? 'Found 1 password' : `Found ${found.length} passwords`;
+  $('import-results').hidden = false;
+  $('import-find-btn').className = 'btn btn-outline';
+  updateImportCount();
+  $('import-results').scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+
+$('import-find-btn').addEventListener('click', findInNotes);
+
+$('import-paste-btn').addEventListener('click', async () => {
+  let text = '';
   try {
-    const canvas = await prepareImage(file);
-    ocrLogger = (m) => {
-      if (m.status === 'recognizing text') setScanStatus(`Reading your note ${Math.round(m.progress * 100)}%`, true);
-      else setScanStatus('Getting the reader ready. The first time takes a little longer.', true);
-    };
-    const worker = await getOcrWorker();
-    const { data } = await worker.recognize(canvas);
-    ocrLogger = null;
-    if (session !== started) return;
-    const note = parseNote(data.text || '');
-    if (!note.lines.length) {
-      setScanStatus("Couldn't find any writing. Try again in good light, with the phone held straight above the page.", false);
-      return;
-    }
-    if (note.name) putInField('edit-name', note.name);
-    if (note.username) putInField('edit-username', note.username);
-    if (note.password) putInField('edit-password', note.password);
-    for (const line of note.lines) {
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.className = 'chip';
-      chip.textContent = line;
-      chip.addEventListener('click', () => {
-        putInField(scanTarget, line);
-        const next = SCAN_FIELDS[SCAN_FIELDS.indexOf(scanTarget) + 1];
-        if (next) scanTarget = next;
-      });
-      $('scan-lines').append(chip);
-    }
-    scanUsed = true;
-    setScanStatus('', false);
-    $('scan-result').hidden = false;
-    $('scan-words').hidden = false;
-    $('generate-btn').hidden = true; // keeping the password from the note, not making a new one
-    $('edit-password-hint').hidden = true;
+    text = await navigator.clipboard.readText();
+  } catch {
+    toast('Press and hold in the box below, then tap Paste.');
+    $('import-text').focus();
+    return;
+  }
+  if (!text.trim()) {
+    toast('Nothing is copied yet. Copy the text in Google Lens first.');
+    return;
+  }
+  $('import-text').value = text;
+  findInNotes();
+});
+
+$('import-save-btn').addEventListener('click', async () => {
+  const cards = [...document.querySelectorAll('.import-card')].filter((c) => c.querySelector('.imp-save').checked);
+  let problem = false;
+  const now = new Date().toISOString();
+  const add = [];
+  for (const card of cards) {
+    const name = card.querySelector('.imp-name').value.trim();
+    const username = card.querySelector('.imp-user').value.trim();
+    const password = card.querySelector('.imp-pass').value;
+    card.classList.toggle('has-problem', !name || !password);
+    if (!name || !password) { problem = true; continue; }
+    add.push({ id: crypto.randomUUID(), name, username, password, created: now, updated: now });
+  }
+  if (problem) {
+    setError('import-save-error', 'Some ticked entries need an app name and a password. Fill them in, or untick them.');
+    document.querySelector('.import-card.has-problem').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return;
+  }
+  setError('import-save-error', '');
+  entries.push(...add);
+  try {
+    await saveVault();
   } catch (err) {
     console.error(err);
-    if (session === started) setScanStatus("Sorry, the reader couldn't start. Check your internet connection the first time you scan, then try again.", false);
+    entries = entries.filter((x) => !add.includes(x));
+    return setError('import-save-error', "Couldn't save. Please try again.");
   }
-}
-
-SCAN_FIELDS.forEach((id) => $(id).addEventListener('focus', () => { scanTarget = id; }));
-SCAN_FIELDS.forEach((id) => $(id).addEventListener('input', () => $(id).classList.remove('filled-from-scan')));
-$('scan-file').addEventListener('change', () => {
-  const file = $('scan-file').files[0];
-  if (file) readNote(file);
+  // The copied text holds every password on the page, so don't leave it on the clipboard.
+  navigator.clipboard.writeText('').catch(() => {});
+  resetImport();
+  await goBack();
+  toast(add.length === 1 ? 'Saved 1 password' : `Saved ${add.length} passwords`);
 });
 
 function goBack() {
@@ -1075,18 +1114,8 @@ $('form-edit').addEventListener('submit', async (e) => {
     return setError('edit-error', "Couldn't save. Please try again.");
   }
   clearInputs(['edit-name', 'edit-username', 'edit-password']);
-  const fromScan = scanUsed;
-  resetScan();
   await goBack();
   toast('Saved');
-  if (fromScan && await ask({
-    title: `${name} saved`,
-    message: 'Scan the next one from your notes?',
-    confirm: 'Scan next',
-  })) {
-    openEditor(null);
-    $('scan-file').click();
-  }
 });
 
 $('form-change').addEventListener('submit', async (e) => {
@@ -1256,8 +1285,7 @@ const actions = {
       toast('Copy this address: ' + location.href.split('#')[0]);
     }
   },
-  scan: () => $('scan-file').click(),
-  'scan-new': () => { openEditor(null); $('scan-file').click(); },
+  import: () => { resetImport(); go('import'); },
   edit: () => openEditor(findEntry(currentId)),
   forgot: () => go('forgot'),
   'change-pw': () => { setError('change-error', ''); go('change'); },

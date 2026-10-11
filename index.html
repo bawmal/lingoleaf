@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#f7f8f9" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#111416" media="(prefers-color-scheme: dark)">
@@ -222,7 +222,7 @@
       <div id="empty" class="empty" hidden>
         <div class="empty-icon"><svg class="icon"><use href="#i-key-round"/></svg></div>
         <p class="empty-title">No passwords yet</p>
-        <p class="muted">Tap <strong>Add password</strong>, or <strong>Scan</strong> to copy one from paper.</p>
+        <p class="muted">Tap <strong>Add password</strong>, or <strong>Scan</strong> to copy them from your notebook.</p>
       </div>
       <div id="no-results" class="empty" hidden>
         <p class="empty-title">No matches</p>
@@ -231,7 +231,7 @@
 
       <div class="bottom-bar">
         <div class="bottom-bar-inner">
-          <button type="button" class="btn btn-outline btn-lg" data-action="scan-new" aria-label="Scan from paper"><svg class="icon"><use href="#i-camera"/></svg>Scan</button>
+          <button type="button" class="btn btn-outline btn-lg" data-action="import" aria-label="Add from my notebook"><svg class="icon"><use href="#i-camera"/></svg>Scan</button>
           <button type="button" class="btn btn-primary btn-lg" data-action="add"><svg class="icon"><use href="#i-plus"/></svg>Add password</button>
         </div>
       </div>
@@ -281,21 +281,7 @@
       </header>
       <form id="form-edit" class="stack" novalidate>
         <h1 id="edit-title">Add password</h1>
-        <button type="button" class="btn btn-outline" id="scan-btn" data-action="scan"><svg class="icon"><use href="#i-camera"/></svg>Scan from paper</button>
-        <input type="file" id="scan-file" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
-        <div class="scan-panel" id="scan-panel" hidden>
-          <img id="scan-img" alt="Your photo of the note">
-          <div class="scan-status" id="scan-status">
-            <span class="spinner" id="scan-spinner"></span>
-            <span id="scan-status-text">Reading your note</span>
-          </div>
-          <div id="scan-result" hidden>
-            <div class="callout">
-              <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
-              <p><strong>Check each box below against your note.</strong> Handwriting is easy to misread, especially 0 and O, 1 and l, 5 and S.</p>
-            </div>
-          </div>
-        </div>
+        <button type="button" class="btn btn-outline" id="import-link" data-action="import"><svg class="icon"><use href="#i-camera"/></svg>Copy from my notebook instead</button>
         <div class="field">
           <label for="edit-name">App or website</label>
           <input id="edit-name" type="text" placeholder="Netflix, Gmail, TD Bank" autocomplete="off">
@@ -314,14 +300,50 @@
           <div class="strength" id="edit-strength" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span></span></div>
           <button type="button" class="btn btn-outline" data-action="generate" id="generate-btn"><svg class="icon"><use href="#i-wand-sparkles"/></svg>Create a strong password for me</button>
         </div>
-        <div class="stack-sm" id="scan-words" hidden>
-          <p class="label">Wrong box? Tap a box above, then tap the right words here.</p>
-          <div class="chips" id="scan-lines"></div>
-          <p class="muted small">Your photo is read on this phone. It isn't sent anywhere or saved.</p>
-        </div>
         <p class="error" id="edit-error" role="alert"></p>
         <button type="submit" class="btn btn-primary btn-lg">Save</button>
       </form>
+    </section>
+
+    <!-- Add from a notebook via Google Lens -->
+    <section class="screen" id="screen-import" hidden>
+      <header class="topbar">
+        <button type="button" class="btn-back" data-action="back"><svg class="icon"><use href="#i-chevron-left"/></svg>Passwords</button>
+      </header>
+      <h1>Add from your notebook</h1>
+      <p class="muted">Copy a whole page at once. Google Lens reads the handwriting, and this app turns it into entries for you to check.</p>
+
+      <section class="section">
+        <h2>1. Copy the page with Google Lens</h2>
+        <ol class="steps">
+          <li>Go to your home screen and tap the <strong>camera icon</strong> in the Google search bar. (Or open the <strong>Google Lens</strong> app.)</li>
+          <li>Point it at the page and tap the shutter button.</li>
+          <li>Tap <strong>Select all</strong>, then <strong>Copy text</strong>. (On some phones, tap <strong>Text</strong> first.)</li>
+          <li>Come back to Password Safe. You have 3 minutes before it locks.</li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <h2>2. Paste it here</h2>
+        <div class="stack">
+          <button type="button" class="btn btn-outline btn-lg" id="import-paste-btn"><svg class="icon"><use href="#i-copy"/></svg>Paste from Google Lens</button>
+          <textarea id="import-text" rows="6" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Text from your notebook" placeholder="Or press and hold here and tap Paste"></textarea>
+          <p class="error" id="import-error" role="alert"></p>
+          <button type="button" class="btn btn-primary" id="import-find-btn">Find passwords</button>
+        </div>
+      </section>
+
+      <section class="section" id="import-results" hidden>
+        <h2 id="import-count"></h2>
+        <div class="callout">
+          <svg class="icon icon-warn"><use href="#i-triangle-alert"/></svg>
+          <p><strong>Check each one against your notebook.</strong> Lens can misread handwriting too, especially 0 and O, 1 and l, 5 and S. Untick anything you don't want.</p>
+        </div>
+        <ul class="import-list" id="import-list"></ul>
+        <p class="error" id="import-save-error" role="alert"></p>
+        <button type="button" class="btn btn-primary btn-lg" id="import-save-btn">Save</button>
+        <p class="muted small import-privacy">After saving, the copied text is cleared from your phone's clipboard.</p>
+      </section>
     </section>
 
     <!-- Settings -->
