@@ -1248,6 +1248,14 @@ const actions = {
   lock: () => lock({ manual: true }),
   settings: () => go('settings'),
   add: () => openEditor(null),
+  'copy-link': async () => {
+    try {
+      await navigator.clipboard.writeText(location.href.split('#')[0]);
+      toast('Link copied. Open Chrome and paste it into the address bar.');
+    } catch {
+      toast('Copy this address: ' + location.href.split('#')[0]);
+    }
+  },
   scan: () => $('scan-file').click(),
   'scan-new': () => { openEditor(null); $('scan-file').click(); },
   edit: () => openEditor(findEntry(currentId)),
@@ -1407,8 +1415,27 @@ function requestPersistentStorage() {
 const isInstalledApp = () => matchMedia('(display-mode: standalone)').matches;
 let justInstalled = false;
 
-// In a Chrome tab, show an Install button when Chrome offers one, otherwise
-// written steps. Inside the installed app, show nothing.
+function browserKind() {
+  const ua = navigator.userAgent;
+  if (/; wv\)|FBAN|FBAV|Instagram|Line\/|GSA\/|WhatsApp|Snapchat/i.test(ua)) return 'inapp';
+  if (/SamsungBrowser/i.test(ua)) return 'samsung';
+  if (/Firefox/i.test(ua)) return 'firefox';
+  if (/EdgA/i.test(ua)) return 'edge';
+  return 'chrome';
+}
+
+// Fixed text written here (never user input), so it's safe to set as HTML.
+const INSTALL_STEPS = {
+  inapp: '<strong>This page is open inside another app</strong>, which can\'t install it. Tap the <strong>⋮</strong> menu and choose <strong>Open in Chrome</strong>. Or tap <strong>Copy link</strong>, open the Chrome app and paste it into the address bar.',
+  samsung: '<strong>Install this app:</strong> tap the menu <strong>☰</strong> at the bottom right, then <strong>Add page to</strong>, then <strong>Home screen</strong>.',
+  firefox: '<strong>Install this app:</strong> tap the <strong>⋮</strong> menu, then <strong>Install</strong> or <strong>Add to Home screen</strong>.',
+  edge: '<strong>Install this app:</strong> tap the <strong>…</strong> menu at the bottom, then <strong>Add to phone</strong>.',
+  chrome: '<strong>Install this app:</strong> tap <strong>⋮</strong> at the top right of Chrome, then <strong>Add to home screen</strong> or <strong>Install app</strong>. No ⋮ at the top right? You may be in a mini browser inside another app: tap <strong>Copy link</strong>, then paste it into the Chrome app.',
+};
+document.querySelectorAll('.install-steps').forEach((p) => { p.innerHTML = INSTALL_STEPS[browserKind()]; });
+
+// In a browser tab, show an Install button when the browser offers one,
+// otherwise written steps. Inside the installed app, show nothing.
 function updateInstallUi() {
   const inBrowser = !isInstalledApp();
   document.querySelectorAll('.install-btn').forEach((b) => { b.hidden = !(inBrowser && installPrompt && !justInstalled); });

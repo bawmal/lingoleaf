@@ -1,6 +1,6 @@
 // Keeps the app working with no internet connection.
 // Bump CACHE when any file below changes so phones pick up the new version.
-const CACHE = 'password-safe-v6';
+const CACHE = 'password-safe-v7';
 const FILES = [
   './',
   'index.html',
@@ -29,18 +29,35 @@ self.addEventListener('activate', (event) => {
       .then(() => self.clients.claim()));
 });
 
+// App files: try the network first so phones always get the newest version,
+// and fall back to the saved copy when offline or the network is very slow.
+// The text reader (ocr/) is large and never changes, so it's served from the
+// saved copy first.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  const isOcr = new URL(event.request.url).pathname.includes('/ocr/');
-  event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        if (isOcr && response.ok) {
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin) return;
+  if (url.pathname.includes('/ocr/')) {
+    event.respondWith(
+      caches.match(event.request, { ignoreSearch: true }).then((cached) => cached || fetch(event.request).then((response) => {
+        if (response.ok) {
           const copy = response.clone();
           caches.open(OCR_CACHE).then((cache) => cache.put(event.request, copy));
         }
         return response;
-      });
-    }));
+      })));
+    return;
+  }
+  const network = fetch(event.request).then((response) => {
+    if (response.ok) {
+      const copy = response.clone();
+      caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+    }
+    return response;
+  });
+  const slow = new Promise((resolve) => setTimeout(resolve, 4000));
+  event.respondWith(
+    Promise.race([network, slow.then(() => caches.match(event.request, { ignoreSearch: true }))])
+      .then((response) => response || network)
+      .catch(() => caches.match(event.request, { ignoreSearch: true })));
 });

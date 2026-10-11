@@ -47,6 +47,20 @@
     <!-- First time: create master password -->
     <section class="screen" id="screen-setup" hidden>
       <div class="brand"><img src="icons/icon.svg" alt="" width="40" height="40"><span>Password Safe</span></div>
+      <div class="install-top">
+          <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
+          <div class="callout install-help" hidden>
+            <svg class="icon icon-accent"><use href="#i-download"/></svg>
+            <div class="install-help-body">
+              <p class="install-steps"></p>
+              <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+            </div>
+          </div>
+          <div class="callout installed-note" hidden>
+            <svg class="icon icon-accent"><use href="#i-check"/></svg>
+            <p><strong>Installed.</strong> Close this Chrome tab and open <strong>Password Safe</strong> from your home screen. If it isn't there, swipe up to see all your apps and look for it.</p>
+          </div>
+      </div>
       <form id="form-setup" class="stack" novalidate>
         <div>
           <h1>Create your master password</h1>
@@ -78,21 +92,26 @@
         <p class="error" id="setup-error" role="alert"></p>
         <button type="submit" class="btn btn-primary">Create my safe</button>
         <button type="button" class="btn btn-ghost" data-action="restore-start">Restore from a backup file</button>
-        <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
-        <div class="callout install-help" hidden>
-          <svg class="icon icon-accent"><use href="#i-download"/></svg>
-          <p><strong>Install this app:</strong> tap <strong>⋮</strong> at the top right of Chrome, then <strong>Add to home screen</strong> or <strong>Install app</strong>. Then open <strong>Password Safe</strong> from your apps list.</p>
-        </div>
-        <div class="callout installed-note" hidden>
-          <svg class="icon icon-accent"><use href="#i-check"/></svg>
-          <p><strong>Installed.</strong> Close this Chrome tab and open <strong>Password Safe</strong> from your home screen. If it isn't there, swipe up to see all your apps and look for it.</p>
-        </div>
       </form>
     </section>
 
     <!-- Unlock -->
     <section class="screen" id="screen-unlock" hidden>
       <div class="brand"><img src="icons/icon.svg" alt="" width="40" height="40"><span>Password Safe</span></div>
+      <div class="install-top">
+          <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
+          <div class="callout install-help" hidden>
+            <svg class="icon icon-accent"><use href="#i-download"/></svg>
+            <div class="install-help-body">
+              <p class="install-steps"></p>
+              <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+            </div>
+          </div>
+          <div class="callout installed-note" hidden>
+            <svg class="icon icon-accent"><use href="#i-check"/></svg>
+            <p><strong>Installed.</strong> Close this Chrome tab and open <strong>Password Safe</strong> from your home screen. If it isn't there, swipe up to see all your apps and look for it.</p>
+          </div>
+      </div>
       <div class="stack">
         <div>
           <h1>Welcome back</h1>
@@ -114,15 +133,6 @@
           <button type="submit" class="btn btn-primary" id="unlock-btn">Unlock</button>
         </form>
         <button type="button" class="btn btn-ghost" data-action="forgot">Forgot your master password?</button>
-        <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
-        <div class="callout install-help" hidden>
-          <svg class="icon icon-accent"><use href="#i-download"/></svg>
-          <p><strong>Install this app:</strong> tap <strong>⋮</strong> at the top right of Chrome, then <strong>Add to home screen</strong> or <strong>Install app</strong>. Then open <strong>Password Safe</strong> from your apps list.</p>
-        </div>
-        <div class="callout installed-note" hidden>
-          <svg class="icon icon-accent"><use href="#i-check"/></svg>
-          <p><strong>Installed.</strong> Close this Chrome tab and open <strong>Password Safe</strong> from your home screen. If it isn't there, swipe up to see all your apps and look for it.</p>
-        </div>
       </div>
     </section>
 
@@ -195,6 +205,13 @@
         </div>
       </div>
 
+        <div class="callout install-help list-install-help" hidden>
+          <svg class="icon icon-accent"><use href="#i-download"/></svg>
+          <div class="install-help-body">
+            <p class="install-steps"></p>
+            <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+          </div>
+        </div>
       <div class="search-wrap" id="search-wrap">
         <svg class="icon"><use href="#i-search"/></svg>
         <input id="search" type="search" placeholder="Search passwords" aria-label="Search passwords" autocomplete="off">
@@ -356,7 +373,13 @@
       <section class="section install-section" hidden>
         <h2>Install</h2>
         <button type="button" class="btn btn-outline install-btn" hidden><svg class="icon"><use href="#i-download"/></svg>Install on my phone</button>
-        <p class="muted small install-help" hidden>Tap <strong>⋮</strong> at the top right of Chrome, then <strong>Add to home screen</strong> or <strong>Install app</strong>.</p>
+        <div class="callout install-help" hidden>
+          <svg class="icon icon-accent"><use href="#i-download"/></svg>
+          <div class="install-help-body">
+            <p class="install-steps"></p>
+            <button type="button" class="btn btn-sm btn-outline" data-action="copy-link"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+          </div>
+        </div>
         <p class="muted small installed-note" hidden>Installed. Open Password Safe from your home screen or apps list.</p>
       </section>
     </section>
