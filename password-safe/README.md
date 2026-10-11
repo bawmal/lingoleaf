@@ -36,7 +36,7 @@ Nothing secret is uploaded here. This is just the empty app. Your passwords neve
 - After you type your master password, the app asks **"Use your fingerprint next time?"**. Tap **Turn on** and touch the sensor.
 - From then on, opening the app asks for your fingerprint straight away. You can still type your master password any time.
 - Turn it on or off in **Settings → Fingerprint**.
-- If you change your master password, fingerprint turns off. Turn it on again in Settings.
+- If you change your master password, the app asks for one fingerprint touch to keep fingerprint unlock working.
 - Your phone needs a fingerprint set up (Android **Settings → Security**) and an up-to-date Chrome.
 
 ## Keep a backup (important!)
@@ -71,7 +71,7 @@ Nobody can reset it, by design. Try these in order:
 - The vault is encrypted with **AES-256-GCM**. The key is derived from the master password with **PBKDF2-SHA256, 600,000 iterations**, random 16-byte salt, and a fresh 12-byte IV on every save. Neither the master password nor the key is stored.
 - Encrypted data lives in IndexedDB. The app asks for persistent storage so Android won't evict it.
 - The backup file is the same encrypted record as JSON.
-- Fingerprint unlock: a platform passkey with the WebAuthn **PRF** extension. The PRF output (HKDF-SHA256) becomes an AES-GCM key that encrypts a copy of the master password, stored in IndexedDB. The secret only comes out of the phone's secure hardware after a fingerprint check. If PRF isn't supported, the option stays off. Changing the master password, restoring a backup or erasing everything turns it off. The passkey is tied to the site's domain.
+- Fingerprint unlock: a platform passkey with the WebAuthn **PRF** extension. The PRF output (HKDF-SHA256) becomes an AES-GCM key that encrypts a copy of the master password, stored in IndexedDB. The secret only comes out of the phone's secure hardware after a fingerprint check. If PRF isn't supported, the option stays off. Changing the master password re-seals it with one touch; restoring a backup or erasing everything turns it off. The passkey is tied to the site's domain.
 - Icons: Lucide (ISC). Font: Inter (OFL, `fonts/LICENSE-Inter.txt`), bundled so the app works offline.
 - Security hardening (Oct 2026 review): master password needs 10+ characters and a non-"Weak" score; backups are rejected if their key-derivation settings are weaker than 100k iterations or salt < 16 bytes, and restored vaults are re-encrypted with fresh settings; a lock during a slow task (e.g. changing the master password) cancels it; copied passwords are cleared from the clipboard after 45 seconds if you're still in the app; revealed passwords re-hide and the page blurs when the app loses focus (recent-apps thumbnail).
 - Known limits: copied passwords can remain in Gboard's clipboard history; a web app can't block screenshots; the phone's screen-lock PIN can stand in for the fingerprint; anyone holding the phone can erase the safe (nothing is revealed).
