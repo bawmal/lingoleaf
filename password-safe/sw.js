@@ -1,6 +1,6 @@
 // Keeps the app working with no internet connection.
 // Bump CACHE when any file below changes so phones pick up the new version.
-const CACHE = 'password-safe-v1';
+const CACHE = 'password-safe-v2';
 const FILES = [
   './',
   'index.html',
@@ -11,6 +11,7 @@ const FILES = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
+  'fonts/inter.woff2',
 ];
 
 self.addEventListener('install', (event) => {
