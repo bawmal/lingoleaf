@@ -1,6 +1,6 @@
 {
   "name": "Password Safe",
-  "short_name": "Passwords",
+  "short_name": "Password Safe",
   "description": "Keep your usernames and passwords safe on your phone.",
   "id": "./",
   "start_url": "./",
